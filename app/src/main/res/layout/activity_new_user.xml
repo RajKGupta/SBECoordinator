@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context="com.example.rajk.leasingmanagers.NewUser">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WELCOME!!"
+        android:id="@+id/welcome"
+        android:textSize="40sp"
+        android:layout_centerHorizontal="true"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/prof_pic_layout"
+        android:layout_below="@+id/welcome"
+        android:layout_above="@id/regDetailsLayout"
+        >
+
+        <ImageButton
+                android:id="@+id/prof_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/bg_circle"
+            android:layout_centerInParent="true"
+            />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_above="@+id/submitButton"
+        android:id="@+id/regDetailsLayout"
+        android:padding="15dp"
+        android:background="@color/colorPrimary">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:id="@+id/name"
+            android:textSize="18sp"
+            android:padding="15dp"
+            android:background="@drawable/edittext_bg"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:id="@+id/email"
+            android:textSize="18sp"
+            android:padding="15dp"
+            android:background="@drawable/edittext_bg"/>
+
+        <AutoCompleteTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext_bg"
+            android:layout_marginTop="5dp"
+            android:textSize="18sp"
+            android:padding="15dp"
+            android:hint="Address"/>
+    </LinearLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:id="@id/submitButton"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>
