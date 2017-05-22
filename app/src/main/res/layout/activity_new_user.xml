@@ -7,36 +7,12 @@
 
     tools:context="com.example.rajk.leasingmanagers.NewUser">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="WELCOME!!"
-        android:id="@+id/welcome"
-        android:textSize="40sp"
-        android:layout_centerHorizontal="true"/>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/prof_pic_layout"
-        android:layout_below="@+id/welcome"
-        android:layout_above="@id/regDetailsLayout"
-        >
-
-        <ImageButton
-                android:id="@+id/prof_pic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/bg_circle"
-            android:layout_centerInParent="true"
-            />
-    </RelativeLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_above="@+id/submitButton"
-        android:id="@+id/regDetailsLayout"
+        android:id="@+id/regLayout"
         android:padding="15dp"
         android:background="@color/colorPrimary">
 
@@ -44,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_marginTop="5dp"
             android:layout_height="wrap_content"
-            android:text="Name"
+            android:hint="Name"
             android:id="@+id/name"
             android:textSize="18sp"
             android:padding="15dp"
@@ -65,10 +41,35 @@
             android:layout_height="wrap_content"
             android:background="@drawable/edittext_bg"
             android:layout_marginTop="5dp"
+            android:id="@+id/address"
             android:textSize="18sp"
             android:padding="15dp"
             android:hint="Address"/>
     </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WELCOME!!"
+        android:id="@+id/welcome"
+        android:textSize="40sp"
+        android:layout_centerHorizontal="true"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/prof_pic_layout"
+        android:layout_below="@+id/welcome"
+        android:layout_above="@+id/regLayout"
+        >
+
+        <ImageButton
+                android:id="@+id/prof_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/bg_circle"
+            android:layout_centerInParent="true"
+            />
+    </RelativeLayout>
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
