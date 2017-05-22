@@ -1,91 +1,140 @@
 package com.example.rajk.leasingmanagers;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.example.rajk.leasingmanagers.R;
-import com.example.rajk.leasingmanagers.helper.CircleTransform;
+import com.example.rajk.leasingmanagers.DiscussionActivity.Home;
+import com.example.rajk.leasingmanagers.model.User;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class NewUser extends AppCompatActivity {
-    private AutoCompleteTextView address;
-    private EditText name;
-    private TextView email;
-    private Button submitButton;
-    private ImageButton profPic;
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
-    DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+
+    CircleImageView prof_pic;
+    TextView name,email;
+    EditText username;
+    AutoCompleteTextView address;
+    Button submit;
+    FirebaseAuth auth;
+    FirebaseUser currentuser;
+    DatabaseReference mDatabase, adduser, Usernames_list, addusername, user_exists;
+    session s;
+    String place,user_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getSupportActionBar().hide();
+
         setContentView(R.layout.activity_new_user);
-        sharedPreferences = getSharedPreferences("",MODE_PRIVATE);
-        editor =sharedPreferences.edit();
-        String signInStatus = sharedPreferences.getString("Status","SIGN_UP");
-        if (signInStatus.equals("SIGN_IN"))
-        {
-            startActivity(new Intent());
-        }
-        address = (AutoCompleteTextView)findViewById(R.id.address);
-        profPic = (ImageButton)findViewById(R.id.prof_pic);
-        name = (EditText) findViewById(R.id.name);
-        name.setText(MainActivity.currentUser.getDisplayName());
 
+        auth = FirebaseAuth.getInstance();
+        currentuser = auth.getCurrentUser();
+
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("MeChat");
+
+        s= new session(NewUser.this);
+
+        prof_pic = (CircleImageView)findViewById(R.id.prof_pic);
+        name = (TextView)findViewById(R.id.name);
         email = (TextView)findViewById(R.id.email);
-        email.setText(MainActivity.currentUser.getEmail());
+        username = (EditText)findViewById(R.id.username);
+        address= (AutoCompleteTextView)findViewById(R.id.address);
+        submit = (Button) findViewById(R.id.submit_button);
 
-        Uri profpicUrl =MainActivity.currentUser.getPhotoUrl();
-        if (!TextUtils.isEmpty(profpicUrl.toString())) {
-            Glide.with(NewUser.this).load(profpicUrl)
-                    .thumbnail(0.5f)
-                    .crossFade()
-                    .transform(new CircleTransform(NewUser.this))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(profPic);
-            } else
+        setcredentials(currentuser);
 
-            {
-
-            }
-
-        submitButton = (Button) findViewById(R.id.submitButton);
-        submitButton.setOnClickListener(new View.OnClickListener() {
+        submit.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                final String Name = name.getText().toString().trim();
-                final String Email = email.getText().toString().trim();
-                final String Address =address.getText().toString().trim();
-                if(TextUtils.isEmpty(Name)||TextUtils.isEmpty(Address))
+            public void onClick(View v)
+            {
+                if ((username.getText().toString().equals(""))&&(address.getText().toString().equals("")))
                 {
-                    Toast.makeText(NewUser.this,"Fields cannot be left empty",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(NewUser.this, "Fill in all the credentials", Toast.LENGTH_SHORT).show();
                 }
-                else
-                {
-                    DatabaseReference dbr = database.child("Users").child(MainActivity.currentUser.getUid());
-                    dbr.child("Name").setValue(Name);
-                    dbr.child("Email").setValue(Email);
-                    dbr.child("Address").setValue(Address);
+                else {
+                    user_name = username.getText().toString();
 
+                    Usernames_list = mDatabase.child("Usernames").child(user_name).getRef();
+
+                    Usernames_list.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                if (!dataSnapshot.exists())
+                                {
+                                    // TODO: 5/21/2017 Testing of App
+                                    place = address.getText().toString();
+                                    addusername = mDatabase.child("Usernames");
+
+                                    addusername.child(user_name).setValue(user_name);
+
+                                    adduser = mDatabase.child("User").child(currentuser.getUid());
+
+                                    adduser.child("name").setValue(name.getText().toString());
+                                    adduser.child("username").setValue(username.getText().toString());
+                                    adduser.child("place_id").setValue(address.getText().toString());
+
+                                    s.create_oldusersession(place);
+
+                                    Intent intent = new Intent(NewUser.this, Home.class);
+                                    intent.putExtra("place_id",place);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            else
+                                {
+                                    username.setText("");
+                                    Toast.makeText(NewUser.this, "Not Available", Toast.LENGTH_SHORT).show();
+                                }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             }
         });
-
     }
+
+    private void setcredentials(FirebaseUser currentuser)
+    {
+        if (currentuser.getDisplayName() != null) {
+            name.setText(currentuser.getDisplayName());
+        }
+
+        if (currentuser.getPhotoUrl() != null)
+        {
+            Picasso.with(this).load(currentuser.getPhotoUrl().toString()).into(prof_pic);
+        }
+
+        if (currentuser.getEmail() != null)
+        {
+            email.setText(currentuser.getEmail());
+        }
+    }
+
 }

@@ -4,7 +4,7 @@ package com.example.rajk.leasingmanagers.model;
  * Created by RajK on 16-05-2017.
  */
 
-public class Address {
+public class Places {
     private String Address;
     private String Id;
 
@@ -24,7 +24,7 @@ public class Address {
         Id = id;
     }
 
-    public Address() {
+    public Places() {
 
     }
 }

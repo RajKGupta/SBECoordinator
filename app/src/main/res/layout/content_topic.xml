@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:padding="3dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.rajk.leasingmanagers.DiscussionActivity.Topic"
+    tools:context="com.example.rajk.leasingmanagers.DiscussionActivity.Home"
     tools:showIn="@layout/activity_topic">
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
