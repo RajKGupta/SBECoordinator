@@ -5,32 +5,84 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.rajk.leasingmanagers.DiscussionActivity.Comment">
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/commentView"
-        ></RelativeLayout>
-
     <RelativeLayout
 
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/commentView"
         android:orientation="vertical"
+        android:padding="10dp"
         android:id="@+id/sendComment"
+
+        android:background="@drawable/edittext_bg_whitebg"
+        android:layout_alignParentBottom="true"
         >
-        <AutoCompleteTextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Type Your Comment"
-            android:id="@+id/typeComment"/>
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignRight="@id/typeComment"
-            android:id="@+id/sendButton"
-            android:background="@mipmap/ic_send"/>
+            android:orientation="horizontal">
+            <AutoCompleteTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Type Your Comment"
+                android:padding="10dp"
+                android:id="@+id/typeComment"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/edittext_bg_greystroke"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/sendButton"
+                android:elevation="@dimen/activity_horizontal_margin"
+                android:layout_gravity="center_horizontal"
+                android:background="@mipmap/ic_send"
+                android:layout_marginLeft="5dp"/>
+
+        </LinearLayout>
     </RelativeLayout>
-</RelativeLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/commentView"
+        android:layout_above="@id/sendComment">
+
+        <me.flipchat.app.android.ui.EmptyRecyclerView
+            android:id="@+id/my_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white_card"
+            android:scrollbars="vertical"
+            android:nestedScrollingEnabled="false"/>
+
+        <LinearLayout
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:textAlignment="center"
+            android:gravity="center"/>
+
+            <ProgressBar
+                android:id="@+id/progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:max="500"
+                android:progress="0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="You need to follow Someone"
+                android:textColor="#ffffff"
+                android:textSize="20dp"
+                android:id="@+id/followsomeone_text"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>

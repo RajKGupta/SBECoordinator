@@ -5,24 +5,19 @@ package com.example.rajk.leasingmanagers.model;
  */
 
 public class Discussions {
-    private String id,place_id;
+    private String place_id,name;
 
-    public Discussions(String id, String place_id)
-    {
-        this.id = id;
-        this.place_id = place_id;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Discussions() {
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getPlace_id() {
         return place_id;

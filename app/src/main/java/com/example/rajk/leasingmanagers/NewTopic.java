@@ -49,7 +49,9 @@ public class NewTopic extends AppCompatActivity {
                     progressDialog.show();
                     SharedPreferences sharedPreferences = getSharedPreferences("SESSION",MODE_PRIVATE);
                     DatabaseReference dbNewTopic=dbTopic.child(topicName);
-                    dbNewTopic.child("placeId").setValue(sharedPreferences.getString("place_id","449"));
+                    dbNewTopic.child("place_id").setValue(sharedPreferences.getString("place_id","449"));
+                    dbNewTopic.child("name").setValue(topicName);
+
                     progressDialog.dismiss();
                     startActivity(new Intent(NewTopic.this, Home.class));
                     finish();

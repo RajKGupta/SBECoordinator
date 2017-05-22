@@ -5,30 +5,30 @@ package com.example.rajk.leasingmanagers.model;
  */
 
 public class CommentModel {
-    private String comment_string,id,discussion_id;
+    private String commentString,sender,timestamp;
 
-    public String getComment_string() {
-        return comment_string;
+    public String getCommentString() {
+        return commentString;
     }
 
-    public void setComment_string(String comment_string) {
-        this.comment_string = comment_string;
+    public void setCommentString(String commentString) {
+        this.commentString = commentString;
     }
 
-    public String getId() {
-        return id;
+    public String getSender() {
+        return sender;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 
-    public String getDiscussion_id() {
-        return discussion_id;
+    public String getTimestamp() {
+        return timestamp;
     }
 
-    public void setDiscussion_id(String discussion_id) {
-        this.discussion_id = discussion_id;
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
     public CommentModel() {
