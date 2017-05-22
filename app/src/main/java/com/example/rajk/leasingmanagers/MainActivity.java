@@ -28,6 +28,7 @@ import com.google.android.gms.auth.api.Auth;
         import com.google.firebase.auth.FirebaseAuth;
         import com.google.firebase.auth.FirebaseUser;
         import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,8 +46,8 @@ public class MainActivity extends AppCompatActivity implements
     private GoogleApiClient mGoogleApiClient;
     private ProgressDialog pd;
     public static FirebaseUser currentUser;
-    session s;
-    String place;
+    session se;
+    String plac;
     DatabaseReference mDatabase, user_exists;
 
     @Override
@@ -180,14 +181,13 @@ public class MainActivity extends AppCompatActivity implements
         hideProgressDialog();
         if (user != null)
         {
-            s= new session(MainActivity.this);
+            se= new session(MainActivity.this);
             // check for existing user by shred prferences
-            if (s.isolduser().equals("true"))
+            if (se.isolduser().equals("true"))
             {
-                String p = s.isolduser();
-                p = s.place();
+                plac = se.place();
                 Intent intent = new Intent(MainActivity.this, Home.class);
-                intent.putExtra("place_id",p);
+                intent.putExtra("place_id",plac);
                 startActivity(intent);
                 finish();
             }
@@ -195,24 +195,42 @@ public class MainActivity extends AppCompatActivity implements
             else {
                 // check for existing user on reinstalling the app
                 user_exists = mDatabase.child("User").child(mAuth.getCurrentUser().getUid());
-                user_exists.addListenerForSingleValueEvent(new ValueEventListener() {
+                user_exists.addChildEventListener(new ChildEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-
-                            User user = dataSnapshot.getValue(User.class);
-                            place = user.getPlace_id();
-                            s.create_oldusersession(place);
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        if (dataSnapshot.exists())
+                        {
+                            if (dataSnapshot.getKey().equals("place_id"))
+                            {
+                                plac = String.valueOf(dataSnapshot.getValue());
+                            }
+                            se.create_oldusersession(plac);
 
                             Intent intent = new Intent(MainActivity.this, Home.class);
-                            intent.putExtra("place_id", place);
+                            intent.putExtra("place_id", plac);
                             startActivity(intent);
                             finish();
-                        } else {
+                        }
+                        else
+                        {
 
                             startActivity(new Intent(MainActivity.this, NewUser.class));
                             finish();
                         }
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
                     }
 
