@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,12 +17,16 @@ import com.example.rajk.leasingmanagers.DiscussionActivity.Home;
 import com.example.rajk.leasingmanagers.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -34,9 +39,10 @@ public class NewUser extends AppCompatActivity {
     Button submit;
     FirebaseAuth auth;
     FirebaseUser currentuser;
-    DatabaseReference mDatabase, adduser, Usernames_list, addusername, user_exists;
+    DatabaseReference mDatabase, adduser, Usernames_list, addusername, places;
     session s;
     String place,user_name;
+    List<String> address_list = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +68,40 @@ public class NewUser extends AppCompatActivity {
         username = (EditText)findViewById(R.id.username);
         address= (AutoCompleteTextView)findViewById(R.id.address);
         submit = (Button) findViewById(R.id.submit_button);
+
+        places = mDatabase.child("Places");
+        places.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                address_list.add(String.valueOf(dataSnapshot.getValue()));
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                (this,android.R.layout.select_dialog_item,address_list);
+
+        address.setAdapter(adapter);
+        address.setThreshold(1);
 
         setcredentials(currentuser);
 
