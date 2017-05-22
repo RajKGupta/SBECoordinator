@@ -23,6 +23,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class NewUser extends AppCompatActivity {
@@ -34,6 +36,7 @@ public class NewUser extends AppCompatActivity {
     Button submit;
     FirebaseAuth auth;
     FirebaseUser currentuser;
+    public static HashMap<String,String> hashMap = new HashMap<>();
     DatabaseReference mDatabase, adduser, Usernames_list, addusername, user_exists;
     session s;
     String place,user_name;
@@ -48,7 +51,10 @@ public class NewUser extends AppCompatActivity {
         getSupportActionBar().hide();
 
         setContentView(R.layout.activity_new_user);
-
+        hashMap.put("449 Palo Verde Road, Gainesville, FL","449");
+        hashMap.put("6731 Thompson Street, Gainesville, FL","6731");
+        hashMap.put("8771 Thomas Boulevard, Orlando, FL","8771");
+        hashMap.put("1234 Verano Place, Orlando, FL","1234");
         auth = FirebaseAuth.getInstance();
         currentuser = auth.getCurrentUser();
 
@@ -92,11 +98,11 @@ public class NewUser extends AppCompatActivity {
 
                                     adduser = mDatabase.child("User").child(currentuser.getUid());
 
-                                    adduser.child("name").setValue(name.getText().toString());
-                                    adduser.child("username").setValue(username.getText().toString());
-                                    adduser.child("place_id").setValue(address.getText().toString());
+                                    adduser.child("name").setValue(name.getText().toString().trim());
+                                    adduser.child("username").setValue(username.getText().toString().trim());
+                                    adduser.child("place_id").setValue(address.getText().toString().trim());
 
-                                    s.create_oldusersession(place);
+                                    s.create_oldusersession(place,username.getText().toString().trim());
 
                                     Intent intent = new Intent(NewUser.this, Home.class);
                                     intent.putExtra("place_id",place);

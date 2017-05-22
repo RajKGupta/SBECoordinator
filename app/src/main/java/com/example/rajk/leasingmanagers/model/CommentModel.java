@@ -4,7 +4,7 @@ package com.example.rajk.leasingmanagers.model;
  * Created by RajK on 16-05-2017.
  */
 
-public class Comment {
+public class CommentModel {
     private String comment_string,id,discussion_id;
 
     public String getComment_string() {
@@ -31,7 +31,7 @@ public class Comment {
         this.discussion_id = discussion_id;
     }
 
-    public Comment() {
+    public CommentModel() {
 
     }
 }
