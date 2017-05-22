@@ -7,8 +7,12 @@ import android.content.Intent;
         import android.os.Bundle;
         import android.support.annotation.NonNull;
         import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.example.rajk.leasingmanagers.DiscussionActivity.Home;
+import com.example.rajk.leasingmanagers.model.User;
 import com.google.android.gms.auth.api.Auth;
         import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
         import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -24,6 +28,11 @@ import com.google.android.gms.auth.api.Auth;
         import com.google.firebase.auth.FirebaseAuth;
         import com.google.firebase.auth.FirebaseUser;
         import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -36,15 +45,25 @@ public class MainActivity extends AppCompatActivity implements
     private GoogleApiClient mGoogleApiClient;
     private ProgressDialog pd;
     public static FirebaseUser currentUser;
+    session s;
+    String place;
+    DatabaseReference mDatabase, user_exists;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getSupportActionBar().hide();
+
         setContentView(R.layout.activity_main);
         pd=new ProgressDialog(this);
 
         findViewById(R.id.signIn).setOnClickListener(this);
 
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("MeChat");
         // [START config_signin]
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -69,15 +88,18 @@ public class MainActivity extends AppCompatActivity implements
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         Intent intent = getIntent();
-        String signOut = intent.getExtras().getString("SIGN_OUT");
-        if(signOut!=null&&signOut.equals("SIGN_OUT"))
+        String signOut = "" ;
+        if (intent.hasExtra("SIGN_OUT")) {
+            signOut = intent.getExtras().getString("SIGN_OUT");
+        }
+            if(signOut!=null&&signOut.equals("SIGN_OUT"))
         {
             signOut();
         }
-        else {
+        else
+        {
             currentUser = mAuth.getCurrentUser();
             updateUI(currentUser);
-
         }
     }
     @Override
@@ -156,8 +178,50 @@ public class MainActivity extends AppCompatActivity implements
 
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
-        if (user != null) {
-            startActivity(new Intent(MainActivity.this, NewUser.class));
+        if (user != null)
+        {
+            s= new session(MainActivity.this);
+            // check for existing user by shred prferences
+            if (s.isolduser().equals("true"))
+            {
+                String p = s.isolduser();
+                p = s.place();
+                Intent intent = new Intent(MainActivity.this, Home.class);
+                intent.putExtra("place_id",p);
+                startActivity(intent);
+                finish();
+            }
+
+            else {
+                // check for existing user on reinstalling the app
+                user_exists = mDatabase.child("User").child(mAuth.getCurrentUser().getUid());
+                user_exists.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+
+                            User user = dataSnapshot.getValue(User.class);
+                            place = user.getPlace_id();
+                            s.create_oldusersession(place);
+
+                            Intent intent = new Intent(MainActivity.this, Home.class);
+                            intent.putExtra("place_id", place);
+                            startActivity(intent);
+                            finish();
+                        } else {
+
+                            startActivity(new Intent(MainActivity.this, NewUser.class));
+                            finish();
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
         }
     }
 

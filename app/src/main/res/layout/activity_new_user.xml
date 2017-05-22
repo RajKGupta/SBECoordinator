@@ -1,79 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    tools:context="com.example.rajk.leasingmanagers.NewUser">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="WELCOME!!"
-        android:id="@+id/welcome"
-        android:textSize="40sp"
-        android:layout_centerHorizontal="true"/>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/prof_pic_layout"
-        android:layout_below="@+id/welcome"
-        android:layout_above="@id/regDetailsLayout"
-        >
-
-        <ImageButton
-                android:id="@+id/prof_pic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/bg_circle"
-            android:layout_centerInParent="true"
-            />
-    </RelativeLayout>
+    android:background="@drawable/background_mechat">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:weightSum="1"
         android:orientation="vertical"
-        android:layout_above="@+id/submitButton"
-        android:id="@+id/regDetailsLayout"
-        android:padding="15dp"
-        android:background="@color/colorPrimary">
-
-        <EditText
+        android:background="@color/whitetranslucent">
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_marginTop="5dp"
-            android:layout_height="wrap_content"
-            android:text="Name"
-            android:id="@+id/name"
-            android:textSize="18sp"
-            android:padding="15dp"
-            android:background="@drawable/edittext_bg"/>
+            android:layout_height="match_parent"
+            android:layout_weight="0.6"
+            android:padding="15dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:orientation="horizontal">
 
-        <TextView
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:textSize="30dp"
+                    android:textColor="@color/secondary_text_material_dark"
+                    android:layout_toLeftOf="@+id/prof_pic_layout"
+                    android:text="@string/app_name"
+                    android:gravity="center"/>
+                <ImageView
+                    android:id="@id/prof_pic_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_verylarge"
+                    android:layout_alignParentRight="true"/>
+            </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:orientation="horizontal"
+                android:padding="7dp">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/prof_pic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_medium"/>
+                <TextView
+                    android:id="@id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:textSize="20dp"
+                    android:textColor="@color/secondary_text_material_dark"
+                    android:layout_gravity="center_vertical"
+                    android:text="Name"/>
+            </LinearLayout>
+        </RelativeLayout>
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_marginTop="5dp"
-            android:layout_height="wrap_content"
-            android:text="Email"
-            android:id="@+id/email"
-            android:textSize="18sp"
-            android:padding="15dp"
-            android:background="@drawable/edittext_bg"/>
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"
+            android:weightSum="1"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+                android:padding="25dp"
+                android:gravity="center">
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    card_view:cardUseCompatPadding="false"
+                    card_view:cardPreventCornerOverlap="false"
+                    card_view:cardElevation="10dp"
+                    card_view:cardCornerRadius="5dp"
+                    android:background="#ffffff">
 
-        <AutoCompleteTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/edittext_bg"
-            android:layout_marginTop="5dp"
-            android:textSize="18sp"
-            android:padding="15dp"
-            android:hint="Address"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="15dp"
+                        android:layout_gravity="center_vertical">
+                        <TextView
+                            android:id="@+id/email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="7dp"
+                            android:textSize="20dp"
+                            android:hint="Email"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/grey_300" />
+
+                        <EditText
+                            android:background="@null"
+                            android:id="@+id/username"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="UserName"
+                            android:padding="7dp"
+                            android:textSize="20dp"
+                            android:gravity="center_vertical"
+                            android:textCursorDrawable="@null"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/grey_300" />
+
+                        <AutoCompleteTextView
+                            android:background="@null"
+                            android:id="@+id/address"
+                            android:padding="7dp"
+                            android:textSize="20dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:hint="Address"
+                            android:textCursorDrawable="@null" />
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5">
+
+                <Button
+                    android:id="@+id/submit_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/secondary_text_material_dark"
+                    android:text="GET STARTED"
+                    android:textSize="10dp"
+                    android:gravity="center"
+                    android:layout_margin="30dp"
+                    android:padding="15dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
     </LinearLayout>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Submit"
-        android:id="@id/submitButton"
-        android:layout_alignParentBottom="true"/>
-
-</RelativeLayout>
+</LinearLayout>

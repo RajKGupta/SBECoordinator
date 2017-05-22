@@ -10,12 +10,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DiscussionActivity.Comment">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <activity android:name=".MainActivity">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <receiver android:name=".CheckInternetConnectivity.NetWatcher">
@@ -29,12 +25,19 @@
         </receiver>
 
         <activity
-            android:name=".DiscussionActivity.Topic"
+            android:name=".DiscussionActivity.Home"
             android:label="@string/title_activity_topic"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".NewTopic" />
-        <!-- activity android:name=".DiscussionActivity.Comment"></activity -->
-        <activity android:name=".NewUser"></activity>
+        <activity android:name=".DiscussionActivity.Comment" />
+        <activity android:name=".NewUser" />
+        <activity android:name=".Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
