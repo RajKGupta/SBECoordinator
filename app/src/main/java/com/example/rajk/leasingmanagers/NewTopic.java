@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.DiscussionActivity.Home;
@@ -22,15 +23,15 @@ import java.util.Calendar;
 
 public class NewTopic extends AppCompatActivity {
     Button create;
-    DatabaseReference dbTopic = FirebaseDatabase.getInstance().getReference().child("Topic").getRef();
-    AutoCompleteTextView newTopic;
+    DatabaseReference dbTopic = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Topic").getRef();
+    EditText newTopic;
     Vibrator vibrate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_topic);
         create  = (Button) findViewById(R.id.create);
-        newTopic = (AutoCompleteTextView)findViewById(R.id.newTopic);
+        newTopic = (EditText) findViewById(R.id.newtopic);
         vibrate = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
         create.setOnClickListener(new View.OnClickListener() {
             @Override

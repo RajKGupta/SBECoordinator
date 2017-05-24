@@ -79,7 +79,7 @@ public class Comment extends AppCompatActivity {
 
         intent = getIntent();
         topic_id = intent.getStringExtra("topic_id");
-        dbTopic = FirebaseDatabase.getInstance().getReference().child("Topic").child(topic_id).child("Comment").getRef();
+        dbTopic = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Topic").child(topic_id).child("Comment").getRef();
 
 
         recyclerView = (EmptyRecyclerView) findViewById(R.id.my_recycler_view);

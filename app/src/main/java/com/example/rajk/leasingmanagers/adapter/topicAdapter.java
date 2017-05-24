@@ -31,7 +31,7 @@ public class topicAdapter extends  RecyclerView.Adapter<topicAdapter.MyViewHolde
         private Context context;
         SharedPreferences sharedPreferences ;
 
-public topicAdapter(ArrayList<Discussions> list, Context context) {
+    public topicAdapter(ArrayList<Discussions> list, Context context) {
         this.list = list;
         this.context = context;
         sharedPreferences = context.getSharedPreferences("SESSION",Context.MODE_PRIVATE);
@@ -39,7 +39,7 @@ public topicAdapter(ArrayList<Discussions> list, Context context) {
 
             @Override
             public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_row,parent,false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.topic_list_row,parent,false);
                 return new MyViewHolder(view);
 
             }
