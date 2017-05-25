@@ -3,9 +3,11 @@ package com.example.rajk.leasingmanagers.adapter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -29,15 +31,20 @@ public class topicAdapter extends  RecyclerView.Adapter<topicAdapter.MyViewHolde
         {
         ArrayList<Discussions> list = new ArrayList<>();
         private Context context;
+        private TopicAdapterListener listener;
 
-            public topicAdapter(ArrayList<Discussions> list, Context context)
+
+            public topicAdapter(ArrayList<Discussions> list, Context context,TopicAdapterListener listener)
             {
             this.list = list;
-            this.context = context;
+            this.listener = listener;
+
         }
 
             public class MyViewHolder extends RecyclerView.ViewHolder {
                 TextView topic,author,message,timestamp,icon_text;
+                ImageView imgProfile;
+                public LinearLayout messageContainer;
 
                 public MyViewHolder(View itemView) {
                     super(itemView);
@@ -46,7 +53,8 @@ public class topicAdapter extends  RecyclerView.Adapter<topicAdapter.MyViewHolde
                     message = (TextView) itemView.findViewById(R.id.message);
                     timestamp = (TextView) itemView.findViewById(R.id.timestamp);
                     icon_text =(TextView)itemView.findViewById(R.id.icon_text);
-
+                    imgProfile = (ImageView)itemView.findViewById(R.id.icon_profile);
+                    messageContainer = (LinearLayout)itemView.findViewById(R.id.message_container);
                 }
 
             }
@@ -63,7 +71,11 @@ public class topicAdapter extends  RecyclerView.Adapter<topicAdapter.MyViewHolde
             public void onBindViewHolder(final topicAdapter.MyViewHolder holder, int position) {
                 Discussions topic = list.get(position);
                 holder.topic.setText(topic.getName());
-                holder.icon_text.setText(topic.getName().charAt(0));
+                String iconText = topic.getName().toUpperCase();
+                holder.icon_text.setText(iconText.charAt(0)+"");
+                holder.imgProfile.setImageResource(R.drawable.bg_circle);
+                holder.imgProfile.setColorFilter(topic.getColor());
+                applyClickEvents(holder, position);
                 final DatabaseReference dbTopic = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Topic").child(topic.getPlace_id()).child(topic.getName()).getRef();
                         DatabaseReference dbTopicLastComment  = dbTopic.child("Comment").getRef();
                         dbTopicLastComment.limitToFirst(1).addChildEventListener(new ChildEventListener() {
@@ -104,5 +116,18 @@ public class topicAdapter extends  RecyclerView.Adapter<topicAdapter.MyViewHolde
             public int getItemCount() {
                 return list.size();
             }
+            public interface TopicAdapterListener {
+                void onTopicRowClicked(int position);
+}
+            private void applyClickEvents(MyViewHolder holder, final int position) {
+
+                holder.messageContainer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        listener.onTopicRowClicked(position);
+                    }
+                });
+
+                }
 
         }

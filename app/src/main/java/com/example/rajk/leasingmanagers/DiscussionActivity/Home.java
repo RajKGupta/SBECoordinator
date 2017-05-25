@@ -1,9 +1,13 @@
 package com.example.rajk.leasingmanagers.DiscussionActivity;
 
 import android.content.Intent;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -28,7 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class Home extends AppCompatActivity
+public class Home extends AppCompatActivity implements topicAdapter.TopicAdapterListener
 {
 
     RecyclerView Topic_list;
@@ -45,13 +49,16 @@ public class Home extends AppCompatActivity
 
         se = new session(getApplicationContext());
         Topic_list = (RecyclerView) findViewById(R.id.Topic_List);
-        linearLayoutManager=new LinearLayoutManager(this);
-        mAdapter = new topicAdapter(TopicList,this);
-        Topic_list.setAdapter(mAdapter);
 
         dbTopic = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Topic").child(se.getPlace_id()).getRef();
-
         LoadData();
+        mAdapter = new topicAdapter(TopicList,this,this);
+        linearLayoutManager=new LinearLayoutManager(this);
+        Topic_list.setLayoutManager(linearLayoutManager);
+        Topic_list.setItemAnimator(new DefaultItemAnimator());
+        Topic_list.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+        Topic_list.setAdapter(mAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +78,7 @@ public class Home extends AppCompatActivity
             public void onChildAdded(DataSnapshot dataSnapshot, String s)
             {
                 Discussions topic = new Discussions(se.getPlace_id(),dataSnapshot.getKey());
+                topic.setColor(getRandomMaterialColor("400"));
                 TopicList.add(topic);
                 mAdapter.notifyDataSetChanged();
             }
@@ -95,5 +103,25 @@ public class Home extends AppCompatActivity
 
             }
         });
+    }
+    private int getRandomMaterialColor(String typeColor) {
+        int returnColor = Color.GRAY;
+        int arrayId = getResources().getIdentifier("mdcolor_" + typeColor, "array", getPackageName());
+
+        if (arrayId != 0) {
+            TypedArray colors = getResources().obtainTypedArray(arrayId);
+            int index = (int) (Math.random() * colors.length());
+            returnColor = colors.getColor(index, Color.GRAY);
+            colors.recycle();
+        }
+        return returnColor;
+    }
+
+    @Override
+    public void onTopicRowClicked(int position) {
+        Intent intent = new Intent(Home.this,Comment.class);
+        Discussions topic = TopicList.get(position);
+        intent.putExtra("topic_id",topic.getName());
+        startActivity(intent);
     }
 }

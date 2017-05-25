@@ -6,6 +6,15 @@ package com.example.rajk.leasingmanagers.model;
 
 public class Discussions {
     private String place_id,name;
+    private int color = -1;
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
 
     public String getName() {
         return name;
