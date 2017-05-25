@@ -30,13 +30,30 @@ public class topicAdapter extends  RecyclerView.Adapter<topicAdapter.MyViewHolde
         ArrayList<Discussions> list = new ArrayList<>();
         private Context context;
 
-    public topicAdapter(ArrayList<Discussions> list, Context context) {
-        this.list = list;
-        this.context = context;
+            public topicAdapter(ArrayList<Discussions> list, Context context)
+            {
+            this.list = list;
+            this.context = context;
         }
 
+            public class MyViewHolder extends RecyclerView.ViewHolder {
+                TextView topic,author,message,timestamp,icon_text;
+
+                public MyViewHolder(View itemView) {
+                    super(itemView);
+                    topic = (TextView) itemView.findViewById(R.id.topic);
+                    author = (TextView) itemView.findViewById(R.id.author);
+                    message = (TextView) itemView.findViewById(R.id.message);
+                    timestamp = (TextView) itemView.findViewById(R.id.timestamp);
+                    icon_text =(TextView)itemView.findViewById(R.id.icon_text);
+
+                }
+
+            }
+
             @Override
-            public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+            {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.topic_list_row,parent,false);
                 return new MyViewHolder(view);
 
@@ -51,10 +68,14 @@ public class topicAdapter extends  RecyclerView.Adapter<topicAdapter.MyViewHolde
                         DatabaseReference dbTopicLastComment  = dbTopic.child("Comment").getRef();
                         dbTopicLastComment.limitToFirst(1).addChildEventListener(new ChildEventListener() {
                             @Override
-                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s)
+                            {
+                                if (dataSnapshot.exists())
+                                {
                                 holder.message.setText(dataSnapshot.child("commentString").getValue(String.class));
                                 holder.author.setText(dataSnapshot.child("sender").getValue(String.class)+" : ");
                                 holder.timestamp.setText(dataSnapshot.child("timestamp").getValue(String.class));
+                                }
                             }
 
                             @Override
@@ -79,26 +100,9 @@ public class topicAdapter extends  RecyclerView.Adapter<topicAdapter.MyViewHolde
                         });
                     }
 
-
-
-
             @Override
             public int getItemCount() {
                 return list.size();
             }
 
-            public class MyViewHolder extends RecyclerView.ViewHolder {
-                TextView topic,author,message,timestamp,icon_text;
-
-                public MyViewHolder(View itemView) {
-                    super(itemView);
-                    topic = (TextView) itemView.findViewById(R.id.topic);
-                    author = (TextView) itemView.findViewById(R.id.author);
-                    message = (TextView) itemView.findViewById(R.id.message);
-                    timestamp = (TextView) itemView.findViewById(R.id.timestamp);
-                    icon_text =(TextView)itemView.findViewById(R.id.icon_text);
-
-                }
-
-            }
         }

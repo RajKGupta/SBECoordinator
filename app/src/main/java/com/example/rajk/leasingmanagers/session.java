@@ -15,10 +15,10 @@ public class session {
     Context _context;
     int mode=0;
     String prefname="SESSION";
-    private String is_olduser = "false";
-    private String place = "";
-    private String place_id ="";
-    private String username = "";
+    private String is_olduser = "is_olduser";
+    private String place = "place";
+    private String place_id ="place_id";
+    private String username = "username";
 
     public session(Context context)
     {
@@ -27,11 +27,11 @@ public class session {
         editor = pref.edit();
     }
 
-    public void create_oldusersession(String place_get,String username_get)
+    public void create_oldusersession(String place_get,String place_ids,String username_get)
     {
         editor.putString(is_olduser,"true");
         editor.putString(place,place_get);
-        editor.putString(place_id,NewUser.hashMap.get(place_get));
+        editor.putString(place_id,place_ids);
         editor.putString(username,username_get);
         editor.commit();
     }

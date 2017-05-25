@@ -6,21 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="3dp"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.rajk.leasingmanagers.DiscussionActivity.Home"
     tools:showIn="@layout/activity_topic">
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_layout"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/Topic_List"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
-
-    </android.support.v4.widget.SwipeRefreshLayout>
-
-
+            android:layout_height="match_parent" />
 </RelativeLayout>

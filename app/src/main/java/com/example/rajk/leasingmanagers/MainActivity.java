@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements
 
                             User user = dataSnapshot.getValue(User.class);
                             place = user.getPlace_id();
-                            s.create_oldusersession(place,user.getUsername());
+                            s.create_oldusersession(place,NewUser.hashMap.get(place),user.getUsername());
 
                             Intent intent = new Intent(MainActivity.this, Home.class);
                             intent.putExtra("place_id", place);

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +24,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -40,6 +43,7 @@ public class NewUser extends AppCompatActivity {
     DatabaseReference mDatabase, adduser, Usernames_list, addusername, user_exists;
     session s;
     String place,user_name;
+    String [] list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +73,12 @@ public class NewUser extends AppCompatActivity {
         address= (AutoCompleteTextView)findViewById(R.id.address);
         submit = (Button) findViewById(R.id.submit_button);
 
+        list = getResources().getStringArray(R.array.list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                (this, android.R.layout.select_dialog_item, list);
+        //Getting the instance of AutoCompleteTextView
+        address.setThreshold(1);//will start working from first character
+        address.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
 
         setcredentials(currentuser);
 
@@ -76,6 +86,12 @@ public class NewUser extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
+
+                if (!Arrays.asList(list).contains(address.getText().toString().trim()))
+                {
+                    address.setText("");
+                }
+
                 if ((username.getText().toString().equals(""))&&(address.getText().toString().equals("")))
                 {
                     Toast.makeText(NewUser.this, "Fill in all the credentials", Toast.LENGTH_SHORT).show();
@@ -104,7 +120,7 @@ public class NewUser extends AppCompatActivity {
                                     adduser.child("username").setValue(username.getText().toString().trim());
                                     adduser.child("place_id").setValue(hashMap.get(place));
 
-                                    s.create_oldusersession(place,username.getText().toString().trim());
+                                    s.create_oldusersession(place,hashMap.get(place),username.getText().toString().trim());
 
                                     Intent intent = new Intent(NewUser.this, Home.class);
                                     intent.putExtra("place_id",hashMap.get(place));
@@ -143,6 +159,7 @@ public class NewUser extends AppCompatActivity {
         {
             email.setText(currentuser.getEmail());
         }
+
     }
 
 }
