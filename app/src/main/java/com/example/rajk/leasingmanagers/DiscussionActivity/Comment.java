@@ -64,8 +64,9 @@ public class Comment extends AppCompatActivity {
     private String lastDate = "20-01-3000 00:00";
     private RecyclerView.Adapter mAdapter;
     private ArrayList<CommentModel> commentList= new ArrayList<>();
+    private SharedPreferences sharedPreferences;
 
-
+    String place_id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -77,9 +78,12 @@ public class Comment extends AppCompatActivity {
         height = displaymetrics.heightPixels;
         width = displaymetrics.widthPixels;
 
+        sharedPreferences=getSharedPreferences("SESSION",MODE_PRIVATE);
+
+        place_id=sharedPreferences.getString("place_id","449");
         intent = getIntent();
         topic_id = intent.getStringExtra("topic_id");
-        dbTopic = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Topic").child(topic_id).child("Comment").getRef();
+        dbTopic = FirebaseDatabase.getInstance().getReference().child(place_id).child("Topic").child(topic_id).child("Comment").getRef();
 
 
         recyclerView = (EmptyRecyclerView) findViewById(R.id.my_recycler_view);
@@ -89,6 +93,7 @@ public class Comment extends AppCompatActivity {
 
         typeComment = (AutoCompleteTextView) findViewById(R.id.typeComment);
         sendButton = (ImageButton) findViewById(R.id.sendButton);
+
         linearLayoutManager=new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
@@ -157,11 +162,19 @@ public class Comment extends AppCompatActivity {
 
                         String timestamp = formatter.format(Calendar.getInstance().getTime());
 
-                        dbNewComment.child("Sender").setValue(sender);
-                        dbNewComment.child("Timestamp").setValue(timestamp);
+                        dbNewComment.child("sender").setValue(sender);
+                        dbNewComment.child("timestamp").setValue(timestamp);
                         dbNewComment.child("commentString").setValue(commentString);
+
+                        /*CommentModel comment = new CommentModel();
+
+                        comment.setCommentString(commentString);
+                        comment.setSender(sender);
+                        comment.setTimestamp(timestamp);
+
+                        commentList.add(comment);
                         mAdapter.notifyDataSetChanged();
-                        progressDialog.dismiss();
+                        progressDialog.dismiss();*/
                     } catch (ParseException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();

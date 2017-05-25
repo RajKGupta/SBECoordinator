@@ -49,7 +49,7 @@ public class topicAdapter extends  RecyclerView.Adapter<topicAdapter.MyViewHolde
                 Discussions topic = list.get(position);
                 holder.topic.setText(topic.getName());
                 holder.icon_text.setText(topic.getName().charAt(0));
-                final DatabaseReference dbTopic = FirebaseDatabase.getInstance().getReference().child(topic.getName()).getRef();
+                final DatabaseReference dbTopic = FirebaseDatabase.getInstance().getReference().child(sharedPreferences.getString("place_id","449")).child(topic.getName()).getRef();
                         DatabaseReference dbTopicLastComment  = dbTopic.child("Comment").getRef();
                         dbTopicLastComment.limitToFirst(1).addChildEventListener(new ChildEventListener() {
                             @Override
