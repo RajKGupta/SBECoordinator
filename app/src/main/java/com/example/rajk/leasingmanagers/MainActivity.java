@@ -214,8 +214,6 @@ public class MainActivity extends AppCompatActivity implements
             {
                 String p;
                 p = s.place();
-                p = s.getPlace_id();
-                p = s.getUsername();
 
                 Intent intent1 = new Intent(MainActivity.this, Home.class);
                 intent1.putExtra("place_id",p);
@@ -235,11 +233,8 @@ public class MainActivity extends AppCompatActivity implements
 
                             User user = dataSnapshot.getValue(User.class);
                             place = user.getPlace_id();
-<<<<<<< Updated upstream
                             s.create_oldusersession(place,user.getUsername());
-=======
                             s.create_oldusersession(NewUser.hashMap2.get(place),place,user.getUsername());
->>>>>>> Stashed changes
 
                             Intent intent = new Intent(MainActivity.this, Home.class);
                             intent.putExtra("place_id", place);

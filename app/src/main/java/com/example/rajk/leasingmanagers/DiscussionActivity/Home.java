@@ -28,6 +28,8 @@ import com.example.rajk.leasingmanagers.adapter.topicAdapter;
 import com.example.rajk.leasingmanagers.listener.EmptyRecyclerView;
 import com.example.rajk.leasingmanagers.model.CommentModel;
 import com.example.rajk.leasingmanagers.model.Discussions;
+import com.example.rajk.leasingmanagers.session;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,11 +47,8 @@ public class Home extends AppCompatActivity
     LinearLayoutManager linearLayoutManager;
     private ArrayList<Discussions>  TopicList= new ArrayList<>();
     private RecyclerView.Adapter mAdapter;
-<<<<<<< Updated upstream
-=======
     session se ;
     Toolbar toolbar;
->>>>>>> Stashed changes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +57,11 @@ public class Home extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-<<<<<<< Updated upstream
-=======
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Topics");
 
         se = new session(getApplicationContext());
->>>>>>> Stashed changes
         Topic_list = (RecyclerView) findViewById(R.id.Topic_List);
         linearLayoutManager=new LinearLayoutManager(this);
         mAdapter = new topicAdapter(TopicList,this);
@@ -113,10 +109,7 @@ public class Home extends AppCompatActivity
 
     void LoadData()
     {
-        dbTopic.child("Comment")
-                .limitToFirst(TOTAL_ITEM_EACH_LOAD)
-                .startAt(currentPage*TOTAL_ITEM_EACH_LOAD)
-                .addValueEventListener(new ValueEventListener() {
+        dbTopic.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if(!dataSnapshot.hasChildren()){
@@ -132,8 +125,6 @@ public class Home extends AppCompatActivity
 
                     @Override public void onCancelled(DatabaseError databaseError) {}});
 
-<<<<<<< Updated upstream
-=======
         dbTopic.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s)
@@ -185,6 +176,5 @@ public class Home extends AppCompatActivity
         intent.putExtra("topic_id",topic.getName());
         startActivity(intent);
         finish();
->>>>>>> Stashed changes
     }
 }
