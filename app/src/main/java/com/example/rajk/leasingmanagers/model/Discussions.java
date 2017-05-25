@@ -18,6 +18,10 @@ public class Discussions {
     public Discussions() {
     }
 
+    public Discussions(String place_id, String name) {
+        this.place_id = place_id;
+        this.name = name;
+    }
 
     public String getPlace_id() {
         return place_id;

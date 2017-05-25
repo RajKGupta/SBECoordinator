@@ -69,6 +69,7 @@ public class NewUser extends AppCompatActivity {
         address= (AutoCompleteTextView)findViewById(R.id.address);
         submit = (Button) findViewById(R.id.submit_button);
 
+
         setcredentials(currentuser);
 
         submit.setOnClickListener(new View.OnClickListener() {
@@ -79,15 +80,16 @@ public class NewUser extends AppCompatActivity {
                 {
                     Toast.makeText(NewUser.this, "Fill in all the credentials", Toast.LENGTH_SHORT).show();
                 }
-                else {
+                else
+                {
                     user_name = username.getText().toString();
 
                     Usernames_list = mDatabase.child("Usernames").child(user_name).getRef();
 
                     Usernames_list.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
+                        public void onDataChange(DataSnapshot dataSnapshot)
+                        {
                                 if (!dataSnapshot.exists())
                                 {
                                     // TODO: 5/21/2017 Testing of App
@@ -100,16 +102,16 @@ public class NewUser extends AppCompatActivity {
 
                                     adduser.child("name").setValue(name.getText().toString().trim());
                                     adduser.child("username").setValue(username.getText().toString().trim());
-                                    adduser.child("place_id").setValue(address.getText().toString().trim());
+                                    adduser.child("place_id").setValue(hashMap.get(place));
 
                                     s.create_oldusersession(place,username.getText().toString().trim());
 
                                     Intent intent = new Intent(NewUser.this, Home.class);
-                                    intent.putExtra("place_id",place);
+                                    intent.putExtra("place_id",hashMap.get(place));
                                     startActivity(intent);
                                     finish();
                                 }
-                            else
+                                else
                                 {
                                     username.setText("");
                                     Toast.makeText(NewUser.this, "Not Available", Toast.LENGTH_SHORT).show();

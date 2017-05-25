@@ -18,6 +18,7 @@ public class session {
     private String is_olduser = "false";
     private String place = "";
     private String place_id ="";
+    private String username = "";
 
     public session(Context context)
     {
@@ -26,12 +27,12 @@ public class session {
         editor = pref.edit();
     }
 
-    public void create_oldusersession(String place_get,String username)
+    public void create_oldusersession(String place_get,String username_get)
     {
         editor.putString(is_olduser,"true");
         editor.putString(place,place_get);
         editor.putString(place_id,NewUser.hashMap.get(place_get));
-        editor.putString("username",username);
+        editor.putString(username,username_get);
         editor.commit();
     }
 
@@ -43,6 +44,16 @@ public class session {
     public String place()
     {
         return pref.getString(place,"");
+    }
+
+    public String getPlace_id()
+    {
+        return pref.getString(place_id,"");
+    }
+
+    public String getUsername()
+    {
+        return pref.getString(username,"");
     }
 
     public void clearoldusersession()

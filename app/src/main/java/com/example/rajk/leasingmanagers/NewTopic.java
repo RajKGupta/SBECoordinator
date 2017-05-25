@@ -26,6 +26,8 @@ public class NewTopic extends AppCompatActivity {
     DatabaseReference dbTopic = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Topic").getRef();
     EditText newTopic;
     Vibrator vibrate;
+    session s = new session(getApplicationContext());
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,9 +50,7 @@ public class NewTopic extends AppCompatActivity {
                     ProgressDialog progressDialog = new ProgressDialog(NewTopic.this);
                     progressDialog.setMessage("Creating New Topic");
                     progressDialog.show();
-                    SharedPreferences sharedPreferences = getSharedPreferences("SESSION",MODE_PRIVATE);
-                    DatabaseReference dbNewTopic=dbTopic.child(topicName);
-                    dbNewTopic.child("place_id").setValue(sharedPreferences.getString("place_id","449"));
+                    DatabaseReference dbNewTopic=dbTopic.child(s.getPlace_id()).child(topicName);
                     dbNewTopic.child("name").setValue(topicName);
 
                     progressDialog.dismiss();

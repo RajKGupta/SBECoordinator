@@ -18,6 +18,7 @@ import com.example.rajk.leasingmanagers.adapter.topicAdapter;
 import com.example.rajk.leasingmanagers.listener.EmptyRecyclerView;
 import com.example.rajk.leasingmanagers.model.CommentModel;
 import com.example.rajk.leasingmanagers.model.Discussions;
+import com.example.rajk.leasingmanagers.session;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,11 +31,11 @@ public class Home extends AppCompatActivity
 {
 
     RecyclerView Topic_list;
-
     DatabaseReference dbTopic;
     LinearLayoutManager linearLayoutManager;
     private ArrayList<Discussions>  TopicList= new ArrayList<>();
     private RecyclerView.Adapter mAdapter;
+    session s ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,8 @@ public class Home extends AppCompatActivity
         linearLayoutManager=new LinearLayoutManager(this);
         mAdapter = new topicAdapter(TopicList,this);
         Topic_list.setAdapter(mAdapter);
-        dbTopic = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Topic").getRef();
+        dbTopic = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Topic").child(s.getPlace_id()).getRef();
+        s = new session(getApplicationContext());
 
         LoadData();
 
@@ -63,22 +65,16 @@ public class Home extends AppCompatActivity
 
     void LoadData()
     {
-        dbTopic.child("Comment")
-                .limitToFirst(TOTAL_ITEM_EACH_LOAD)
-                .startAt(currentPage*TOTAL_ITEM_EACH_LOAD)
-                .addValueEventListener(new ValueEventListener() {
+        dbTopic.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if(!dataSnapshot.hasChildren()){
-                            Toast.makeText(Comment.this, "No more comments", Toast.LENGTH_SHORT).show();
-                            currentPage--;
+                            Toast.makeText(Home.this, "No Topics yet", Toast.LENGTH_SHORT).show();
                         }
-                        for (DataSnapshot data : dataSnapshot.getChildren()) {
-                            CommentModel comment = data.getValue(CommentModel.class);
-                            commentList.add(comment);
+                            Discussions topic = new Discussions(s.getPlace_id(),dataSnapshot.getKey());
+                            TopicList.add(topic);
                             mAdapter.notifyDataSetChanged();
                         }
-                    }
 
                     @Override public void onCancelled(DatabaseError databaseError) {}});
 

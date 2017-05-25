@@ -107,35 +107,6 @@ public class Comment extends AppCompatActivity {
         });
         loadData(); // load data here for first time launch app
 
-
-/*
-
- }layoutParams_commentView = new RelativeLayout.LayoutParams(width,height*75/100);
-                        });layoutParams_commentView.topMargin = height*1/100;
-                        loadFollowedDataFirst(postPaths);layoutParams_commentView.leftMargin = width*1/100;
-        layoutParams_commentView.rightMargin = width*1/100;
-        commentView.setLayoutParams(layoutParams_commentView);
-
-
-        sendComment = (RelativeLayout)findViewById(R.id.sendComment);
-        layoutParams_sendComment = new RelativeLayout.LayoutParams(width,height*20/100);
-        layoutParams_sendComment.topMargin = height*78/100;
-        layoutParams_sendComment.leftMargin = width*0/100;
-        sendComment.setBackgroundColor(Color.WHITE);
-        sendComment.setLayoutParams(layoutParams_sendComment);
-
-        layoutParams_typeComment = new RelativeLayout.LayoutParams(width*78/100,height*16/100);
-        layoutParams_typeComment.topMargin = height*1/100;
-        layoutParams_typeComment.leftMargin = width*2/100;
-        typeComment.setLayoutParams(layoutParams_typeComment);
-
-
-         layoutParams_sendButton = new RelativeLayout.LayoutParams(width*16/100,height*16/100);
-        layoutParams_sendButton.topMargin = height*1/100;
-        layoutParams_sendButton.leftMargin = width*80/100;
-        sendButton.setElevation(4.0F);
-        sendButton.setLayoutParams(layoutParams_sendButton);
-    */
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -211,5 +182,3 @@ public class Comment extends AppCompatActivity {
         loadData();
     }
 }
-
-
