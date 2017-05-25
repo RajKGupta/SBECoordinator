@@ -34,4 +34,10 @@ public class CommentModel {
     public CommentModel() {
 
     }
+
+    public CommentModel(String commentString, String sender, String timestamp) {
+        this.commentString = commentString;
+        this.sender = sender;
+        this.timestamp = timestamp;
+    }
 }

@@ -24,10 +24,10 @@ public class commentAdapter extends  RecyclerView.Adapter<commentAdapter.MyViewH
         private Context context;
         SharedPreferences sharedPreferences ;
 
-public commentAdapter(ArrayList<CommentModel> list, Context context) {
-        this.list = list;
-        this.context = context;
-        sharedPreferences = context.getSharedPreferences("SESSION",Context.MODE_PRIVATE);
+        public commentAdapter(ArrayList<CommentModel> list, Context context) {
+            this.list = list;
+            this.context = context;
+            sharedPreferences = context.getSharedPreferences("SESSION",Context.MODE_PRIVATE);
         }
 
             @Override
@@ -77,7 +77,5 @@ public commentAdapter(ArrayList<CommentModel> list, Context context) {
                     commentString = (TextView) itemView.findViewById(R.id.commentString);
 
                 }
-
-
             }
         }

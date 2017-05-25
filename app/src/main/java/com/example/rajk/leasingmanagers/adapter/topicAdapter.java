@@ -51,7 +51,7 @@ public class topicAdapter extends  RecyclerView.Adapter<topicAdapter.MyViewHolde
                 holder.icon_text.setText(topic.getName().charAt(0));
                 final DatabaseReference dbTopic = FirebaseDatabase.getInstance().getReference().child(topic.getName()).getRef();
                         DatabaseReference dbTopicLastComment  = dbTopic.child("Comment").getRef();
-                        dbTopicLastComment.limitToFirst(1).addChildEventListener(new ChildEventListener() {
+                        dbTopicLastComment.limitToLast(1).addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                                 holder.message.setText(dataSnapshot.child("commentString").getValue(String.class));

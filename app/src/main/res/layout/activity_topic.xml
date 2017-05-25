@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,25 +10,49 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+<<<<<<< Updated upstream
         android:theme="@style/AppTheme.AppBarOverlay">
+=======
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:id="@+id/s">
+>>>>>>> Stashed changes
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
+<<<<<<< Updated upstream
             android:layout_height="?attr/actionBarSize"
+=======
+            android:layout_height="wrap_content"
+>>>>>>> Stashed changes
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
 
+<<<<<<< Updated upstream
     <include layout="@layout/content_topic" />
+=======
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="3dp"
+        android:layout_below="@+id/s">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/Topic_List"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
+>>>>>>> Stashed changes
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@mipmap/ic_add"/>
 
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

@@ -1,6 +1,7 @@
 package com.example.rajk.leasingmanagers;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.content.Intent;
@@ -80,28 +81,33 @@ public class MainActivity extends AppCompatActivity implements
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
+
     }
 
     // [START on_start_check_user]
     @Override
-    public void onStart() {
+    public void onStart()
+    {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        Intent intent = getIntent();
+/*        Intent intent = getIntent();
         String signOut = "" ;
-        if (intent.hasExtra("SIGN_OUT")) {
+        if (intent.hasExtra("SIGN_OUT"))
+        {
             signOut = intent.getExtras().getString("SIGN_OUT");
         }
             if(signOut!=null&&signOut.equals("SIGN_OUT"))
         {
+
             signOut();
-        }
-        else
-        {
+        }*/
+
             currentUser = mAuth.getCurrentUser();
             updateUI(currentUser);
-        }
+
+
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -113,7 +119,9 @@ public class MainActivity extends AppCompatActivity implements
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
-            } else {
+            }
+            else
+            {
                 updateUI(null);
                 }
         }
@@ -154,7 +162,8 @@ public class MainActivity extends AppCompatActivity implements
         pd.dismiss();
     }
 
-    private void showProgressDialog() {
+    private void showProgressDialog()
+    {
         pd.setTitle("Loading");
         pd.show();
     }
@@ -162,53 +171,83 @@ public class MainActivity extends AppCompatActivity implements
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
-        private void signOut() {
+        private void signOut()
+        {
         // Firebase sign out
         mAuth.signOut();
 
         // Google sign out
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+    /*    Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(@NonNull Status status) {
                         updateUI(null);
                     }
-                });
+                });*/
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
     }
 
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
+
         if (user != null)
         {
+
+            SharedPreferences sharedPreferences = getSharedPreferences("SIGNEDOUT",MODE_PRIVATE);
+            SharedPreferences.Editor editor1 = sharedPreferences.edit();
+            String signOut = sharedPreferences.getString("signedout","signedin") ;
+
+            if (signOut.equals("signedout"))
+            {
+                editor1.clear();
+                editor1.commit();
+                signOut();
+                user = null;
+            }
+        }
+        if (user != null)
+        {
+
             s= new session(MainActivity.this);
             // check for existing user by shred prferences
             if (s.isolduser().equals("true"))
             {
-                String p = s.isolduser();
+                String p;
                 p = s.place();
-                Intent intent = new Intent(MainActivity.this, Home.class);
-                intent.putExtra("place_id",p);
-                startActivity(intent);
+                p = s.getPlace_id();
+                p = s.getUsername();
+
+                Intent intent1 = new Intent(MainActivity.this, Home.class);
+                intent1.putExtra("place_id",p);
+                startActivity(intent1);
                 finish();
             }
 
-            else {
+            else
+            {
                 // check for existing user on reinstalling the app
-                user_exists = mDatabase.child("User").child(mAuth.getCurrentUser().getUid());
+                user_exists = mDatabase.child("User").child(user.getUid());
                 user_exists.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
+                        if (dataSnapshot.exists())
+                        {
 
                             User user = dataSnapshot.getValue(User.class);
                             place = user.getPlace_id();
+<<<<<<< Updated upstream
                             s.create_oldusersession(place,user.getUsername());
+=======
+                            s.create_oldusersession(NewUser.hashMap2.get(place),place,user.getUsername());
+>>>>>>> Stashed changes
 
                             Intent intent = new Intent(MainActivity.this, Home.class);
                             intent.putExtra("place_id", place);
                             startActivity(intent);
                             finish();
-                        } else {
+                        }
+                        else
+                        {
 
                             startActivity(new Intent(MainActivity.this, NewUser.class));
                             finish();
