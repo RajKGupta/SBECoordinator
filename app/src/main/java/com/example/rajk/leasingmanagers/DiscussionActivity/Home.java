@@ -1,26 +1,20 @@
 package com.example.rajk.leasingmanagers.DiscussionActivity;
 
 import android.content.Intent;
-<<<<<<< Updated upstream
-=======
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Color;
->>>>>>> Stashed changes
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.rajk.leasingmanagers.MainActivity;
 import com.example.rajk.leasingmanagers.NewTopic;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.commentAdapter;
@@ -38,92 +32,46 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class Home extends AppCompatActivity
+public class Home extends AppCompatActivity implements topicAdapter.TopicAdapterListener
 {
 
     RecyclerView Topic_list;
-
     DatabaseReference dbTopic;
     LinearLayoutManager linearLayoutManager;
     private ArrayList<Discussions>  TopicList= new ArrayList<>();
     private RecyclerView.Adapter mAdapter;
     session se ;
-    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Topics");
 
         se = new session(getApplicationContext());
         Topic_list = (RecyclerView) findViewById(R.id.Topic_List);
-        linearLayoutManager=new LinearLayoutManager(this);
-        mAdapter = new topicAdapter(TopicList,this);
-        Topic_list.setAdapter(mAdapter);
-        dbTopic = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Topic").getRef();
 
+        dbTopic = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Topic").child(se.getPlace_id()).getRef();
         LoadData();
+        mAdapter = new topicAdapter(TopicList,this,this);
+        linearLayoutManager=new LinearLayoutManager(this);
+        Topic_list.setLayoutManager(linearLayoutManager);
+        Topic_list.setItemAnimator(new DefaultItemAnimator());
+        Topic_list.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+        Topic_list.setAdapter(mAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(Home.this,NewTopic.class));
-                finish();
             }
         });
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId())
-        {
-            case R.id.signout:
-                se.clearoldusersession();
-                //se.create_signedin("false");
-                SharedPreferences sharedPreferences = getSharedPreferences("SIGNEDOUT",MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("signedout","signedout");
-                editor.commit();
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                finish();
-        }
-        return true;
-    }
-
     void LoadData()
     {
-        dbTopic.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if(!dataSnapshot.hasChildren()){
-                            Toast.makeText(Comment.this, "No more comments", Toast.LENGTH_SHORT).show();
-                            currentPage--;
-                        }
-                        for (DataSnapshot data : dataSnapshot.getChildren()) {
-                            CommentModel comment = data.getValue(CommentModel.class);
-                            commentList.add(comment);
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    }
-
-                    @Override public void onCancelled(DatabaseError databaseError) {}});
 
         dbTopic.addChildEventListener(new ChildEventListener() {
             @Override
@@ -175,6 +123,5 @@ public class Home extends AppCompatActivity
         Discussions topic = TopicList.get(position);
         intent.putExtra("topic_id",topic.getName());
         startActivity(intent);
-        finish();
     }
 }
