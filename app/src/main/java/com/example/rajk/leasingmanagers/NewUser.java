@@ -100,7 +100,7 @@ public class NewUser extends AppCompatActivity {
                     address.setText("");
                 }
 
-                if ((username.getText().toString().equals(""))&&(address.getText().toString().equals("")))
+                else if ((username.getText().toString().equals(""))&&(address.getText().toString().equals("")))
                 {
                     Toast.makeText(NewUser.this, "Fill in all the credentials", Toast.LENGTH_SHORT).show();
                 }

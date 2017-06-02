@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.rajk.leasingmanagers.R;
-import com.example.rajk.leasingmanagers.model.CommentModel;
 import com.example.rajk.leasingmanagers.model.Discussions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;

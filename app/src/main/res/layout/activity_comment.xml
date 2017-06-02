@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <AutoCompleteTextView
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -49,7 +49,7 @@
         android:id="@+id/commentView"
         android:layout_above="@id/sendComment">
 
-        <me.flipchat.app.android.ui.EmptyRecyclerView
+        <com.example.rajk.leasingmanagers.listener.EmptyRecyclerView
             android:id="@+id/my_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.CalendarView;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -27,6 +28,7 @@ import com.example.rajk.leasingmanagers.adapter.commentAdapter;
 import com.example.rajk.leasingmanagers.listener.EmptyRecyclerView;
 import com.example.rajk.leasingmanagers.listener.EndlessRecyclerOnScrollListener;
 import com.example.rajk.leasingmanagers.model.CommentModel;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,7 +47,7 @@ public class Comment extends AppCompatActivity {
     private static final int TOTAL_ITEM_EACH_LOAD = 20;
     // RelativeLayout.LayoutParams layoutParams_commentView,layoutParams_sendComment,layoutParams_typeComment,layoutParams_sendButton;
     private int height, width;
-    private AutoCompleteTextView typeComment;
+    private EditText typeComment;
     private ImageButton sendButton;
     RelativeLayout commentView, sendComment;
     Intent intent;
@@ -78,12 +80,13 @@ public class Comment extends AppCompatActivity {
         height = displaymetrics.heightPixels;
         width = displaymetrics.widthPixels;
 
+        getSupportActionBar().setTitle("Comments");
         sharedPreferences=getSharedPreferences("SESSION",MODE_PRIVATE);
 
         place_id=sharedPreferences.getString("place_id","449");
         intent = getIntent();
         topic_id = intent.getStringExtra("topic_id");
-        dbTopic = FirebaseDatabase.getInstance().getReference().child(place_id).child("Topic").child(topic_id).child("Comment").getRef();
+        dbTopic = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Topic").child(place_id).child(topic_id).child("Comment");
 
 
         recyclerView = (EmptyRecyclerView) findViewById(R.id.my_recycler_view);
@@ -91,20 +94,19 @@ public class Comment extends AppCompatActivity {
         recyclerView.setEmptyView(emptyView);
         progressBar = (ProgressBar) findViewById(R.id.progress);
 
-        typeComment = (AutoCompleteTextView) findViewById(R.id.typeComment);
+        typeComment = (EditText) findViewById(R.id.typeComment);
         sendButton = (ImageButton) findViewById(R.id.sendButton);
 
         linearLayoutManager=new LinearLayoutManager(this);
-        linearLayoutManager.setReverseLayout(true);
-        linearLayoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
         mAdapter = new commentAdapter(commentList,this);
         recyclerView.setAdapter(mAdapter);
-        recyclerView.setOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
+/*        recyclerView.setOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int current_page) { // when we have reached end of RecyclerView this event fired
                 loadMoreData();
             }
-        });
+        });*/
         loadData(); // load data here for first time launch app
 
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -114,28 +116,26 @@ public class Comment extends AppCompatActivity {
                 if (TextUtils.isEmpty(commentString)) {
                     Toast.makeText(Comment.this, "What?? No Comment!!", Toast.LENGTH_SHORT).show();
                 } else {
-                    try {
 
                         ProgressDialog progressDialog = new ProgressDialog(Comment.this);
                         progressDialog.setMessage("Posting Comment...");
                         progressDialog.show();
 
-                        Date lastdate = formatter.parse(lastDate);
-                        long ldInSec = lastdate.getTime();
+                        //Date lastdate = formatter.parse(lastDate);
+                        //long ldInSec = lastdate.getTime();
                         long curTime = Calendar.getInstance().getTimeInMillis();
-                        long id = ldInSec - curTime;
-
-
-                        DatabaseReference dbNewComment = dbTopic.child(String.valueOf(id));
+                        long id = curTime;
 
                         SharedPreferences sharedPreferences = getSharedPreferences("SESSION", MODE_PRIVATE);
                         String sender = sharedPreferences.getString("username", "username");
 
                         String timestamp = formatter.format(Calendar.getInstance().getTime());
 
-                        dbNewComment.child("sender").setValue(sender);
-                        dbNewComment.child("timestamp").setValue(timestamp);
-                        dbNewComment.child("commentString").setValue(commentString);
+                        CommentModel cm = new CommentModel(commentString,sender,timestamp);
+                        dbTopic.child(String.valueOf(id)).setValue(cm);
+//                        dbNewComment.child("sender").setValue(sender);
+  //                      dbNewComment.child("timestamp").setValue(timestamp);
+    //                    dbNewComment.child("commentString").setValue(commentString);
 
                         /*CommentModel comment = new CommentModel();
 
@@ -144,12 +144,9 @@ public class Comment extends AppCompatActivity {
                         comment.setTimestamp(timestamp);
 
                         commentList.add(comment);
-                        mAdapter.notifyDataSetChanged();
-                        progressDialog.dismiss();*/
-                    } catch (ParseException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                        mAdapter.notifyDataSetChanged();*/
+                        progressDialog.dismiss();
+                        typeComment.setText("");
 
                 }
             }
@@ -157,24 +154,39 @@ public class Comment extends AppCompatActivity {
 
     }
     private void loadData() {
-        dbTopic.child("Comment")
-                .limitToFirst(TOTAL_ITEM_EACH_LOAD)
-                .startAt(currentPage*TOTAL_ITEM_EACH_LOAD)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if(!dataSnapshot.hasChildren()){
-                            Toast.makeText(Comment.this, "No more comments", Toast.LENGTH_SHORT).show();
-                            currentPage--;
-                        }
-                        for (DataSnapshot data : dataSnapshot.getChildren()) {
-                            CommentModel comment = data.getValue(CommentModel.class);
-                            commentList.add(comment);
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    }
+        dbTopic.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if(!dataSnapshot.hasChildren()){
+                    Toast.makeText(Comment.this, "No more comments", Toast.LENGTH_SHORT).show();
+                }
 
-                    @Override public void onCancelled(DatabaseError databaseError) {}});
+                    CommentModel comment = dataSnapshot.getValue(CommentModel.class);
+                    commentList.add(comment);
+                    mAdapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(commentList.size() - 1);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void loadMoreData(){
