@@ -5,10 +5,50 @@ package com.example.rajk.leasingmanagers.model;
  */
 
 public class CommentModel {
-    private String commentString,sender,timestamp;
+    private String commentString,sender,timestamp,type,id,status,imgurl,videourl;
+
+    public String getImgurl() {
+        return imgurl;
+    }
+
+    public void setImgurl(String imgurl) {
+        this.imgurl = imgurl;
+    }
+
+    public String getVideourl() {
+        return videourl;
+    }
+
+    public void setVideourl(String videourl) {
+        this.videourl = videourl;
+    }
 
     public String getCommentString() {
         return commentString;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void setCommentString(String commentString) {
@@ -33,6 +73,15 @@ public class CommentModel {
 
     public CommentModel() {
 
+    }
+
+    public CommentModel(String commentString, String sender, String timestamp, String type, String id, String status) {
+        this.commentString = commentString;
+        this.sender = sender;
+        this.timestamp = timestamp;
+        this.type = type;
+        this.id = id;
+        this.status = status;
     }
 
     public CommentModel(String commentString, String sender, String timestamp) {

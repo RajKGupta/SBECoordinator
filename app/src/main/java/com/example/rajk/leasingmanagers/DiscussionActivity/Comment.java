@@ -3,53 +3,34 @@ package com.example.rajk.leasingmanagers.DiscussionActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
-import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
-
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.commentAdapter;
 import com.example.rajk.leasingmanagers.listener.EmptyRecyclerView;
-import com.example.rajk.leasingmanagers.listener.EndlessRecyclerOnScrollListener;
 import com.example.rajk.leasingmanagers.model.CommentModel;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.text.Format;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 public class Comment extends AppCompatActivity {
     private static final int TOTAL_ITEM_EACH_LOAD = 20;
-    // RelativeLayout.LayoutParams layoutParams_commentView,layoutParams_sendComment,layoutParams_typeComment,layoutParams_sendButton;
-    private int height, width;
     private EditText typeComment;
-    private ImageButton sendButton;
-    RelativeLayout commentView, sendComment;
+    private ImageButton sendButton,attachment;
     Intent intent;
     DatabaseReference dbTopic;
     String topic_id;
@@ -62,33 +43,34 @@ public class Comment extends AppCompatActivity {
     private int currentPage = 0;
     private long currentPageNumber = 1;// pageNumber starts from 1
     LinearLayout emptyView;
-    SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy hh:mm");
+    SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
     private String lastDate = "20-01-3000 00:00";
     private RecyclerView.Adapter mAdapter;
     private ArrayList<CommentModel> commentList= new ArrayList<>();
     private SharedPreferences sharedPreferences;
-
+    String username;
+    boolean clicked;
+    View view;
     String place_id;
+    LinearLayout layoutToAdd;
+    LinearLayout commentView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
-
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        height = displaymetrics.heightPixels;
-        width = displaymetrics.widthPixels;
-
+        clicked = false;
+        layoutToAdd = (LinearLayout)findViewById(R.id.attachmentpopup);
         getSupportActionBar().setTitle("Comments");
         sharedPreferences=getSharedPreferences("SESSION",MODE_PRIVATE);
-
+        username = sharedPreferences.getString("username","username");
         place_id=sharedPreferences.getString("place_id","449");
         intent = getIntent();
         topic_id = intent.getStringExtra("topic_id");
         dbTopic = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Topic").child(place_id).child(topic_id).child("Comment");
 
-
+        commentView = (LinearLayout)findViewById(R.id.commentView);
         recyclerView = (EmptyRecyclerView) findViewById(R.id.my_recycler_view);
         emptyView = (LinearLayout) findViewById(R.id.empty_view);
         recyclerView.setEmptyView(emptyView);
@@ -96,10 +78,29 @@ public class Comment extends AppCompatActivity {
 
         typeComment = (EditText) findViewById(R.id.typeComment);
         sendButton = (ImageButton) findViewById(R.id.sendButton);
+        attachment = (ImageButton) findViewById(R.id.attachment);
+
+        attachment.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if(clicked==false) {
+
+                    layoutToAdd.setVisibility(View.VISIBLE);
+                    clicked =true;
+                }
+                else
+                {
+                    layoutToAdd.setVisibility(View.GONE);
+                    clicked=false;
+                }
+            }
+        });
 
         linearLayoutManager=new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
-        mAdapter = new commentAdapter(commentList,this);
+        mAdapter = new commentAdapter(commentList,this,place_id,topic_id);
         recyclerView.setAdapter(mAdapter);
 /*        recyclerView.setOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
             @Override
@@ -127,24 +128,12 @@ public class Comment extends AppCompatActivity {
                         long id = curTime;
 
                         SharedPreferences sharedPreferences = getSharedPreferences("SESSION", MODE_PRIVATE);
-                        String sender = sharedPreferences.getString("username", "username");
+                        String sender = username;
 
                         String timestamp = formatter.format(Calendar.getInstance().getTime());
 
-                        CommentModel cm = new CommentModel(commentString,sender,timestamp);
+                        CommentModel cm = new CommentModel(commentString,sender,timestamp,"text",String.valueOf(id),"0");
                         dbTopic.child(String.valueOf(id)).setValue(cm);
-//                        dbNewComment.child("sender").setValue(sender);
-  //                      dbNewComment.child("timestamp").setValue(timestamp);
-    //                    dbNewComment.child("commentString").setValue(commentString);
-
-                        /*CommentModel comment = new CommentModel();
-
-                        comment.setCommentString(commentString);
-                        comment.setSender(sender);
-                        comment.setTimestamp(timestamp);
-
-                        commentList.add(comment);
-                        mAdapter.notifyDataSetChanged();*/
                         progressDialog.dismiss();
                         typeComment.setText("");
 
@@ -162,6 +151,17 @@ public class Comment extends AppCompatActivity {
                 }
 
                     CommentModel comment = dataSnapshot.getValue(CommentModel.class);
+                    if(!comment.getSender().equals(username)) {
+
+                        dbTopic.child(comment.getId()).child("status").setValue("3");
+                        comment.setStatus("3");  // all message status set to read
+                    }
+                    else
+                    {
+                        if(comment.getStatus().equals("0"))
+                        dbTopic.child(comment.getId()).child("status").setValue("1");
+                        comment.setStatus("1");  // all message status set to read
+                    }
                     commentList.add(comment);
                     mAdapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(commentList.size() - 1);
@@ -192,5 +192,16 @@ public class Comment extends AppCompatActivity {
     private void loadMoreData(){
         currentPage++;
         loadData();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(clicked ==true) {
+            layoutToAdd.setVisibility(View.GONE);
+            clicked =false;
+        }
+        else
+            startActivity(new Intent(Comment.this,Home.class));
+            finish();
     }
 }
