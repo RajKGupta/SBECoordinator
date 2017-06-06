@@ -62,6 +62,9 @@ public class Cust_add extends AppCompatActivity {
                     intent.putExtra("page",0);
                     startActivity(intent);
                     finish();
+                            startActivity(new Intent(Cust_add.this, Cust_Tab.class));
+                            finish();
+
                 }
             }
         });

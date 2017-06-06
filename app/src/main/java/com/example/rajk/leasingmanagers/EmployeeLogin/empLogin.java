@@ -90,8 +90,7 @@ public class empLogin extends AppCompatActivity {
                         } else
                         {
                             session.create_oldusersession(Username);
-                     //       startActivity(new Intent(getBaseContext(), viewbook.class));
-                            finish();
+
                         }
                     }
                     else
