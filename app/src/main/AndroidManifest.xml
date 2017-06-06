@@ -47,6 +47,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ImageComment" />
+        <activity android:name=".tablayout.Tabs"></activity>
     </application>
 
 </manifest>
