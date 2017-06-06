@@ -106,7 +106,7 @@
         android:layout_above="@id/sendComment"
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
-        android:visibility="">
+        android:visibility="gone">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
