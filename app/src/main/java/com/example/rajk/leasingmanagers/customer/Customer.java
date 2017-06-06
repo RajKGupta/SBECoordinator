@@ -10,7 +10,7 @@ public class Customer {
     private String phone_num;
     private String address;
     private String id;
-    private int Color=1;
+    private int Color=-1;
 
     public int getColor() {
         return Color;
