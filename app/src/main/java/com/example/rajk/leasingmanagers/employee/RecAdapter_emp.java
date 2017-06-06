@@ -18,7 +18,7 @@ public class RecAdapter_emp extends RecyclerView.Adapter<RecAdapter_emp.RecHolde
     public List<Employee> list;
     Context context;
 
-    RecAdapter_emp(List<Employee> list ,Context c){
+    public RecAdapter_emp(List<Employee> list, Context c){
         this.list = list;
         this.context = c;
     }

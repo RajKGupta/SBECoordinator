@@ -30,9 +30,9 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="1"
-            android:textColor="#58000000"
+            android:textColor="#000000"
             android:textSize="18sp"
-            android:textStyle="italic" />
+            android:textStyle="bold" />
        </LinearLayout>
 
     <RelativeLayout

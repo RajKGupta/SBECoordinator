@@ -1,6 +1,7 @@
 package com.example.rajk.leasingmanagers.MainViews;
 
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.rajk.leasingmanagers.ForwardTask.forwardTask;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.assignedto_adapter;
 import com.example.rajk.leasingmanagers.adapter.measurement_adapter;
@@ -37,6 +39,7 @@ public class TaskDetail extends AppCompatActivity {
     RecyclerView rec_assignedto,rec_completedby,rec_measurement ;
     assignedto_adapter adapter_assignedto,adapter_completedby;
     List<CompletedBy> assignedtoList = new ArrayList<>();
+    FloatingActionButton forward;
     List<CompletedBy> completedbyList = new ArrayList<>();
     ArrayList<measurement> measurementList = new ArrayList<>();
     measurement_adapter adapter_measurement;
@@ -47,7 +50,7 @@ public class TaskDetail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
         dbRef = FirebaseDatabase.getInstance().getReference().child("MeChat");
-
+        forward = (FloatingActionButton)findViewById(R.id.forward);
         taskName = (EditText) findViewById(R.id.taskName);
         startDate = (EditText) findViewById(R.id.startDate);
         endDate = (EditText) findViewById(R.id.endDate);
@@ -158,6 +161,15 @@ public class TaskDetail extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
+        forward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent1  = new Intent(TaskDetail.this,forwardTask.class);
+                intent1.putExtra("task_id",task_id);
+                startActivity(intent1);
+                finish();
             }
         });
     }

@@ -13,6 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.employee.Emp_add;
+import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -54,8 +56,15 @@ public class Cust_add extends AppCompatActivity {
                             Customer customer = new Customer(name,num,add,id+"",getRandomMaterialColor("400"));
                             database = db.child(Calendar.getInstance().getTimeInMillis()+"");
                             database.setValue(customer);
+
+
+                    Intent intent = new Intent(Cust_add.this, Cust_Tab.class);
+                    intent.putExtra("page",0);
+                    startActivity(intent);
+                    finish();
                             startActivity(new Intent(Cust_add.this, Cust_Tab.class));
                             finish();
+
                 }
             }
         });

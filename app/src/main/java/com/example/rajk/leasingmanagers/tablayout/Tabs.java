@@ -11,11 +11,17 @@ public class Tabs extends AppCompatActivity implements TabLayout.OnTabSelectedLi
 
     private TabLayout tab;
     private ViewPager vpager;
+    int page;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs);
+
+        if(getIntent().getExtras()!=null)
+            page = getIntent().getIntExtra("page",0);
+        else
+            page = 0;
 
         tab = (TabLayout) findViewById(R.id.tabLayout);
 
@@ -33,6 +39,7 @@ public class Tabs extends AppCompatActivity implements TabLayout.OnTabSelectedLi
         tab.setOnTabSelectedListener(this);
         vpager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab));
 
+        vpager.setCurrentItem(page);
     }
 
     @Override
