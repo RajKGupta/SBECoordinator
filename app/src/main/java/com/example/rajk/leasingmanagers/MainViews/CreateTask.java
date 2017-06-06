@@ -14,13 +14,15 @@ import com.example.rajk.leasingmanagers.model.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class CreateTask extends AppCompatActivity {
     DatabaseReference dbRef;
     EditText taskName,startDate,endDate,quantity,description,custId;
-    String customerId,customerName;
+    String customerId,customerName,curdate;
     Button submit_task;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,10 @@ public class CreateTask extends AppCompatActivity {
         custId = (EditText) findViewById(R.id.custId);
         custId.setText(customerId+": "+customerName);
         submit_task = (Button)findViewById(R.id.submit_task);
+        Calendar c = Calendar.getInstance();
+        curdate = dateFormat.format(c.getTime());
+        startDate.setText(curdate);
+
 
         submit_task.setOnClickListener(new View.OnClickListener() {
             @Override

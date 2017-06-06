@@ -54,4 +54,12 @@ public class CompletedBy {
 
     public CompletedBy() {
     }
+
+    public CompletedBy(String empId, String dateassigned, String datecompleted, String note, String id) {
+        this.empId = empId;
+        this.dateassigned = dateassigned;
+        this.datecompleted = datecompleted;
+        this.note = note;
+        this.id = id;
+    }
 }

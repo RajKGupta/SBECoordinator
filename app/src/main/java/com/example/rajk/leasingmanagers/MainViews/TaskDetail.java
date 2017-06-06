@@ -1,14 +1,17 @@
 package com.example.rajk.leasingmanagers.MainViews;
 
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.EditText;
 
+import com.example.rajk.leasingmanagers.ForwardTask.forwardTask;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.assignedto_adapter;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
@@ -33,6 +36,7 @@ public class TaskDetail extends AppCompatActivity {
     RecyclerView rec_assignedto,rec_completedby ;
     assignedto_adapter adapter_assignedto,adapter_completedby;
     List<CompletedBy> assignedtoList = new ArrayList<>();
+    FloatingActionButton forward;
     List<CompletedBy> completedbyList = new ArrayList<>();
 
     @Override
@@ -40,7 +44,7 @@ public class TaskDetail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
         dbRef = FirebaseDatabase.getInstance().getReference().child("MeChat");
-
+        forward = (FloatingActionButton)findViewById(R.id.forward);
         taskName = (EditText) findViewById(R.id.taskName);
         startDate = (EditText) findViewById(R.id.startDate);
         endDate = (EditText) findViewById(R.id.endDate);
@@ -99,6 +103,15 @@ public class TaskDetail extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
+        forward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent1  = new Intent(TaskDetail.this,forwardTask.class);
+                intent1.putExtra("task_id",task_id);
+                startActivity(intent1);
+                finish();
             }
         });
     }

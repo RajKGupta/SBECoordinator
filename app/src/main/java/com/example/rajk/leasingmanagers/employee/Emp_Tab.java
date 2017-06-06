@@ -109,6 +109,10 @@ public class Emp_Tab extends Fragment{
         protected Void doInBackground(Void... params) {
 
             DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").getRef();
+            if(db.getDatabase().equals(null)){
+                if (pDialog.isShowing())
+                    pDialog.dismiss();
+            }
 
             db.addChildEventListener(new ChildEventListener() {
                 @Override
@@ -139,7 +143,8 @@ public class Emp_Tab extends Fragment{
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-
+                    if (pDialog.isShowing())
+                        pDialog.dismiss();
                 }
             });
             return null;

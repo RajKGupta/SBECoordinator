@@ -57,7 +57,7 @@
         <activity android:name=".employee.Emp_add" />
         <activity android:name=".MainViews.TaskDetail"/>
         <activity android:name=".MainViews.TaskHome" />
-        <activity android:name=".MainViews.TaskDetail" />
+        <activity android:name=".employee.Emp_Tab" />
         <activity android:name=".ForwardTask.forwardTask" />
         <activity android:name=".ForwardTask.forwardTaskScreen2"></activity>
    </application>

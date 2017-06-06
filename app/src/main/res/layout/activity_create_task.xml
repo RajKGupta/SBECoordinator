@@ -60,6 +60,7 @@
                 android:inputType="date"
                 android:id="@+id/startDate"
                 android:hint="DD/MM/YYYY"
+                android:enabled="false"
                 android:layout_below="@+id/textView"
                 />
 

@@ -28,7 +28,7 @@ public class Cust_details extends AppCompatActivity {
 
     Dialog dialog;
     String id,name,num,add,temp_name,temp_add,temp_num;
-    TextView Name,Num,Add;
+    EditText Name,Num,Add;
     DatabaseReference db;
 
     @Override
@@ -38,9 +38,9 @@ public class Cust_details extends AppCompatActivity {
 
         id = getIntent().getStringExtra("id");
 
-        Name = (TextView) findViewById(R.id.name);
-        Num = (TextView) findViewById(R.id.num);
-        Add = (TextView) findViewById(R.id.add);
+        Name = (EditText) findViewById(R.id.name);
+        Num = (EditText) findViewById(R.id.num);
+        Add = (EditText) findViewById(R.id.add);
 
         // get name, num and address from database using id and show them in activity
 

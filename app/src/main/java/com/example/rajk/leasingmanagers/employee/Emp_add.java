@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,7 +26,6 @@ public class Emp_add extends AppCompatActivity {
     Button submit;
     DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").getRef();
     long n;
-    DatabaseReference database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +55,7 @@ public class Emp_add extends AppCompatActivity {
                 {
                     // upload info to database
 
-                    final DatabaseReference dbnewEmp = database.child(username).getRef();
+                    final DatabaseReference dbnewEmp = db.child(username).getRef();
                     dbnewEmp.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -76,7 +76,9 @@ public class Emp_add extends AppCompatActivity {
                         }
                     });
 
-                    startActivity(new Intent(Emp_add.this,Emp_Tab.class));
+                    Intent intent = new Intent(Emp_add.this,Tabs.class);
+                    intent.putExtra("page","2");
+                    startActivity(intent);
                     finish();
                 }
                 else
