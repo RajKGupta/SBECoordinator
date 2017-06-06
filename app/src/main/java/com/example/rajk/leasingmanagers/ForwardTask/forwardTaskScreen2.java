@@ -15,6 +15,6 @@ public class forwardTaskScreen2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forward_task_screen2);
 
-        submit.setOnClickListener(new );
+
     }
 }

@@ -113,6 +113,11 @@ public class Emp_Tab extends Fragment{
             db.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    if (!dataSnapshot.hasChildren())
+                    {
+                        pDialog.dismiss();
+                    }
+
                     emp = dataSnapshot.getValue(Employee.class);
                     list.add(emp);
                     adapter.notifyDataSetChanged();

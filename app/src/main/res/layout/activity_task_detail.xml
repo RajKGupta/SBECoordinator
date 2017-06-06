@@ -122,12 +122,15 @@
                 android:textSize="20dp"
                 android:drawableEnd="@mipmap/ic_drop_down"
                 android:layout_marginTop="10dp"
-                android:drawableRight="@mipmap/ic_drop_down" />
+                android:drawableRight="@mipmap/ic_drop_down"
+                android:id="@+id/open_assignedto"/>
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:id="@+id/rec_assignedto">
+                android:id="@+id/rec_assignedto"
+                android:visibility="gone"
+                android:nestedScrollingEnabled="true">
 
             </android.support.v7.widget.RecyclerView>
 
@@ -140,12 +143,15 @@
                 android:textSize="20dp"
                 android:drawableEnd="@mipmap/ic_drop_down"
                 android:layout_marginTop="10dp"
-                android:drawableRight="@mipmap/ic_drop_down" />
+                android:drawableRight="@mipmap/ic_drop_down"
+                android:id="@+id/open_completedby"/>
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:id="@+id/rec_completedby">
+                android:id="@+id/rec_completedby"
+                android:visibility="gone"
+                android:nestedScrollingEnabled="true">
 
             </android.support.v7.widget.RecyclerView>
 
@@ -206,18 +212,17 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <Button
+                    <ImageButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:elevation="5dp"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:layout_margin="5dp"
+                        android:layout_margin="3dp"
                         android:textStyle="bold"
                         android:padding="3dp"
-                        android:drawableRight="@drawable/ic_download"
-                        android:background="#426dfc"
                         android:textColor="#FFFFFF"
+                        android:background="@mipmap/ic_download"
                         android:id="@+id/downloadQuotation"/>
                 </RelativeLayout>
             </LinearLayout>
@@ -230,12 +235,15 @@
                 android:textSize="20dp"
                 android:drawableEnd="@mipmap/ic_drop_down"
                 android:layout_marginTop="10dp"
-                android:drawableRight="@mipmap/ic_drop_down" />
+                android:drawableRight="@mipmap/ic_drop_down"
+                android:id="@+id/open_measurement"/>
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:id="@+id/measurement"></android.support.v7.widget.RecyclerView>
+                android:id="@+id/rec_measurement"
+                android:visibility="gone"
+                android:nestedScrollingEnabled="true"></android.support.v7.widget.RecyclerView>
 
         </LinearLayout>
     </ScrollView>

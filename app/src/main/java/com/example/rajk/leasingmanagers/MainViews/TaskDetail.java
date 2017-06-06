@@ -7,12 +7,16 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.assignedto_adapter;
+import com.example.rajk.leasingmanagers.adapter.measurement_adapter;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
 import com.example.rajk.leasingmanagers.model.Task;
+import com.example.rajk.leasingmanagers.model.measurement;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,15 +29,18 @@ import java.util.List;
 
 public class TaskDetail extends AppCompatActivity {
 
-    private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned;
+    private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned,dbMeasurement;
     private String task_id;
     private Task task;
     private String customername;
     EditText startDate,endDate,custId,taskName,quantity,description;
-    RecyclerView rec_assignedto,rec_completedby ;
+    RecyclerView rec_assignedto,rec_completedby,rec_measurement ;
     assignedto_adapter adapter_assignedto,adapter_completedby;
     List<CompletedBy> assignedtoList = new ArrayList<>();
     List<CompletedBy> completedbyList = new ArrayList<>();
+    ArrayList<measurement> measurementList = new ArrayList<>();
+    measurement_adapter adapter_measurement;
+    TextView open_assignedto,open_completedby,open_measurement;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +56,13 @@ public class TaskDetail extends AppCompatActivity {
         custId = (EditText) findViewById(R.id.custId);
         rec_assignedto = (RecyclerView)findViewById(R.id.rec_assignedto);
         rec_completedby = (RecyclerView)findViewById(R.id.rec_completedby);
+        rec_measurement = (RecyclerView)findViewById(R.id.rec_measurement);
+        open_assignedto = (TextView)findViewById(R.id.open_assignedto);
+        open_completedby = (TextView)findViewById(R.id.open_completedby);
+        open_measurement = (TextView)findViewById(R.id.open_measurement);
 
         Intent intent = getIntent();
         task_id = intent.getStringExtra("task_id");
-
 
         rec_assignedto.setLayoutManager(new LinearLayoutManager(this));
         rec_assignedto.setItemAnimator(new DefaultItemAnimator());
@@ -66,13 +76,62 @@ public class TaskDetail extends AppCompatActivity {
         adapter_completedby = new assignedto_adapter(completedbyList, this,"CompletedBy",task_id);
         rec_completedby.setAdapter(adapter_completedby);
 
+        rec_measurement.setLayoutManager(new LinearLayoutManager(this));
+        rec_measurement.setItemAnimator(new DefaultItemAnimator());
+        rec_measurement.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        adapter_measurement = new measurement_adapter(measurementList, this);
+        rec_measurement.setAdapter(adapter_measurement);
+
         dbTask = dbRef.child("Task").child(task_id);
 
         dbCompleted = dbTask.child("CompletedBy").getRef();
         dbAssigned = dbTask.child("AssignedTo").getRef();
+        dbMeasurement = dbTask.child("Measurement").getRef();
 
         prepareListData();
 
+        open_measurement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                if (rec_measurement.getVisibility()== View.GONE)
+                {
+                    rec_measurement.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    rec_measurement.setVisibility(View.GONE);
+                }
+            }
+        });
+
+
+        open_completedby.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (rec_completedby.getVisibility()== View.GONE)
+                {
+                    rec_completedby.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    rec_completedby.setVisibility(View.GONE);
+                }            }
+        });
+
+        open_assignedto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (rec_assignedto.getVisibility()== View.GONE)
+                {
+                    rec_assignedto.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    rec_assignedto.setVisibility(View.GONE);
+                }
+            }
+        });
         dbTask.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -105,7 +164,6 @@ public class TaskDetail extends AppCompatActivity {
 
     private void prepareListData()
     {
-
         dbCompleted.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot)
@@ -150,6 +208,24 @@ public class TaskDetail extends AppCompatActivity {
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        dbMeasurement.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                if (dataSnapshot.exists())
+                {
+                    measurement item = dataSnapshot.getValue(measurement.class);
+                    measurementList.add(item);
+                    adapter_measurement.notifyDataSetChanged();
+                }
             }
 
             @Override

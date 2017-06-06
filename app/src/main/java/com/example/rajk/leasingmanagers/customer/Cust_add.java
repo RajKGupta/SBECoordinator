@@ -54,8 +54,8 @@ public class Cust_add extends AppCompatActivity {
                             Customer customer = new Customer(name,num,add,id+"",getRandomMaterialColor("400"));
                             database = db.child(Calendar.getInstance().getTimeInMillis()+"");
                             database.setValue(customer);
-                    startActivity(new Intent(Cust_add.this, Cust_Tab.class));
-                    finish();
+                            startActivity(new Intent(Cust_add.this, Cust_Tab.class));
+                            finish();
                 }
             }
         });
