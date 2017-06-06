@@ -190,7 +190,6 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="DOWNLOAD"
                         android:elevation="5dp"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
@@ -200,8 +199,6 @@
                         android:paddingTop="3dp"
                         android:paddingBottom="3dp"
                         android:drawableRight="@drawable/ic_download"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
                         android:background="#426dfc"
                         android:textColor="#FFFFFF"
                         android:id="@+id/downloadQuotation"/>
