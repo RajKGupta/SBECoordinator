@@ -5,23 +5,31 @@ package com.example.rajk.leasingmanagers.model;
  */
 
 public class Discussions {
-    private String id,place_id;
+    private String place_id,name;
+    private int color = -1;
 
-    public Discussions(String id, String place_id)
-    {
-        this.id = id;
-        this.place_id = place_id;
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Discussions() {
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public Discussions(String place_id, String name) {
+        this.place_id = place_id;
+        this.name = name;
     }
 
     public String getPlace_id() {

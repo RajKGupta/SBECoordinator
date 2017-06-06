@@ -17,7 +17,6 @@ import com.example.rajk.leasingmanagers.DiscussionActivity.Home;
 import com.example.rajk.leasingmanagers.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,7 +25,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -39,10 +39,12 @@ public class NewUser extends AppCompatActivity {
     Button submit;
     FirebaseAuth auth;
     FirebaseUser currentuser;
-    DatabaseReference mDatabase, adduser, Usernames_list, addusername, places;
+    public static HashMap<String,String> hashMap = new HashMap<>();
+    public static HashMap<String,String> hashMap2 = new HashMap<>();
+    DatabaseReference mDatabase, adduser, Usernames_list, addusername, user_exists;
     session s;
     String place,user_name;
-    List<String> address_list = new ArrayList<String>();
+    String [] list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,17 @@ public class NewUser extends AppCompatActivity {
         getSupportActionBar().hide();
 
         setContentView(R.layout.activity_new_user);
+        hashMap.put("449 Palo Verde Road, Gainesville, FL","449");
+        hashMap.put("6731 Thompson Street, Gainesville, FL","6731");
+        hashMap.put("8771 Thomas Boulevard, Orlando, FL","8771");
+        hashMap.put("1234 Verano Place, Orlando, FL","1234");
 
+
+
+        hashMap2.put("449","449 Palo Verde Road, Gainesville, FL");
+        hashMap2.put("6731","6731 Thompson Street, Gainesville, FL");
+        hashMap2.put("8771","8771 Thomas Boulevard, Orlando, FL");
+        hashMap2.put("1234","1234 Verano Place, Orlando, FL");
         auth = FirebaseAuth.getInstance();
         currentuser = auth.getCurrentUser();
 
@@ -69,39 +81,12 @@ public class NewUser extends AppCompatActivity {
         address= (AutoCompleteTextView)findViewById(R.id.address);
         submit = (Button) findViewById(R.id.submit_button);
 
-        places = mDatabase.child("Places");
-        places.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                address_list.add(String.valueOf(dataSnapshot.getValue()));
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
+        list = getResources().getStringArray(R.array.list);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>
-                (this,android.R.layout.select_dialog_item,address_list);
-
-        address.setAdapter(adapter);
-        address.setThreshold(1);
+                (this, android.R.layout.select_dialog_item, list);
+        //Getting the instance of AutoCompleteTextView
+        address.setThreshold(1);//will start working from first character
+        address.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
 
         setcredentials(currentuser);
 
@@ -109,19 +94,26 @@ public class NewUser extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                if ((username.getText().toString().equals(""))&&(address.getText().toString().equals("")))
+
+                if (!Arrays.asList(list).contains(address.getText().toString().trim()))
+                {
+                    address.setText("");
+                }
+
+                else if ((username.getText().toString().equals(""))&&(address.getText().toString().equals("")))
                 {
                     Toast.makeText(NewUser.this, "Fill in all the credentials", Toast.LENGTH_SHORT).show();
                 }
-                else {
+                else
+                {
                     user_name = username.getText().toString();
 
                     Usernames_list = mDatabase.child("Usernames").child(user_name).getRef();
 
                     Usernames_list.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
+                        public void onDataChange(DataSnapshot dataSnapshot)
+                        {
                                 if (!dataSnapshot.exists())
                                 {
                                     // TODO: 5/21/2017 Testing of App
@@ -132,18 +124,18 @@ public class NewUser extends AppCompatActivity {
 
                                     adduser = mDatabase.child("User").child(currentuser.getUid());
 
-                                    adduser.child("name").setValue(name.getText().toString());
-                                    adduser.child("username").setValue(username.getText().toString());
-                                    adduser.child("place_id").setValue(address.getText().toString());
+                                    adduser.child("name").setValue(name.getText().toString().trim());
+                                    adduser.child("username").setValue(username.getText().toString().trim());
+                                    adduser.child("place_id").setValue(hashMap.get(place));
 
-                                    s.create_oldusersession(place);
+                                    s.create_oldusersession(place,hashMap.get(place),username.getText().toString().trim());
 
                                     Intent intent = new Intent(NewUser.this, Home.class);
-                                    intent.putExtra("place_id",place);
+                                    intent.putExtra("place_id",hashMap.get(place));
                                     startActivity(intent);
                                     finish();
                                 }
-                            else
+                                else
                                 {
                                     username.setText("");
                                     Toast.makeText(NewUser.this, "Not Available", Toast.LENGTH_SHORT).show();
@@ -175,6 +167,7 @@ public class NewUser extends AppCompatActivity {
         {
             email.setText(currentuser.getEmail());
         }
+
     }
 
 }

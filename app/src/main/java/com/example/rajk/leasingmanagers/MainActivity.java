@@ -1,6 +1,7 @@
 package com.example.rajk.leasingmanagers;
 
 import android.app.ProgressDialog;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.content.Intent;
@@ -28,7 +29,6 @@ import com.google.android.gms.auth.api.Auth;
         import com.google.firebase.auth.FirebaseAuth;
         import com.google.firebase.auth.FirebaseUser;
         import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,8 +46,8 @@ public class MainActivity extends AppCompatActivity implements
     private GoogleApiClient mGoogleApiClient;
     private ProgressDialog pd;
     public static FirebaseUser currentUser;
-    session se;
-    String plac;
+    session s;
+    String place;
     DatabaseReference mDatabase, user_exists;
 
     @Override
@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements
 
         setContentView(R.layout.activity_main);
         pd=new ProgressDialog(this);
+        s= new session(MainActivity.this);
 
         findViewById(R.id.signIn).setOnClickListener(this);
 
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements
             if(signOut!=null&&signOut.equals("SIGN_OUT"))
         {
             signOut();
+            s.clearoldusersession();
         }
         else
         {
@@ -163,9 +165,10 @@ public class MainActivity extends AppCompatActivity implements
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
-        private void signOut() {
+        private void signOut()
+        {
         // Firebase sign out
-        mAuth.signOut();
+        /*mAuth.signOut();
 
         // Google sign out
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
@@ -174,20 +177,44 @@ public class MainActivity extends AppCompatActivity implements
                     public void onResult(@NonNull Status status) {
                         updateUI(null);
                     }
-                });
+                });*/
+
+            mGoogleApiClient.connect();
+            mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                @Override
+                public void onConnected(@Nullable Bundle bundle) {
+
+                    FirebaseAuth.getInstance().signOut();
+                    if(mGoogleApiClient.isConnected()) {
+                        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(@NonNull Status status) {
+                                if (status.isSuccess()) {
+                                    Log.d(TAG, "User Logged out");
+                                }
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onConnectionSuspended(int i) {
+                    Log.d(TAG, "Google API Client Connection Suspended");
+                }
+            });
     }
 
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
         if (user != null)
         {
-            se= new session(MainActivity.this);
             // check for existing user by shred prferences
-            if (se.isolduser().equals("true"))
+            if (s.isolduser().equals("true"))
             {
-                plac = se.place();
+                String p = s.isolduser();
+                p = s.place();
                 Intent intent = new Intent(MainActivity.this, Home.class);
-                intent.putExtra("place_id",plac);
+                intent.putExtra("place_id",p);
                 startActivity(intent);
                 finish();
             }
@@ -195,42 +222,24 @@ public class MainActivity extends AppCompatActivity implements
             else {
                 // check for existing user on reinstalling the app
                 user_exists = mDatabase.child("User").child(mAuth.getCurrentUser().getUid());
-                user_exists.addChildEventListener(new ChildEventListener() {
+                user_exists.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        if (dataSnapshot.exists())
-                        {
-                            if (dataSnapshot.getKey().equals("place_id"))
-                            {
-                                plac = String.valueOf(dataSnapshot.getValue());
-                            }
-                            se.create_oldusersession(plac);
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+
+                            User user = dataSnapshot.getValue(User.class);
+                            place = user.getPlace_id();
+                            s.create_oldusersession(NewUser.hashMap2.get(place),place,user.getUsername());
 
                             Intent intent = new Intent(MainActivity.this, Home.class);
-                            intent.putExtra("place_id", plac);
+                            intent.putExtra("place_id", place);
                             startActivity(intent);
                             finish();
-                        }
-                        else
-                        {
+                        } else {
 
                             startActivity(new Intent(MainActivity.this, NewUser.class));
                             finish();
                         }
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
                     }
 
