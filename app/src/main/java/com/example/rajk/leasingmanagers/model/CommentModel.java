@@ -84,6 +84,27 @@ public class CommentModel {
         this.status = status;
     }
 
+    public CommentModel(String commentString, String sender, String timestamp, String type, String id, String status, String imgurl) {
+        this.commentString = commentString;
+        this.sender = sender;
+        this.timestamp = timestamp;
+        this.type = type;
+        this.id = id;
+        this.status = status;
+        this.imgurl = imgurl;
+    }
+
+    public CommentModel(String commentString, String sender, String timestamp, String type, String id, String status, String imgurl, String videourl) {
+        this.commentString = commentString;
+        this.sender = sender;
+        this.timestamp = timestamp;
+        this.type = type;
+        this.id = id;
+        this.status = status;
+        this.imgurl = imgurl;
+        this.videourl = videourl;
+    }
+
     public CommentModel(String commentString, String sender, String timestamp) {
         this.commentString = commentString;
         this.sender = sender;

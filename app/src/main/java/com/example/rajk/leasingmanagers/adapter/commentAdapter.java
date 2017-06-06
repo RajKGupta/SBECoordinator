@@ -2,6 +2,7 @@ package com.example.rajk.leasingmanagers.adapter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -80,13 +82,7 @@ public class commentAdapter extends  RecyclerView.Adapter<commentAdapter.MyViewH
 
                     case "photo":
                         holder.photo.setVisibility(View.VISIBLE);
-                        Glide.with(context).load(comment.getImgurl())
-                                .thumbnail(0.5f)
-                                .crossFade()
-                                .transform(new CircleTransform(context))
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .into(holder.photo);
-
+                        Picasso.with(context).load(Uri.parse(comment.getImgurl())).into(holder.photo);
 
                         if(comment.getCommentString().equals(""))
                         {
