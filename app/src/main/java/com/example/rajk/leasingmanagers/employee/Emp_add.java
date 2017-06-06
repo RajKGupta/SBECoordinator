@@ -77,7 +77,7 @@ public class Emp_add extends AppCompatActivity {
                     });
 
                     Intent intent = new Intent(Emp_add.this,Tabs.class);
-                    intent.putExtra("page","2");
+                    intent.putExtra("page",2);
                     startActivity(intent);
                     finish();
                 }

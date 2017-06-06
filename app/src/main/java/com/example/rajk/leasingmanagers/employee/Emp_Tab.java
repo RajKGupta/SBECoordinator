@@ -109,7 +109,7 @@ public class Emp_Tab extends Fragment{
         protected Void doInBackground(Void... params) {
 
             DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").getRef();
-            if(db.getDatabase().equals(null)){
+            if(db.equals(null)){
                 if (pDialog.isShowing())
                     pDialog.dismiss();
             }
