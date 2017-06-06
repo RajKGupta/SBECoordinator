@@ -4,7 +4,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-public class pager extends FragmentStatePagerAdapter {
+import com.example.rajk.leasingmanagers.MainViews.TaskHome;
+import com.example.rajk.leasingmanagers.customer.Cust_Tab;
+import com.example.rajk.leasingmanagers.employee.Emp_Tab;
+
+public class pager extends FragmentStatePagerAdapter
+{
     int tabCount;
 
     public pager(FragmentManager fm, int tabCount)
@@ -14,13 +19,19 @@ public class pager extends FragmentStatePagerAdapter {
     }
 
     @Override
-    public Fragment getItem(int position) {
-
-        //Fragment frag;
-        switch (position) {
+    public Fragment getItem(int position)
+    {
+        switch (position)
+        {
             case 0:
+                Cust_Tab a = new Cust_Tab();
+                return a;
             case 1:
+                TaskHome b = new TaskHome();
+                return b;
             case 2:
+                Emp_Tab c = new Emp_Tab();
+                return c;
             default:
                 return null;
         }
@@ -31,19 +42,5 @@ public class pager extends FragmentStatePagerAdapter {
     {
         return tabCount;
     }
-
-    /*@Override
-    public CharSequence getPageTitle(int position) {
-        //this is where you set the titles
-        switch(position) {
-            case 0:
-                return "a1";
-            case 1:
-                return "a2";
-            case 2:
-                return "a3";
-        }
-        return null;
-    }*/
 
 }

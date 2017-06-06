@@ -1,9 +1,12 @@
 package com.example.rajk.leasingmanagers.MainViews;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -11,9 +14,12 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.rajk.leasingmanagers.DiscussionActivity.Comment;
 import com.example.rajk.leasingmanagers.MainActivity;
@@ -30,65 +36,45 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-public class TaskHome extends AppCompatActivity implements taskAdapter.TaskAdapterListener{
+public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListener{
     RecyclerView task_list;
     DatabaseReference dbTask;
     LinearLayoutManager linearLayoutManager;
     private ArrayList<Task> TaskList= new ArrayList<>();
     private RecyclerView.Adapter mAdapter;
-    Toolbar toolbar;
+
+    Context context;
+    public TaskHome() {
+        // Required empty public constructor
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_task);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
 
-        task_list = (RecyclerView) findViewById(R.id.task_list);
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Task");
+
+        return inflater.inflate(R.layout.activity_task_home, container, false);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+
+        task_list = (RecyclerView) getView().findViewById(R.id.task_list);
 
         dbTask = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").getRef();
         LoadData();
-        mAdapter = new taskAdapter(TaskList,this,this);
-        linearLayoutManager=new LinearLayoutManager(this);
+        mAdapter = new taskAdapter(TaskList,getContext(),this);
+        linearLayoutManager=new LinearLayoutManager(getContext());
         task_list.setLayoutManager(linearLayoutManager);
         task_list.setItemAnimator(new DefaultItemAnimator());
-        task_list.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        task_list.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
 
         task_list.setAdapter(mAdapter);
 
-      /*  FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(TaskHome.this,NewTopic.class));
-            }
-        });*/
-
     }
-/*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch (item.getItemId())
-        {
-            case R.id.signout:
-                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                i.putExtra("SIGN_OUT","SIGN_OUT");
-                startActivity(i);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }*/
 
     void LoadData()
     {
@@ -128,9 +114,10 @@ public class TaskHome extends AppCompatActivity implements taskAdapter.TaskAdapt
 
     @Override
     public void onTaskRowClicked(int position) {
-        Intent intent = new Intent(TaskHome.this,TaskDetail.class);
+        Intent intent = new Intent(getContext(),TaskDetail.class);
         Task task = TaskList.get(position);
         intent.putExtra("task_id",task.getTaskId());
+
         startActivity(intent);
 
     }

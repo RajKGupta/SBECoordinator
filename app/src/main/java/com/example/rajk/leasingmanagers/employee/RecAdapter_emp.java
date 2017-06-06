@@ -15,30 +15,17 @@ import java.util.List;
 public class RecAdapter_emp extends RecyclerView.Adapter<RecAdapter_emp.RecHolder>{
 
 
-    //interface
-    public interface ItemClickCallback{
-        void onItemClick(int p);
-    }
-
-    ItemClickCallback itemClickCallback;
-
-    public void setItemClickCallback(ItemClickCallback itemClickCallback){
-        this.itemClickCallback = itemClickCallback;
-    }
-
-
-    //adapter
     public List<Employee> list;
-    public LayoutInflater layoutInflater;
+    Context context;
 
     RecAdapter_emp(List<Employee> list ,Context c){
         this.list = list;
-        this.layoutInflater = LayoutInflater.from(c);
+        this.context = c;
     }
 
     @Override
     public RecHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = layoutInflater.inflate(R.layout.employee_row,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.employee_row,parent,false);
         return new RecHolder(view);
     }
 
@@ -66,30 +53,20 @@ public class RecAdapter_emp extends RecyclerView.Adapter<RecAdapter_emp.RecHolde
     }
 
     // holder class
-    public class RecHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class RecHolder extends RecyclerView.ViewHolder{
 
         TextView name,desig,tasks,icon_text;
         ImageView imgProfile;
-        View view;
 
         public RecHolder(View itemView) {
             super(itemView);
 
             name = (TextView) itemView.findViewById(R.id.name);
             desig = (TextView) itemView.findViewById(R.id.desig);
-            view = itemView.findViewById(R.id.container);
             icon_text =(TextView)itemView.findViewById(R.id.icon_text);
             imgProfile = (ImageView)itemView.findViewById(R.id.icon_profile);
-            view.setOnClickListener(this);
-        }
 
-        @Override
-        public void onClick(View v) {
-            if(v == view){
-                itemClickCallback.onItemClick(getAdapterPosition());
-            }
         }
-
     }
 
 

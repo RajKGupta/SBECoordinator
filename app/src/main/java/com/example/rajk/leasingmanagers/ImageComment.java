@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
-import com.example.rajk.leasingmanagers.helper.ImageFilePath;
 import com.example.rajk.leasingmanagers.model.CommentModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -153,7 +152,6 @@ public class ImageComment extends AppCompatActivity {
                                 // Find thumbnail uri
                                 File myFile = new File(videouri.getPath());
                                 myFile.getAbsolutePath();
-                                //selectedPathVideo = ImageFilePath.getPath(getApplicationContext(), videouri);
                                 try {
                                     Bitmap thumb = ThumbnailUtils.createVideoThumbnail(getPath(videouri), MediaStore.Video.Thumbnails.MINI_KIND);
                                     ByteArrayOutputStream bytes = new ByteArrayOutputStream();

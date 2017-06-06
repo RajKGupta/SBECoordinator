@@ -11,6 +11,8 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.rajk.leasingmanagers.tablayout.Tabs;
+
 public class Splash extends AppCompatActivity
 {
     private static int SPLASH_TIME_OUT = 2500;
@@ -42,7 +44,7 @@ public class Splash extends AppCompatActivity
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent i = new Intent(Splash.this, MainActivity.class);
+                Intent i = new Intent(Splash.this, Tabs.class);
                 startActivity(i);
                 finish();
             }

@@ -1,6 +1,7 @@
 package com.example.rajk.leasingmanagers.customer;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.rajk.leasingmanagers.MainViews.CreateTask;
 import com.example.rajk.leasingmanagers.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -40,8 +42,6 @@ public class Cust_details extends AppCompatActivity {
         Num = (TextView) findViewById(R.id.num);
         Add = (TextView) findViewById(R.id.add);
 
-
-
         // get name, num and address from database using id and show them in activity
 
         db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Customer").child(id);
@@ -66,7 +66,6 @@ public class Cust_details extends AppCompatActivity {
 
             }
         });
-
 
     }
 
@@ -101,7 +100,6 @@ public class Cust_details extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         // update database accordingly
-
                         temp_add = add_new.getText().toString();
                         temp_name = name_new.getText().toString();
                         temp_num = num_new.getText().toString();
@@ -109,7 +107,8 @@ public class Cust_details extends AppCompatActivity {
                         if(TextUtils.isEmpty(temp_add) || TextUtils.isEmpty(temp_name) || TextUtils.isEmpty(temp_num))
                             Toast.makeText(Cust_details.this,"Enter details...",Toast.LENGTH_SHORT).show();
 
-                        else{
+                        else
+                        {
                             db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Customer").child(id);
                             db.child("name").setValue(temp_name);
                             db.child("address").setValue(temp_add);
@@ -117,7 +116,6 @@ public class Cust_details extends AppCompatActivity {
 
                             dialog.dismiss();
                         }
-
                     }
                 });
 
@@ -125,7 +123,11 @@ public class Cust_details extends AppCompatActivity {
                 break;
 
             case R.id.item2:
-                // add  task and update list
+                Intent intent = new Intent(Cust_details.this, CreateTask.class);
+                intent.putExtra("customerId",id);
+                intent.putExtra("customerName",Name.getText());
+                startActivity(intent);
+                finish();
                 break;
         }
         return true;

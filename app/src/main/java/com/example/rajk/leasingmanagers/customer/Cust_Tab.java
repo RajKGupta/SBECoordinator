@@ -1,8 +1,12 @@
 package com.example.rajk.leasingmanagers.customer;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -10,12 +14,18 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.listener.ClickListener;
+import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Cust_Tab extends AppCompatActivity implements RecAdapter_cust.ItemClickCallback {
+public class Cust_Tab extends Fragment {
 
     RecyclerView recview;
     RecAdapter_cust adapter;
@@ -35,65 +45,66 @@ public class Cust_Tab extends AppCompatActivity implements RecAdapter_cust.ItemC
     Customer cust = new Customer();
     Customer temp_cust = new Customer();
     ProgressDialog pDialog;
+    FloatingActionButton cust_add;
+
+    public Cust_Tab() {
+        // Required empty public constructor
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cust_tab);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.activity_cust_tab, container, false);
+    }
 
-
-        recview = (RecyclerView) findViewById(R.id.recview);
-        recview.setLayoutManager(new LinearLayoutManager(this));
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        cust_add = (FloatingActionButton)getView().findViewById(R.id.add_cust);
+        recview = (RecyclerView) getView().findViewById(R.id.recview);
+        recview.setLayoutManager(new LinearLayoutManager(getContext()));
         recview.setItemAnimator(new DefaultItemAnimator());
-        recview.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        recview.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
 
-        adapter = new RecAdapter_cust(list, this);
+        adapter = new RecAdapter_cust(list, getContext());
         recview.setAdapter(adapter);
-        adapter.setItemClickCallback(this);
 
+        cust_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                startActivity(new Intent(getContext(), Cust_add.class));
+            }
+        });
         new net().execute();
 
+        recview.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recview, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Customer item = list.get(position);
+                Intent i = new Intent(getContext(), Cust_details.class);
+                i.putExtra("id", item.getId());
+                startActivity(i);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
     }
-
-    @Override
-    public void onItemClick(int p) {
-        Customer item = list.get(p);
-        Intent i = new Intent(Cust_Tab.this, Cust_details.class);
-        i.putExtra("id", item.getId());
-        startActivity(i);
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.cust_add, menu);
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.item1:
-                startActivity(new Intent(Cust_Tab.this, Cust_add.class));
-                break;
-        }
-        return false;
-    }
-
 
     class net extends AsyncTask<Void, Void, Void> {
-
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             // Showing progress dialog
-            pDialog = new ProgressDialog(Cust_Tab.this);
+            pDialog = new ProgressDialog(getContext());
             pDialog.setMessage("Please wait...");
             pDialog.setCancelable(false);
             pDialog.show();
-
         }
 
         @Override
@@ -104,6 +115,7 @@ public class Cust_Tab extends AppCompatActivity implements RecAdapter_cust.ItemC
             db.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    pDialog.show();
                     cust = dataSnapshot.getValue(Customer.class);
                     cust.setId(dataSnapshot.getKey());
                     list.add(cust);
@@ -134,10 +146,8 @@ public class Cust_Tab extends AppCompatActivity implements RecAdapter_cust.ItemC
 
                 }
             });
-
             return null;
         }
-
     }
 
 }

@@ -40,14 +40,23 @@
         <activity android:name=".DiscussionActivity.Comment" />
         <activity android:name=".NewUser" />
         <activity android:name=".Splash">
+
+        </activity>
+        <activity android:name=".ImageComment" />
+        <activity android:name=".tablayout.Tabs">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ImageComment" />
-        <activity android:name=".tablayout.Tabs"></activity>
+        <activity android:name=".MainViews.CreateTask"></activity>
+        <activity android:name=".customer.Cust_add" />
+        <activity android:name=".customer.Cust_details" />
+        <activity android:name=".employee.Emp_details" />
+        <activity android:name=".employee.Emp_add" />
+        <activity android:name=".MainViews.TaskDetail"/>
+        <activity android:name=".MainViews.TaskHome" />
     </application>
 
 </manifest>
