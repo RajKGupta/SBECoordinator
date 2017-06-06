@@ -11,16 +11,17 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.rajk.leasingmanagers.MainActivity;
 import com.example.rajk.leasingmanagers.NewTopic;
 import com.example.rajk.leasingmanagers.R;
-import com.example.rajk.leasingmanagers.adapter.commentAdapter;
 import com.example.rajk.leasingmanagers.adapter.topicAdapter;
-import com.example.rajk.leasingmanagers.listener.EmptyRecyclerView;
-import com.example.rajk.leasingmanagers.model.CommentModel;
 import com.example.rajk.leasingmanagers.model.Discussions;
 import com.example.rajk.leasingmanagers.session;
 import com.google.firebase.database.ChildEventListener;
@@ -28,7 +29,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -41,6 +41,7 @@ public class Home extends AppCompatActivity implements topicAdapter.TopicAdapter
     private ArrayList<Discussions>  TopicList= new ArrayList<>();
     private RecyclerView.Adapter mAdapter;
     session se ;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,9 @@ public class Home extends AppCompatActivity implements topicAdapter.TopicAdapter
 
         se = new session(getApplicationContext());
         Topic_list = (RecyclerView) findViewById(R.id.Topic_List);
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Topic");
 
         dbTopic = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Topic").child(se.getPlace_id()).getRef();
         LoadData();
@@ -68,6 +72,28 @@ public class Home extends AppCompatActivity implements topicAdapter.TopicAdapter
             }
         });
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case R.id.signout:
+                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                i.putExtra("SIGN_OUT","SIGN_OUT");
+                startActivity(i);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     void LoadData()

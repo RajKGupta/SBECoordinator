@@ -1,26 +1,20 @@
 package com.example.rajk.leasingmanagers.adapter;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
-import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.example.rajk.leasingmanagers.R;
-import com.example.rajk.leasingmanagers.model.CommentModel;
 import com.example.rajk.leasingmanagers.model.Discussions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 
 /**
@@ -38,8 +32,7 @@ public class topicAdapter extends  RecyclerView.Adapter<topicAdapter.MyViewHolde
             {
             this.list = list;
             this.listener = listener;
-
-        }
+            }
 
             public class MyViewHolder extends RecyclerView.ViewHolder {
                 TextView topic,author,message,timestamp,icon_text;
@@ -78,7 +71,7 @@ public class topicAdapter extends  RecyclerView.Adapter<topicAdapter.MyViewHolde
                 applyClickEvents(holder, position);
                 final DatabaseReference dbTopic = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Topic").child(topic.getPlace_id()).child(topic.getName()).getRef();
                         DatabaseReference dbTopicLastComment  = dbTopic.child("Comment").getRef();
-                        dbTopicLastComment.limitToFirst(1).addChildEventListener(new ChildEventListener() {
+                        dbTopicLastComment.limitToLast(1).addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s)
                             {

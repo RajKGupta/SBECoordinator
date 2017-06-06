@@ -1,6 +1,7 @@
 package com.example.rajk.leasingmanagers;
 
 import android.app.ProgressDialog;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.content.Intent;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements
 
         setContentView(R.layout.activity_main);
         pd=new ProgressDialog(this);
+        s= new session(MainActivity.this);
 
         findViewById(R.id.signIn).setOnClickListener(this);
 
@@ -95,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements
             if(signOut!=null&&signOut.equals("SIGN_OUT"))
         {
             signOut();
+            s.clearoldusersession();
         }
         else
         {
@@ -162,9 +165,10 @@ public class MainActivity extends AppCompatActivity implements
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
-        private void signOut() {
+        private void signOut()
+        {
         // Firebase sign out
-        mAuth.signOut();
+        /*mAuth.signOut();
 
         // Google sign out
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
@@ -173,14 +177,37 @@ public class MainActivity extends AppCompatActivity implements
                     public void onResult(@NonNull Status status) {
                         updateUI(null);
                     }
-                });
+                });*/
+
+            mGoogleApiClient.connect();
+            mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                @Override
+                public void onConnected(@Nullable Bundle bundle) {
+
+                    FirebaseAuth.getInstance().signOut();
+                    if(mGoogleApiClient.isConnected()) {
+                        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(@NonNull Status status) {
+                                if (status.isSuccess()) {
+                                    Log.d(TAG, "User Logged out");
+                                }
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onConnectionSuspended(int i) {
+                    Log.d(TAG, "Google API Client Connection Suspended");
+                }
+            });
     }
 
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
         if (user != null)
         {
-            s= new session(MainActivity.this);
             // check for existing user by shred prferences
             if (s.isolduser().equals("true"))
             {
@@ -202,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements
 
                             User user = dataSnapshot.getValue(User.class);
                             place = user.getPlace_id();
-                            s.create_oldusersession(place,NewUser.hashMap.get(place),user.getUsername());
+                            s.create_oldusersession(NewUser.hashMap2.get(place),place,user.getUsername());
 
                             Intent intent = new Intent(MainActivity.this, Home.class);
                             intent.putExtra("place_id", place);

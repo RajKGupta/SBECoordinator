@@ -40,6 +40,7 @@ public class NewUser extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseUser currentuser;
     public static HashMap<String,String> hashMap = new HashMap<>();
+    public static HashMap<String,String> hashMap2 = new HashMap<>();
     DatabaseReference mDatabase, adduser, Usernames_list, addusername, user_exists;
     session s;
     String place,user_name;
@@ -59,6 +60,13 @@ public class NewUser extends AppCompatActivity {
         hashMap.put("6731 Thompson Street, Gainesville, FL","6731");
         hashMap.put("8771 Thomas Boulevard, Orlando, FL","8771");
         hashMap.put("1234 Verano Place, Orlando, FL","1234");
+
+
+
+        hashMap2.put("449","449 Palo Verde Road, Gainesville, FL");
+        hashMap2.put("6731","6731 Thompson Street, Gainesville, FL");
+        hashMap2.put("8771","8771 Thomas Boulevard, Orlando, FL");
+        hashMap2.put("1234","1234 Verano Place, Orlando, FL");
         auth = FirebaseAuth.getInstance();
         currentuser = auth.getCurrentUser();
 
@@ -92,7 +100,7 @@ public class NewUser extends AppCompatActivity {
                     address.setText("");
                 }
 
-                if ((username.getText().toString().equals(""))&&(address.getText().toString().equals("")))
+                else if ((username.getText().toString().equals(""))&&(address.getText().toString().equals("")))
                 {
                     Toast.makeText(NewUser.this, "Fill in all the credentials", Toast.LENGTH_SHORT).show();
                 }
