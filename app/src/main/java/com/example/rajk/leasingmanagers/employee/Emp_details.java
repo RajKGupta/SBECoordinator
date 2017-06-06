@@ -46,7 +46,6 @@ public class Emp_details extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-
                 Map<String, String> map_new = (Map<String, String>) dataSnapshot.getValue();
 
                 name = (map_new.get("name"));

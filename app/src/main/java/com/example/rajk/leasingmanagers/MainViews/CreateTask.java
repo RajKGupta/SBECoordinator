@@ -5,6 +5,8 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.rajk.leasingmanagers.R;
@@ -18,7 +20,7 @@ public class CreateTask extends AppCompatActivity {
     DatabaseReference dbRef;
     EditText taskName,startDate,endDate,quantity,description,custId;
     String customerId,customerName;
-
+    Button submit_task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +38,14 @@ public class CreateTask extends AppCompatActivity {
         description = (EditText) findViewById(R.id.description);
         custId = (EditText) findViewById(R.id.custId);
         custId.setText(customerId+": "+customerName);
+        submit_task = (Button)findViewById(R.id.submit_task);
 
-
-
+        submit_task.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createTask();
+            }
+        });
     }
     void createTask()
     {
@@ -54,6 +61,7 @@ public class CreateTask extends AppCompatActivity {
 
         long curTime = Calendar.getInstance().getTimeInMillis();
         curTime=9999999999999L-curTime;
+
 
         Task newTask = new Task("task"+curTime,taskname,startdate,enddate,qty,desc,customerId,getRandomMaterialColor("400"));
         dbRef.child("Task").child("task"+curTime).setValue(newTask);

@@ -8,6 +8,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <uses-feature android:name="android.hardware.camera" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:name=".LeasingManagers"
         android:allowBackup="true"
@@ -36,17 +40,26 @@
         <activity android:name=".DiscussionActivity.Comment" />
         <activity android:name=".NewUser" />
         <activity android:name=".Splash">
+
+        </activity>
+        <activity android:name=".ImageComment" />
+        <activity android:name=".tablayout.Tabs">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainViews.CreateTask" />
+        <activity android:name=".MainViews.CreateTask"></activity>
+        <activity android:name=".customer.Cust_add" />
+        <activity android:name=".customer.Cust_details" />
+        <activity android:name=".employee.Emp_details" />
+        <activity android:name=".employee.Emp_add" />
+        <activity android:name=".MainViews.TaskDetail"/>
         <activity android:name=".MainViews.TaskHome" />
         <activity android:name=".MainViews.TaskDetail" />
         <activity android:name=".ForwardTask.forwardTask" />
         <activity android:name=".ForwardTask.forwardTaskScreen2"></activity>
-    </application>
+   </application>
 
 </manifest>

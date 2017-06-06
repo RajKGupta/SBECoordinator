@@ -4,7 +4,8 @@ package com.example.rajk.leasingmanagers.model;
  * Created by RajK on 03-06-2017.
  */
 
-public class Task {
+public class Task
+{
     private String taskId,name,startDate,expEndDate,quotationId,qty,desc,customerId;
     private int color = -1;
 
