@@ -3,6 +3,10 @@ package com.example.rajk.leasingmanagers.employee;
 import android.app.Dialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,12 +18,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.adapter.CustomerTasks_Adapter;
+import com.example.rajk.leasingmanagers.adapter.EmployeeTask_Adapter;
+import com.example.rajk.leasingmanagers.model.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class Emp_details extends AppCompatActivity {
@@ -28,6 +37,10 @@ public class Emp_details extends AppCompatActivity {
     String id,name,num,add,desig,temp_name,temp_add,temp_num,temp_designation;
     TextView Name,Num,Add,Desig,Order;
     DatabaseReference db;
+    RecyclerView rec_employeetask;
+    LinearLayoutManager linearLayoutManager;
+    private ArrayList<Task> TaskList= new ArrayList<>();
+    private EmployeeTask_Adapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +53,12 @@ public class Emp_details extends AppCompatActivity {
         Num = (TextView) findViewById(R.id.num);
         Add = (TextView) findViewById(R.id.add);
         Desig = (TextView) findViewById(R.id.desig);
+
+        rec_employeetask = (RecyclerView)findViewById(R.id.rec_employeetask);
+        linearLayoutManager=new LinearLayoutManager(getApplicationContext());
+        rec_employeetask.setLayoutManager(linearLayoutManager);
+        rec_employeetask.setItemAnimator(new DefaultItemAnimator());
+        rec_employeetask.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
 
         db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(id);
         db.addValueEventListener(new ValueEventListener() {
@@ -64,6 +83,25 @@ public class Emp_details extends AppCompatActivity {
 
             }
         });
+
+        final List<String> listoftasks = new ArrayList<>();
+        db = db.child("AssignedTask").getRef();
+        db.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                    listoftasks.add(childSnapshot.getKey());
+                }
+                mAdapter = new EmployeeTask_Adapter(listoftasks,getApplication(),id);
+                rec_employeetask.setAdapter(mAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
 
     }

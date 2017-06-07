@@ -4,6 +4,10 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,13 +19,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.MainViews.CreateTask;
+import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.adapter.CustomerTasks_Adapter;
+import com.example.rajk.leasingmanagers.adapter.taskAdapter;
+import com.example.rajk.leasingmanagers.adapter.topicAdapter;
+import com.example.rajk.leasingmanagers.model.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Cust_details extends AppCompatActivity {
@@ -30,6 +42,10 @@ public class Cust_details extends AppCompatActivity {
     String id,name,num,add,temp_name,temp_add,temp_num;
     TextView Name,Num,Add;
     DatabaseReference db;
+    RecyclerView rec_customertasks;
+    LinearLayoutManager linearLayoutManager;
+    private ArrayList<Task> TaskList= new ArrayList<>();
+    private CustomerTasks_Adapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +57,12 @@ public class Cust_details extends AppCompatActivity {
         Name = (TextView) findViewById(R.id.name);
         Num = (TextView) findViewById(R.id.num);
         Add = (TextView) findViewById(R.id.add);
+
+        rec_customertasks = (RecyclerView)findViewById(R.id.rec_customertasks);
+        linearLayoutManager=new LinearLayoutManager(getApplicationContext());
+        rec_customertasks.setLayoutManager(linearLayoutManager);
+        rec_customertasks.setItemAnimator(new DefaultItemAnimator());
+        rec_customertasks.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
 
         // get name, num and address from database using id and show them in activity
 
@@ -66,6 +88,25 @@ public class Cust_details extends AppCompatActivity {
 
             }
         });
+
+        final List<String> listoftasks = new ArrayList<>();
+        db = db.child("Task").getRef();
+        db.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+                    listoftasks.add(childSnapshot.getKey());
+                }
+                mAdapter = new CustomerTasks_Adapter(listoftasks,getApplication());
+                rec_customertasks.setAdapter(mAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
     }
 
@@ -132,4 +173,5 @@ public class Cust_details extends AppCompatActivity {
         }
         return true;
     }
+
 }

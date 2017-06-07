@@ -9,15 +9,7 @@ public class CompletedBy {
     private String dateassigned;
     private String datecompleted;
     private String note;
-    private String id;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getNote() {
         return note;
