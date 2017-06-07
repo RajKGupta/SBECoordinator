@@ -87,7 +87,7 @@ public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter
         holder.removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference dbCancelJob = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(taskId).child("AssignedTo").child(emp.getId()).getRef();
+                DatabaseReference dbCancelJob = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(taskId).child("AssignedTo").child(emp.getEmpId()).getRef();
                 dbCancelJob.removeValue();
             }
         });

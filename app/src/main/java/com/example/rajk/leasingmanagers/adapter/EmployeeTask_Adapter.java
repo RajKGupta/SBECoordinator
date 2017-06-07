@@ -49,7 +49,7 @@ public class EmployeeTask_Adapter extends  RecyclerView.Adapter<EmployeeTask_Ada
     @Override
     public void onBindViewHolder(final EmployeeTask_Adapter.MyViewHolder holder, int position)
     {
-        holder.button_rl.setVisibility(View.VISIBLE);
+        holder.button_rl.setVisibility(View.GONE);
         holder.noteAuthor.setText("Coordinator's Note:");
         holder.tv_dateCompleted.setText("Expected Deadline :");
 
