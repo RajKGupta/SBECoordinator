@@ -5,11 +5,14 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.customer.Cust_details;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -68,12 +71,20 @@ public class CreateTask extends AppCompatActivity {
         long curTime = Calendar.getInstance().getTimeInMillis();
         curTime=9999999999999L-curTime;
 
-
-        Task newTask = new Task("task"+curTime,taskname,startdate,enddate,qty,desc,customerId,getRandomMaterialColor("400"));
-        dbRef.child("Task").child("task"+curTime).setValue(newTask);
-
-        dbRef.child("Customer").child(customerId).child("Task").child("task"+curTime).setValue("task"+curTime);
-
+        if(TextUtils.isEmpty(taskname)||TextUtils.isEmpty(qty)||TextUtils.isEmpty(desc)||TextUtils.isEmpty(enddate)||TextUtils.isEmpty(startdate)) {
+            Toast.makeText(CreateTask.this,"Fill all the details",Toast.LENGTH_SHORT).show();
+        }
+        else
+            {
+            Task newTask = new Task("task" + curTime, taskname, startdate, enddate, qty, desc, customerId, getRandomMaterialColor("400"));
+            dbRef.child("Task").child("task" + curTime).setValue(newTask);
+            dbRef.child("Customer").child(customerId).child("Task").child("task" + curTime).setValue("pending");
+                Toast.makeText(CreateTask.this,"Task Created",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(CreateTask.this, Cust_details.class);
+                intent.putExtra("id",customerId);
+                startActivity(intent);
+                finish();
+            }
     }
     private int getRandomMaterialColor(String typeColor) {
         int returnColor = Color.GRAY;
@@ -88,4 +99,11 @@ public class CreateTask extends AppCompatActivity {
         return returnColor;
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(CreateTask.this, Cust_details.class);
+        intent.putExtra("id",customerId);
+        startActivity(intent);
+        finish();
+    }
 }

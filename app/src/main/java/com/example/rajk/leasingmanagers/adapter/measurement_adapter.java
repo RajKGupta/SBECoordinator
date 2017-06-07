@@ -39,7 +39,7 @@ public class measurement_adapter extends  RecyclerView.Adapter<measurement_adapt
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView tag,width,height;
+        TextView tag,width,height,unit;
         CircleImageView fleximage;
 
         public MyViewHolder(View itemView) {
@@ -48,6 +48,7 @@ public class measurement_adapter extends  RecyclerView.Adapter<measurement_adapt
             width = (TextView) itemView.findViewById(R.id.width);
             height = (TextView) itemView.findViewById(R.id.height);
             fleximage = (CircleImageView)itemView.findViewById(R.id.fleximage);
+            unit = (TextView)itemView.findViewById(R.id.unit);
         }
 
     }
@@ -66,6 +67,7 @@ public class measurement_adapter extends  RecyclerView.Adapter<measurement_adapt
         holder.tag.setText(msr.getTag());
         holder.width.setText(msr.getWidth());
         holder.height.setText(msr.getHeight());
+        holder.unit.setText(msr.getUnit());
         Picasso.with(context).load(msr.getFleximage()).into(holder.fleximage);
 
     }

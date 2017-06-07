@@ -55,13 +55,12 @@ public class forwardTaskScreen2 extends AppCompatActivity {
             public void onClick(View v) {
                 String deadline  = enddate.getText().toString().trim();
                 String cooordnote = note.getText().toString().trim();
-                String id = Calendar.getInstance().getTimeInMillis()+"";
-                CompletedBy completedBy = new CompletedBy(empId,curdate,deadline,cooordnote,id);
-                DatabaseReference dbAssigned = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(task_id).child("AssignedTo").child(id);
+                CompletedBy completedBy = new CompletedBy(empId,curdate,deadline,cooordnote);
+                DatabaseReference dbAssigned = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(task_id).child("AssignedTo").child(empId);
                 dbAssigned.setValue(completedBy);
 
                 DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(empId).child("AssignedTask").child(task_id);
-                dbEmployee.setValue(task_id); //for employee
+                dbEmployee.setValue("pending"); //for employee
 
                 Toast.makeText(forwardTaskScreen2.this,"Task Assigned to "+empName,Toast.LENGTH_SHORT).show();
                 Intent intent1 =new Intent(forwardTaskScreen2.this, TaskDetail.class);

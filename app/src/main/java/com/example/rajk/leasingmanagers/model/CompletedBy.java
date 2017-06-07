@@ -9,15 +9,7 @@ public class CompletedBy {
     private String dateassigned;
     private String datecompleted;
     private String note;
-    private String id;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getNote() {
         return note;
@@ -55,11 +47,10 @@ public class CompletedBy {
     public CompletedBy() {
     }
 
-    public CompletedBy(String empId, String dateassigned, String datecompleted, String note, String id) {
+    public CompletedBy(String empId, String dateassigned, String datecompleted, String note) {
         this.empId = empId;
         this.dateassigned = dateassigned;
         this.datecompleted = datecompleted;
         this.note = note;
-        this.id = id;
     }
 }
