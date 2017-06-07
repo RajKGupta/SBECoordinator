@@ -5,26 +5,14 @@ package com.example.rajk.leasingmanagers.model;
  */
 
 public class Quotation {
-    private String quotationId,quotationUrl,approvedByCust,approvedByAdmin;
+    private String approvedByCust;
 
     public Quotation() {
 
     }
 
-    public String getQuotationId() {
-        return quotationId;
-    }
-
-    public void setQuotationId(String quotationId) {
-        this.quotationId = quotationId;
-    }
-
-    public String getQuotationUrl() {
-        return quotationUrl;
-    }
-
-    public void setQuotationUrl(String quotationUrl) {
-        this.quotationUrl = quotationUrl;
+    public Quotation(String approvedByCust) {
+        this.approvedByCust = approvedByCust;
     }
 
     public String getApprovedByCust() {
@@ -35,11 +23,5 @@ public class Quotation {
         this.approvedByCust = approvedByCust;
     }
 
-    public String getApprovedByAdmin() {
-        return approvedByAdmin;
-    }
 
-    public void setApprovedByAdmin(String approvedByAdmin) {
-        this.approvedByAdmin = approvedByAdmin;
-    }
 }

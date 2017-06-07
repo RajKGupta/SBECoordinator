@@ -10,12 +10,22 @@ public class measurement
     private String width;
     private String height;
     private String fleximage;
+    private String unit;
 
-    public measurement(String tag, String width, String height, String fleximage) {
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public measurement(String tag, String width, String height, String fleximage,String unit) {
         this.tag = tag;
         this.width = width;
         this.height = height;
         this.fleximage = fleximage;
+        this.unit = unit;
     }
 
     public measurement() {

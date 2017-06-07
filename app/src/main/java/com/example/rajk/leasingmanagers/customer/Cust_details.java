@@ -166,7 +166,7 @@ public class Cust_details extends AppCompatActivity {
             case R.id.item2:
                 Intent intent = new Intent(Cust_details.this, CreateTask.class);
                 intent.putExtra("customerId",id);
-                intent.putExtra("customerName",Name.getText());
+                intent.putExtra("customerName",Name.getText().toString().trim());
                 startActivity(intent);
                 finish();
                 break;
