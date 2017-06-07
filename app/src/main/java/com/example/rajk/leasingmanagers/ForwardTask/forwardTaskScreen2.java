@@ -59,12 +59,15 @@ public class forwardTaskScreen2 extends AppCompatActivity {
                 CompletedBy completedBy = new CompletedBy(empId,curdate,deadline,cooordnote,id);
                 DatabaseReference dbAssigned = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(task_id).child("AssignedTo").child(id);
                 dbAssigned.setValue(completedBy);
+
+                DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(empId).child("AssignedTask").child(task_id);
+                dbEmployee.setValue(task_id); //for employee
+
                 Toast.makeText(forwardTaskScreen2.this,"Task Assigned to "+empName,Toast.LENGTH_SHORT).show();
                 Intent intent1 =new Intent(forwardTaskScreen2.this, TaskDetail.class);
                 intent1.putExtra("task_id",task_id);
                 startActivity(intent1);
                 finish();
-//TODO do something to add the values to the employee
             }
         });
 

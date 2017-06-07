@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -28,10 +29,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class measurement_adapter extends  RecyclerView.Adapter<measurement_adapter.MyViewHolder>
 {
-    ArrayList<measurement> list = new ArrayList<>();
+    List<measurement> list = new ArrayList<>();
     private Context context;
 
-    public measurement_adapter(ArrayList<measurement> list, Context context)
+    public measurement_adapter(List<measurement> list, Context context)
     {
         this.list = list;
         this.context = context;
@@ -54,7 +55,7 @@ public class measurement_adapter extends  RecyclerView.Adapter<measurement_adapt
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.topic_list_row,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.measurement_row,parent,false);
         return new MyViewHolder(view);
 
     }

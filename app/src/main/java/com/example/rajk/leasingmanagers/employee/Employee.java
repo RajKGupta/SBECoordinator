@@ -11,7 +11,6 @@ public class Employee {
     private String name;
     private String phone_num;
     private String address;
-    private String num_tasks;
     private String designation;
     private String username,password;
 
@@ -63,14 +62,6 @@ public class Employee {
         this.address = address;
     }
 
-    public void setNum_tasks(String num_tasks) {
-        this.num_tasks = num_tasks;
-    }
-
-    public String getNum_tasks() {
-        return num_tasks;
-    }
-
     public String getDesignation() {
         return designation;
     }
@@ -87,6 +78,5 @@ public class Employee {
         this.designation = designation;
         this.username = username;
         this.password = password;
-        this.num_tasks="0";
-    }
+        }
 }

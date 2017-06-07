@@ -9,7 +9,16 @@ public class Customer {
     private String name;
     private String phone_num;
     private String address;
-    private String id;
+    private String id,password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     private int Color=-1;
 
     public int getColor() {
@@ -48,12 +57,13 @@ public class Customer {
         return id;
     }
 
-    public Customer(String name, String phone_num, String address, String id, int color) {
+    public Customer(String name, String phone_num, String address, String id, int color,String password) {
         this.name = name;
         this.phone_num = phone_num;
         this.address = address;
         this.id = id;
         Color = color;
+        this.password = password;
     }
 
     public String getPhone_num() {

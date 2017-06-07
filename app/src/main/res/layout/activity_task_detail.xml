@@ -211,19 +211,32 @@
             </LinearLayout>
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <ImageButton
+                    android:layout_height="match_parent"
+                    android:id="@+id/button_rl"
+                    >
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:elevation="5dp"
-                        android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:layout_margin="3dp"
-                        android:textStyle="bold"
-                        android:padding="3dp"
-                        android:textColor="#FFFFFF"
-                        android:background="@mipmap/ic_download"
-                        android:id="@+id/downloadQuotation"/>
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true">
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/upload"
+                            android:background="@mipmap/ic_upload" />
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/download"
+                            android:layout_marginLeft="15dp"
+                            android:background="@mipmap/ic_download"
+                            />
+
+                    </LinearLayout>
                 </RelativeLayout>
             </LinearLayout>
             <TextView

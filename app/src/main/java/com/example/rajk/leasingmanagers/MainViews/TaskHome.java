@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.example.rajk.leasingmanagers.DiscussionActivity.Comment;
 import com.example.rajk.leasingmanagers.MainActivity;
@@ -42,7 +43,7 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
     LinearLayoutManager linearLayoutManager;
     private ArrayList<Task> TaskList= new ArrayList<>();
     private RecyclerView.Adapter mAdapter;
-
+    private String selectedFilePath;
     Context context;
     public TaskHome() {
         // Required empty public constructor
@@ -63,7 +64,6 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
 
 
         task_list = (RecyclerView) getView().findViewById(R.id.task_list);
-
         dbTask = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").getRef();
         LoadData();
         mAdapter = new taskAdapter(TaskList,getContext(),this);
