@@ -86,14 +86,15 @@ public class CustomerTasks_Adapter extends  RecyclerView.Adapter<CustomerTasks_A
             }
         });
 
-        holder.viewdetail.setOnClickListener(new View.OnClickListener() {
+        holder.viewdetail.setVisibility(View.GONE);
+        /*setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context,TaskDetail.class);
                 intent.putExtra("task_id",list.get(position));
                 context.startActivity(intent);
             }
-        });
+        });*/
     }
     @Override
     public int getItemCount() {

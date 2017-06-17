@@ -52,4 +52,6 @@ public class CompletedBy {
         this.dateassigned = dateassigned;
         this.datecompleted = datecompleted;
         this.note = note;
+    }
+
 }
