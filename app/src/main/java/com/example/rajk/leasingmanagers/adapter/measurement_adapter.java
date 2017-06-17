@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -28,17 +29,17 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class measurement_adapter extends  RecyclerView.Adapter<measurement_adapter.MyViewHolder>
 {
-    ArrayList<measurement> list = new ArrayList<>();
+    List<measurement> list = new ArrayList<>();
     private Context context;
 
-    public measurement_adapter(ArrayList<measurement> list, Context context)
+    public measurement_adapter(List<measurement> list, Context context)
     {
         this.list = list;
         this.context = context;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView tag,width,height;
+        TextView tag,width,height,unit;
         CircleImageView fleximage;
 
         public MyViewHolder(View itemView) {
@@ -47,6 +48,7 @@ public class measurement_adapter extends  RecyclerView.Adapter<measurement_adapt
             width = (TextView) itemView.findViewById(R.id.width);
             height = (TextView) itemView.findViewById(R.id.height);
             fleximage = (CircleImageView)itemView.findViewById(R.id.fleximage);
+            unit = (TextView)itemView.findViewById(R.id.unit);
         }
 
     }
@@ -54,7 +56,7 @@ public class measurement_adapter extends  RecyclerView.Adapter<measurement_adapt
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.topic_list_row,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.measurement_row,parent,false);
         return new MyViewHolder(view);
 
     }
@@ -65,6 +67,7 @@ public class measurement_adapter extends  RecyclerView.Adapter<measurement_adapt
         holder.tag.setText(msr.getTag());
         holder.width.setText(msr.getWidth());
         holder.height.setText(msr.getHeight());
+        holder.unit.setText(msr.getUnit());
         Picasso.with(context).load(msr.getFleximage()).into(holder.fleximage);
 
     }

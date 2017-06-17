@@ -62,7 +62,6 @@ public class RecAdapter_cust extends RecyclerView.Adapter<RecAdapter_cust.RecHol
             name = (TextView) itemView.findViewById(R.id.name);
             icon_text =(TextView)itemView.findViewById(R.id.icon_text);
             imgProfile = (ImageView)itemView.findViewById(R.id.icon_profile);
-
         }
     }
     

@@ -25,11 +25,10 @@ import java.util.Calendar;
 
 public class Cust_add extends AppCompatActivity {
 
-    EditText Name, Add, Num;
-    String name, add, num;
+    EditText Name, Add, Num,Password;
+    String name, add, num,password;
     Button submit;
     DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Customer").getRef();
-    Long n;
     DatabaseReference database;
 
     @Override
@@ -40,20 +39,21 @@ public class Cust_add extends AppCompatActivity {
         Name = (EditText) findViewById(R.id.name);
         Add = (EditText) findViewById(R.id.add);
         Num = (EditText) findViewById(R.id.num);
+        Password =(EditText)findViewById(R.id.password);
         submit = (Button) findViewById(R.id.submit);
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                name = Name.getText().toString();
-                add = Add.getText().toString();
-                num = Num.getText().toString();
+                name = Name.getText().toString().trim();
+                add = Add.getText().toString().trim();
+                num = Num.getText().toString().trim();
+                password = Password.getText().toString().trim();
                 if (TextUtils.isEmpty(name) || TextUtils.isEmpty(add) || TextUtils.isEmpty(num))
                     Toast.makeText(Cust_add.this, "Enter Details", Toast.LENGTH_LONG).show();
                 else {
-                            long id = Calendar.getInstance().getTimeInMillis();
-                            Customer customer = new Customer(name,num,add,id+"",getRandomMaterialColor("400"));
+                            Customer customer = new Customer(name,num,add,num,getRandomMaterialColor("400"),password);
                             database = db.child(Calendar.getInstance().getTimeInMillis()+"");
                             database.setValue(customer);
 
