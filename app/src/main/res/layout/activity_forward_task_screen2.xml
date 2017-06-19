@@ -76,7 +76,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView3"
         android:hint="DD/MM/YYYY"
-        android:inputType="date" />
+        android:inputType="date"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        />
 
     <TextView
     android:layout_width="match_parent"

@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.rajk.leasingmanagers.MainViews.CreateTask;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.DataSnapshot;
@@ -31,7 +32,8 @@ public class Emp_add extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emp_add);
-
+        getSupportActionBar().setTitle("Add New Employee");
+        getSupportActionBar().setIcon(R.mipmap.ic_new_person_white);
         Name = (EditText) findViewById(R.id.name);
         Num = (EditText) findViewById(R.id.num);
         Add = (EditText) findViewById(R.id.add);

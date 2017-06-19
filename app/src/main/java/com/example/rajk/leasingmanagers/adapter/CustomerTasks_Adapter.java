@@ -32,11 +32,14 @@ public class CustomerTasks_Adapter extends  RecyclerView.Adapter<CustomerTasks_A
 {
     List<String> list = new ArrayList<>();
     private Context context;
+    private CustomerTaskAdapterListener listener;
 
-    public CustomerTasks_Adapter(List<String> list, Context c)
+
+    public CustomerTasks_Adapter(List<String> list, Context c,CustomerTaskAdapterListener listener)
     {
         this.list = list;
         this.context = c;
+        this.listener =listener;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -70,6 +73,7 @@ public class CustomerTasks_Adapter extends  RecyclerView.Adapter<CustomerTasks_A
             @Override
             public void onDataChange(DataSnapshot dataSnapshot)
             {
+                if(dataSnapshot.exists()) {
                     Task task = dataSnapshot.getValue(Task.class);
                     holder.taskname.setText(task.getName());
                     String iconText = task.getName().toUpperCase();
@@ -77,7 +81,8 @@ public class CustomerTasks_Adapter extends  RecyclerView.Adapter<CustomerTasks_A
                     holder.imgProfile.setImageResource(R.drawable.bg_circle);
                     holder.imgProfile.setColorFilter(task.getColor());
                     holder.timestamp.setText(task.getStartDate());
-
+                    applyClickEvents(holder,position);
+                }
             }
 
             @Override
@@ -86,18 +91,25 @@ public class CustomerTasks_Adapter extends  RecyclerView.Adapter<CustomerTasks_A
             }
         });
 
-        holder.viewdetail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context,TaskDetail.class);
-                intent.putExtra("task_id",list.get(position));
-                context.startActivity(intent);
             }
-        });
-    }
     @Override
     public int getItemCount() {
         return list.size();
     }
+
+    public interface CustomerTaskAdapterListener {
+        void onCustomerTaskRowClicked(int position);
+    }
+    private void applyClickEvents(CustomerTasks_Adapter.MyViewHolder holder, final int position) {
+
+        holder.viewdetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onCustomerTaskRowClicked(position);
+            }
+        });
+
+    }
+
 
 }

@@ -41,17 +41,17 @@ public class EmployeeTask_Adapter extends  RecyclerView.Adapter<EmployeeTask_Ada
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.assignedto_list_row,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.employeetask_row,parent,false);
         return new MyViewHolder(view);
 
     }
 
     @Override
-    public void onBindViewHolder(final EmployeeTask_Adapter.MyViewHolder holder, int position)
+    public void onBindViewHolder(final EmployeeTask_Adapter.MyViewHolder holder, final int position)
     {
-        holder.button_rl.setVisibility(View.GONE);
+       // holder.button_rl.setVisibility(View.GONE);
         holder.noteAuthor.setText("Coordinator's Note:");
-        holder.tv_dateCompleted.setText("Expected Deadline :");
+        holder.tv_dateCompleted.setText("Deadline :");
 
         DatabaseReference refh = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(list.get(position)).child("AssignedTo").child(empId).getRef();
 
@@ -66,15 +66,16 @@ public class EmployeeTask_Adapter extends  RecyclerView.Adapter<EmployeeTask_Ada
                 holder.dateCompleted.setText(emp.getDatecompleted());
                 holder.noteString.setText(emp.getNote());
 
-                DatabaseReference dbEmp = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(empId).getRef();
+                DatabaseReference dbEmp = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(list.get(position)).getRef();
                 dbEmp.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String empname = dataSnapshot.child("name").getValue(String.class);
                         holder.employeename.setText(empname);
 
-                        String empdesig = dataSnapshot.child("designation").getValue(String.class);
-                        holder.employeeDesig.setText(empdesig);
+                        //String empdesig = dataSnapshot.child("designation").getValue(String.class);
+                        holder.employeeDesig.setVisibility(View.GONE);
+                        //holder.employeeDesig.setText(empdesig);
 
                     }
 

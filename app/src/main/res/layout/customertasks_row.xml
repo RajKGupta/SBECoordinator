@@ -18,7 +18,12 @@
         android:clickable="true"
         android:orientation="vertical"
         android:paddingLeft="72dp"
-        android:paddingRight="@dimen/padding_list_row">
+        android:paddingRight="@dimen/padding_list_row"
+        android:layout_alignTop="@+id/viewdetails"
+        android:layout_alignRight="@+id/viewdetails"
+        android:layout_alignEnd="@+id/viewdetails"
+        android:layout_marginRight="17dp"
+        android:layout_marginEnd="17dp">
 
         <TextView
             android:id="@+id/tv_taskname"

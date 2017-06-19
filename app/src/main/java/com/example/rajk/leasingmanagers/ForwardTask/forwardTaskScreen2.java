@@ -1,6 +1,7 @@
 package com.example.rajk.leasingmanagers.ForwardTask;
 
 import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
+import com.codetroopers.betterpickers.calendardatepicker.MonthAdapter;
 import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
@@ -18,8 +21,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
-public class forwardTaskScreen2 extends AppCompatActivity {
+public class forwardTaskScreen2 extends FragmentActivity implements CalendarDatePickerDialogFragment.OnDateSetListener {
     Button submit;
     EditText name,designation,enddate,note,startDate;
     String empId,empName,empDesig;
@@ -49,7 +53,24 @@ public class forwardTaskScreen2 extends AppCompatActivity {
         Calendar c = Calendar.getInstance();
         curdate = dateFormat.format(c.getTime());
         startDate.setText(curdate);
+        enddate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Date now = new Date();
+                Calendar calendar = new GregorianCalendar();
+                calendar.setTime(now);
+                MonthAdapter.CalendarDay minDate = new MonthAdapter.CalendarDay(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 
+                CalendarDatePickerDialogFragment cdp = new CalendarDatePickerDialogFragment()
+                        .setOnDateSetListener(forwardTaskScreen2.this)
+                        .setFirstDayOfWeek(Calendar.SUNDAY)
+                        .setDateRange( minDate,null)
+                        .setDoneText("Ok")
+                        .setCancelText("Cancel").setThemeLight();
+                cdp.show(getSupportFragmentManager(), "Select Day, Month and Year.");
+
+            }
+        });
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,6 +100,12 @@ public class forwardTaskScreen2 extends AppCompatActivity {
         intent.putExtra("task_id",task_id);
         startActivity(intent);
         finish();
+
+    }
+
+    @Override
+    public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
+        enddate.setText(dayOfMonth+"/"+(monthOfYear+1)+"/"+year);
 
     }
 }
