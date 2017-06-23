@@ -35,11 +35,11 @@ public class Emp_details extends AppCompatActivity {
 
     Dialog dialog;
     String id,name,num,add,desig,temp_name,temp_add,temp_num,temp_designation;
-    TextView Name,Num,Add,Desig,Order;
+    EditText Name,Num,Add,Desig;
     DatabaseReference db;
     RecyclerView rec_employeetask;
     LinearLayoutManager linearLayoutManager;
-    private ArrayList<Task> TaskList= new ArrayList<>();
+    private ArrayList<Task> TaskList = new ArrayList<>();
     private EmployeeTask_Adapter mAdapter;
 
     @Override
@@ -49,10 +49,10 @@ public class Emp_details extends AppCompatActivity {
 
         id = getIntent().getStringExtra("id");
 
-        Name = (TextView) findViewById(R.id.name);
-        Num = (TextView) findViewById(R.id.num);
-        Add = (TextView) findViewById(R.id.add);
-        Desig = (TextView) findViewById(R.id.desig);
+        Name = (EditText) findViewById(R.id.name);
+        Num = (EditText) findViewById(R.id.num);
+        Add = (EditText) findViewById(R.id.add);
+        Desig = (EditText) findViewById(R.id.desig);
 
         rec_employeetask = (RecyclerView)findViewById(R.id.rec_employeetask);
         linearLayoutManager=new LinearLayoutManager(getApplicationContext());
@@ -76,6 +76,8 @@ public class Emp_details extends AppCompatActivity {
                 Num.setText(num);
                 Add.setText(add);
                 Desig.setText(desig);
+                getSupportActionBar().setTitle(name);
+                getSupportActionBar().setSubtitle(desig);
             }
 
             @Override
@@ -108,7 +110,7 @@ public class Emp_details extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.cust_menu,menu);
+        getMenuInflater().inflate(R.menu.emp_menu,menu);
         return true;
     }
 

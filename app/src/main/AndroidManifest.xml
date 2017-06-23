@@ -46,7 +46,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".Splash"
             android:screenOrientation="portrait">
-
+            <activity android:name="com.zfdang.multiple_images_selector.ImagesSelectorActivity" android:configChanges="orientation|screenSize"/>
         </activity>
         <activity android:name=".ImageComment"
             android:screenOrientation="portrait"/>

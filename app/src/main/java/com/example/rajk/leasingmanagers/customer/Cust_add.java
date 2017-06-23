@@ -35,6 +35,8 @@ public class Cust_add extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cust_add);
+        getSupportActionBar().setTitle("Add New Customer");
+        getSupportActionBar().setIcon(R.mipmap.ic_new_person_white);
 
         Name = (EditText) findViewById(R.id.name);
         Add = (EditText) findViewById(R.id.add);

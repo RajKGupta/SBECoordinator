@@ -1,7 +1,9 @@
 package com.example.rajk.leasingmanagers.customer;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,8 +25,7 @@ import com.example.rajk.leasingmanagers.MainViews.CreateTask;
 import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.CustomerTasks_Adapter;
-import com.example.rajk.leasingmanagers.adapter.taskAdapter;
-import com.example.rajk.leasingmanagers.adapter.topicAdapter;
+import com.example.rajk.leasingmanagers.model.CustomerAccount;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,22 +38,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Cust_details extends AppCompatActivity {
+public class Cust_details extends AppCompatActivity implements CustomerTasks_Adapter.CustomerTaskAdapterListener{
 
-    Dialog dialog;
+    AlertDialog customerEditDetails;
     String id,name,num,add,temp_name,temp_add,temp_num;
     EditText Name,Num,Add;
-    DatabaseReference db;
+    DatabaseReference db,dbTask,dbaccountinfo;
     RecyclerView rec_customertasks;
     LinearLayoutManager linearLayoutManager;
+    ValueEventListener dblistener,dbtasklistener,dbaccountlistener;
     private ArrayList<Task> TaskList= new ArrayList<>();
     private CustomerTasks_Adapter mAdapter;
-
+    private ProgressDialog progressDialog;
+    public AlertDialog customerAccountDialog;
+    private List<String> listoftasks = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cust_details);
-
+        progressDialog = new ProgressDialog(this);
         id = getIntent().getStringExtra("id");
 
         Name = (EditText) findViewById(R.id.name);
@@ -67,7 +72,7 @@ public class Cust_details extends AppCompatActivity {
         // get name, num and address from database using id and show them in activity
 
         db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Customer").child(id);
-        db.addValueEventListener(new ValueEventListener() {
+        dblistener =db.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -77,7 +82,7 @@ public class Cust_details extends AppCompatActivity {
                 name = (map_new.get("name"));
                 add = (map_new.get("address"));
                 num = (map_new.get("phone_num"));
-
+                getSupportActionBar().setTitle(name);
                 Name.setText(name);
                 Num.setText(num);
                 Add.setText(add);
@@ -89,15 +94,15 @@ public class Cust_details extends AppCompatActivity {
             }
         });
 
-        final List<String> listoftasks = new ArrayList<>();
-        db = db.child("Task").getRef();
-        db.addValueEventListener(new ValueEventListener() {
+
+        dbTask = db.child("Task").getRef();
+        dbtasklistener = dbTask.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
                     listoftasks.add(childSnapshot.getKey());
                 }
-                mAdapter = new CustomerTasks_Adapter(listoftasks,getApplication());
+                mAdapter = new CustomerTasks_Adapter(listoftasks,getApplication(),Cust_details.this);
                 rec_customertasks.setAdapter(mAdapter);
             }
 
@@ -123,15 +128,16 @@ public class Cust_details extends AppCompatActivity {
 
                 final EditText name_new,num_new,add_new;
                 Button sub;
+                customerEditDetails = new AlertDialog.Builder(this)
+                        .setTitle("Edit Customer Details")
+                        .setView(R.layout.edit_cust).setIcon(R.mipmap.ic_edit_pink)
+                        .create();
+                customerEditDetails.show();
 
-                dialog = new Dialog(Cust_details.this);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setContentView(R.layout.edit_cust);
-
-                name_new = (EditText) dialog.findViewById(R.id.name);
-                num_new = (EditText) dialog.findViewById(R.id.num);
-                add_new = (EditText) dialog.findViewById(R.id.add);
-                sub = (Button) dialog.findViewById(R.id.submit);
+                name_new = (EditText) customerEditDetails.findViewById(R.id.name);
+                num_new = (EditText) customerEditDetails.findViewById(R.id.num);
+                add_new = (EditText) customerEditDetails.findViewById(R.id.add);
+                sub = (Button) customerEditDetails.findViewById(R.id.submit);
 
                 name_new.setText(name);
                 num_new.setText(num);
@@ -150,17 +156,15 @@ public class Cust_details extends AppCompatActivity {
 
                         else
                         {
-                            db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Customer").child(id);
                             db.child("name").setValue(temp_name);
                             db.child("address").setValue(temp_add);
                             db.child("phone_num").setValue(temp_num);
 
-                            dialog.dismiss();
+                            customerEditDetails.dismiss();
                         }
                     }
                 });
 
-                dialog.show();
                 break;
 
             case R.id.item2:
@@ -170,8 +174,101 @@ public class Cust_details extends AppCompatActivity {
                 startActivity(intent);
                 finish();
                 break;
+
+            case R.id.item3:
+                customerAccountDialog = new AlertDialog.Builder(this)
+                        .setTitle("Account Information")
+                        .setView(R.layout.account_info_layout).setIcon(R.mipmap.ic_account_info_pink)
+                        .create();
+                customerAccountDialog.show();
+                final Button edit,submit;
+                final EditText total,advance,balance;
+                final LinearLayout balanceLayout;
+                total = (EditText)customerAccountDialog.findViewById(R.id.total);
+                advance = (EditText)customerAccountDialog.findViewById(R.id.advance);
+                balance = (EditText)customerAccountDialog.findViewById(R.id.balance);
+                edit = (Button)customerAccountDialog.findViewById(R.id.edit);
+                submit = (Button)customerAccountDialog.findViewById(R.id.submit);
+                balanceLayout = (LinearLayout)customerAccountDialog.findViewById(R.id.balanceLayout);
+                 dbaccountinfo = db.child("Account").getRef();
+                dbaccountlistener =dbaccountinfo.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists()) {
+
+                            CustomerAccount customerAccount = dataSnapshot.getValue(CustomerAccount.class);
+                            total.setText(customerAccount.getTotal() + "");
+                            advance.setText(customerAccount.getAdvance() + "");
+                            balance.setText((customerAccount.getTotal() - customerAccount.getAdvance()) + "");
+                        }}
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                edit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        total.setEnabled(true);
+                        advance.setEnabled(true);
+                        balanceLayout.setVisibility(View.GONE);
+                        submit.setVisibility(View.VISIBLE);
+                        edit.setVisibility(View.GONE);
+                    }
+                });
+
+                submit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CustomerAccount  customerAccount = new CustomerAccount();
+                        customerAccount.setTotal(Integer.parseInt(total.getText().toString()));
+                        customerAccount.setAdvance(Integer.parseInt(advance.getText().toString()));
+                        dbaccountinfo.setValue(customerAccount);
+                        total.setEnabled(false);
+                        advance.setEnabled(false);
+                        balanceLayout.setVisibility(View.VISIBLE);
+                        submit.setVisibility(View.GONE);
+                        edit.setVisibility(View.VISIBLE);
+
+                    }
+                });
+                break;
+            case R.id.item4:
+                break;
+
+            case  R.id.item6:
+                dbaccountinfo.removeValue();
+                break;
+
+
         }
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(db!=null && dblistener!=null)
+        db.removeEventListener(dblistener);
+
+        if(dbTask!=null && dbtasklistener!=null)
+            dbTask.removeEventListener(dbtasklistener);
+
+        if(dbaccountinfo!=null && dbaccountlistener!=null)
+            dbaccountinfo.removeEventListener(dbaccountlistener);
+    }
+
+    @Override
+    public void onCustomerTaskRowClicked(int position) {
+        Intent intent = new Intent(this,TaskDetail.class);
+        intent.putExtra("task_id",listoftasks.get(position));
+        startActivity(intent);
+    }
 }
