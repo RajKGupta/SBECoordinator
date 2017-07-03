@@ -1,10 +1,12 @@
 package com.example.rajk.leasingmanagers.model;
 
+import java.io.Serializable;
+
 /**
  * Created by RajK on 03-06-2017.
  */
 
-public class Task
+public class Task implements Serializable
 {
     private String taskId,name,startDate,expEndDate,quotationId,qty,desc,customerId;
     private int color = -1;

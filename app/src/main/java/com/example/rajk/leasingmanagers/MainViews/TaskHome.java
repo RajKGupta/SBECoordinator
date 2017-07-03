@@ -26,6 +26,7 @@ import com.example.rajk.leasingmanagers.adapter.taskAdapter;
 import com.example.rajk.leasingmanagers.helper.FilePath;
 import com.example.rajk.leasingmanagers.model.Quotation;
 import com.example.rajk.leasingmanagers.model.Task;
+import com.example.rajk.leasingmanagers.services.UploadQuotationService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -215,10 +216,19 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
                     selectedFilePath = FilePath.getPath(getActivity(),selectedFileUri);
                 }
 
+
                 if(selectedFilePath != null && !selectedFilePath.equals(""))
                 {
                     mAdapter.resetAnimationIndex();
                     List<Integer> selectedItemPositions = mAdapter.getSelectedItems();
+
+                    /*Intent serviceIntent = new Intent(getActivity(), UploadQuotationService.class);
+                    serviceIntent.putExtra("TaskList", TaskList);
+                    serviceIntent.putExtra("selectedFileUri", selectedFileUri);
+                    serviceIntent.putExtra("selectedItemPositions", String.valueOf(selectedItemPositions));
+                    getActivity().startService(serviceIntent);
+                    getActivity().finish();*/
+
                     for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
                         selectedItemPositions.get(i);
                         final Task task = TaskList.get(selectedItemPositions.get(i));

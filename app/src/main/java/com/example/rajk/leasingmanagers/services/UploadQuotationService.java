@@ -12,6 +12,8 @@ import android.support.v7.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.model.Quotation;
+import com.example.rajk.leasingmanagers.model.Task;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -22,6 +24,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by SoumyaAgarwal on 7/3/2017.
@@ -29,15 +32,11 @@ import java.util.ArrayList;
 
 public class UploadQuotationService extends IntentService
 {
-    public static ArrayList<String> picUriList = new ArrayList<String>();
-    public static String taskid;
+    public static ArrayList<Task> TaskList = new ArrayList<Task>();
+    public static Uri selectedFileUri;
+    public static List<Integer> selectedItemPositions = new ArrayList<>();
     private NotificationManager notificationManager;
     private NotificationCompat.Builder mBuilder;
-    private static int totalnoofimages;
-    private static int s = 0;
-    private static int f = 0;
-
-    //private boolean isSuccess;
 
     public UploadQuotationService() {
         super("Upload");
@@ -47,7 +46,6 @@ public class UploadQuotationService extends IntentService
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         int icon = R.mipmap.ic_upload;
-        //isSuccess = false;
         mBuilder = new NotificationCompat.Builder(
                 getApplicationContext());
         mBuilder.setSmallIcon(icon)
@@ -68,10 +66,10 @@ public class UploadQuotationService extends IntentService
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
 
-            picUriList = intent.getStringArrayListExtra("picUriList");
-            taskid = intent.getStringExtra("taskid");
-            totalnoofimages = picUriList.size();
-            saveImagesToFirebase(picUriList);
+            TaskList = (ArrayList<Task>) intent.getSerializableExtra("TaskList");
+            selectedFileUri = Uri.parse(intent.getStringExtra("selectedFileUri"));
+            selectedItemPositions = intent.getIntegerArrayListExtra("selectedItemPositions");
+            saveQuotationtoFirebase(TaskList,selectedItemPositions);
         }
     }
 
@@ -80,54 +78,39 @@ public class UploadQuotationService extends IntentService
         super.onDestroy();
     }
 
-    private void saveImagesToFirebase(ArrayList<String> picUriList)
+    private void saveQuotationtoFirebase(ArrayList<Task> TaskList,List<Integer> selectedItemPositions)
     {
-        Toast.makeText(getBaseContext(),"Uploading Images in Background", Toast.LENGTH_SHORT).show();
-        for (String p: picUriList)
-        {
-            FirebaseStorage storageRef = FirebaseStorage.getInstance();
-            final StorageReference mediaRef;
 
-            final long timestamp = System.currentTimeMillis();
-            final String fileNameOnFirebase = String.valueOf(timestamp);
+        Toast.makeText(getBaseContext(),"Uploading Quotation in Background", Toast.LENGTH_SHORT).show();
 
-            mediaRef = storageRef.getReference().child("TaskImages").child(taskid).child(fileNameOnFirebase);
+        for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+            selectedItemPositions.get(i);
 
-            try
-            {
-                mediaRef.putFile(Uri.fromFile(new File(p))).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        s++;
-                        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(taskid).child("DescImages");
-                        ref.child(fileNameOnFirebase).setValue(taskSnapshot.getDownloadUrl());
+            final Task task = TaskList.get(selectedItemPositions.get(i));
 
-                        if (f+s==totalnoofimages)
-                        {
-                            updateNotification(s+" Uploaded ,"+f+" Failed ");
+            StorageReference riversRef = FirebaseStorage.getInstance().getReference().child("Quotation").child(task.getTaskId());
+
+            riversRef.putFile(selectedFileUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // Get a URL to the uploaded content
+                            Quotation quotation = new Quotation("No");
+                            DatabaseReference dbQuotation = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(task.getTaskId()).child("Quotation").getRef();
+                            dbQuotation.setValue(quotation);
+                            updateNotification("Succesfully Uploaded");
                             stopSelf();
                         }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        f++;
-                        if (f+s==totalnoofimages)
-                        {
-                            updateNotification(s+" Uploaded ,"+f+" Failed ");
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            updateNotification("Upload failed");
                             stopSelf();
                         }
-                    }
-                });
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                updateNotification("Upload Unsuccessful. Please try again ");
-                stopSelf();
-            }
-
+                    });
         }
-    }
+     }
 
     private void updateNotification(String information) {
         notificationManager.cancel(0);
