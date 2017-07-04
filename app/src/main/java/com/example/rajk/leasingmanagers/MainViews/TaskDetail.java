@@ -3,11 +3,15 @@ package com.example.rajk.leasingmanagers.MainViews;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -30,10 +34,12 @@ import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.assignedto_adapter;
 import com.example.rajk.leasingmanagers.adapter.measurement_adapter;
 import com.example.rajk.leasingmanagers.helper.FilePath;
+import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
 import com.example.rajk.leasingmanagers.model.Quotation;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.example.rajk.leasingmanagers.model.measurement;
+import com.example.rajk.leasingmanagers.services.DownloadFileService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -44,6 +50,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -53,9 +60,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TaskDetail extends AppCompatActivity {
+    DownloadFileService downloadFileService;
+    boolean mServiceBound = false;
 
     private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned,dbMeasurement;
-    ImageButton upload,download;
+    ImageButton download;
     private String task_id;
     private Task task;
     private String customername;
@@ -72,14 +81,16 @@ public class TaskDetail extends AppCompatActivity {
     DatabaseReference dbQuotation;
     ProgressDialog progressDialog ;
     private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+    private MarshmallowPermissions marshmallowPermissions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
+        marshmallowPermissions =new MarshmallowPermissions(this);
         dbRef = FirebaseDatabase.getInstance().getReference().child("MeChat");
         progressDialog = new ProgressDialog(this);
-        upload = (ImageButton)findViewById(R.id.upload);
+ //       upload = (ImageButton)findViewById(R.id.upload);
         download = (ImageButton)findViewById(R.id.download);
         uploadStatus = (TextView)findViewById(R.id.uploadStatus);
         appByCustomer = (TextView)findViewById(R.id.appByCustomer);
@@ -206,107 +217,89 @@ public class TaskDetail extends AppCompatActivity {
                 finish();
             }
         });
-        upload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
+      //  upload.setOnClickListener(new View.OnClickListener() {
+      //      @Override
+      //      public void onClick(View v) {
+      //          Intent intent = new Intent();
                 //sets the select file to all types of files
-                intent.setType("*/*");
+       //         intent.setType("*/*");
                 //allows to select data and return it
-                intent.setAction(Intent.ACTION_GET_CONTENT);
+      //          intent.setAction(Intent.ACTION_GET_CONTENT);
                 //starts new activity to select file and return data
-                startActivityForResult(Intent.createChooser(intent,"Choose File to Upload.."),PICK_FILE_REQUEST);
+     //           startActivityForResult(Intent.createChooser(intent,"Choose File to Upload.."),PICK_FILE_REQUEST);
 
-            }
-        });
+      //      }
+      //  });
+
         download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
-                    checkPermission();
-                } else {
+            if(!marshmallowPermissions.checkPermissionForCamera())
+            {
+                marshmallowPermissions.requestPermissionForExternalStorage();
+                if(!marshmallowPermissions.checkPermissionForExternalStorage())
+                showToast("Cannot Download because external storage permission not granted");
+                else
+                launchLibrary();
+            } else {
+
                     launchLibrary();
-                }
+                    }
 
 
             }
         });
 
     }
- private void launchLibrary()
+
+    private void showToast(String message) {
+        Toast.makeText(this,message,Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mServiceBound) {
+            if(mServiceConnection!=null)
+                unbindService(mServiceConnection);
+            mServiceBound = false;
+        }
+        Intent intent = new Intent(TaskDetail.this,
+                DownloadFileService.class);
+        stopService(intent);
+
+    }
+
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mServiceBound = false;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            DownloadFileService.MyBinder myBinder = (DownloadFileService.MyBinder) service;
+            downloadFileService = myBinder.getService();
+            mServiceBound = true;
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(this, DownloadFileService.class);
+        startService(intent);
+        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+
+    }
+
+    private void launchLibrary()
  {
-     dbQuotation.addValueEventListener(new ValueEventListener() {
-         @Override
-         public void onDataChange(DataSnapshot dataSnapshot) {
-             if(dataSnapshot.exists())
-             {
-                 showpd("Downloading");
-                 Quotation quotation=dataSnapshot.getValue(Quotation.class);
-                 File localFile = null;
-                 localFile = new File(Environment.getExternalStorageDirectory(), "Management/Quotation");
-                 // Create direcorty if not exists
-                 if (!localFile.exists()) {
-                     localFile.mkdirs();
-                 }
-
-                 File myDownloadedFile = new File(localFile, task_id+"Quotation.pdf");
-                 StorageReference storageReference =mStorageRef.child("Quotation").child(task_id);
-                         storageReference.getFile(myDownloadedFile)
-                         .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                             @Override
-                             public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                 // Successfully downloaded data to local file
-                                 // ...
-                                 hidepd();
-                                 Toast.makeText(TaskDetail.this,"Successfully downloaded",Toast.LENGTH_SHORT).show();
-                             }
-                         }).addOnFailureListener(new OnFailureListener() {
-                     @Override
-                     public void onFailure(@NonNull Exception exception) {
-                         // Handle failed download
-                         // ...
-                         String s = exception.toString();
-                         hidepd();
-                         Toast.makeText(TaskDetail.this,"Download Failed",Toast.LENGTH_SHORT).show();
-                     }
-
-
-                 });
-             }
-             else
-             {
-                 Toast.makeText(TaskDetail.this,"No quotation uploaded yet!!",Toast.LENGTH_SHORT).show();
-             }
-         }
-
-         @Override
-         public void onCancelled(DatabaseError databaseError) {
-
-         }
-     });
+        downloadFileService.downloadFile(dbQuotation,task_id);
  }
 
 
- private void checkPermission()
- {
-     if (ContextCompat.checkSelfPermission(TaskDetail.this,
-             Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-             && ContextCompat.checkSelfPermission(TaskDetail.this,
-             Manifest.permission.READ_EXTERNAL_STORAGE)
-             != PackageManager.PERMISSION_GRANTED) {//Can add more as per requirement
-
-         ActivityCompat.requestPermissions(TaskDetail.this,
-                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
-                 1);
-
-     }
-
-     else
-     {
-         launchLibrary();
-     }
-
- }
     private void prepareListData()
     {
         dbCompleted.addChildEventListener(new ChildEventListener() {
@@ -443,7 +436,7 @@ public class TaskDetail extends AppCompatActivity {
 
     }
 
-    @Override
+    /*@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == Activity.RESULT_OK){
@@ -473,7 +466,16 @@ public class TaskDetail extends AppCompatActivity {
                                     Toast.makeText(TaskDetail.this,"Successfully Uploaded",Toast.LENGTH_SHORT).show();
                                     hidepd();
                                 }
-                            })
+                            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            //calculating progress percentage
+                            //or create msg with 2 extra nodes
+
+                            int progress = (int) ((100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
+                             showpd("Uploaded " + ((int) progress) + "%...");
+                        }
+                    })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception exception) {
@@ -486,7 +488,10 @@ public class TaskDetail extends AppCompatActivity {
                 }
             }
         }
-    }
+    }*/
+
+
+
     void showpd(String text)
     {
         progressDialog.setMessage(text);
@@ -496,19 +501,5 @@ public class TaskDetail extends AppCompatActivity {
     {
         progressDialog.dismiss();
     }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    launchLibrary();
-                } else {
-                    checkPermission();
-                }
-                return;
-            }
 
-        }
-    }
 }

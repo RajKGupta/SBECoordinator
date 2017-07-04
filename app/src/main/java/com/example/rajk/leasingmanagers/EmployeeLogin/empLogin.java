@@ -35,6 +35,11 @@ public class empLogin extends AppCompatActivity {
         setContentView(R.layout.emp_login);
 
         session = new EmployeeSession(getApplicationContext());
+        if(session.isolduser()==true)
+        {
+            //TODO go to view pager
+        }
+
         username = (EditText) findViewById(R.id.editText2);
         password = (EditText) findViewById(R.id.editText3);
         button = (Button) findViewById(R.id.login);

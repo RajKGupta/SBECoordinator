@@ -19,17 +19,17 @@ public class CoordinatorSession {
         editor = pref.edit();
     }
 
-    public void create_oldusersession(String place_get,String place_ids,String username_get)
+    public void create_oldusersession(String username_get)
     {
-        editor.putString(is_loggedin,"true");
+        editor.putBoolean(is_loggedin,true);
         editor.putString(username,username_get);
         editor.putString("designation","coordinator");
         editor.commit();
     }
 
-    public String isolduser()
+    public Boolean isolduser()
     {
-        return pref.getString(is_loggedin,"");
+        return pref.getBoolean(is_loggedin,false);
     }
 
     public String getUsername()

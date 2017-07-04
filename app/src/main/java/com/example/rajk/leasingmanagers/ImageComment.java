@@ -54,7 +54,7 @@ public class ImageComment extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_comment);
+       setContentView(R.layout.activity_image_comment);
 
         sendImage = (FloatingActionButton)findViewById(R.id.sendImage);
         imagecomment = (ImageView)findViewById(R.id.imagecomment);

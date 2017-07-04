@@ -8,11 +8,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.CAMERA"/>
     <uses-feature android:name="android.hardware.camera" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <application
         android:name=".LeasingManagers"
         android:allowBackup="true"
@@ -33,11 +31,22 @@
             </intent-filter>
         </receiver>
 
-        <activity
+        <activity android:name="com.zfdang.multiple_images_selector.ImagesSelectorActivity" android:configChanges="orientation|screenSize"/>
+
+
+    <activity
             android:name=".DiscussionActivity.Home"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_topic"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".CoordinatorLogin.coordinatorLogin"
+            android:screenOrientation="portrait">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
         <activity android:name=".NewTopic"
             android:screenOrientation="portrait"/>
         <activity android:name=".DiscussionActivity.Comment"
@@ -45,19 +54,27 @@
         <activity android:name=".NewUser"
             android:screenOrientation="portrait"/>
         <activity android:name=".Splash"
-            android:screenOrientation="portrait">
-            <activity android:name="com.zfdang.multiple_images_selector.ImagesSelectorActivity" android:configChanges="orientation|screenSize"/>
-        </activity>
+            android:screenOrientation="portrait"/>
         <activity android:name=".ImageComment"
             android:screenOrientation="portrait"/>
         <activity android:name=".tablayout.Tabs"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
+        <activity android:name=".chat.ChatActivity"/>
+        <service android:name=".services.DownloadFileService"/>
+        <service
+            android:name=".services.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <service
+            android:name=".services.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service><service android:name=".services.UploadFileService"/>
         <activity android:name=".MainViews.CreateTask"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".customer.Cust_add"
@@ -76,6 +93,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".ForwardTask.forwardTaskScreen2"
             android:screenOrientation="portrait"></activity>
+
    </application>
 
 </manifest>
