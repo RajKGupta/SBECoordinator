@@ -35,8 +35,9 @@ public class EmployeeSession {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Employee employee = dataSnapshot.getValue(Employee.class);
                 editor.putString("designation",employee.getDesignation().toLowerCase());
-                editor.putString(is_loggedin,"true");
+                editor.putBoolean(is_loggedin,true);
                 editor.putString(username,employee.getUsername());
+                editor.putString("name",employee.getName());
                 editor.commit();
 
             }
@@ -48,16 +49,25 @@ public class EmployeeSession {
         });
         }
 
-    public String isolduser()
+    public Boolean isolduser()
     {
-        return pref.getString(is_loggedin,"");
+        return pref.getBoolean(is_loggedin,false);
     }
 
     public String getUsername()
     {
         return pref.getString(username,"");
+
+    }
+    public String getName()
+    {
+        return pref.getString("name","");
     }
 
+    public String getDesignation()
+    {
+        return pref.getString("designation","");
+    }
     public void clearoldusersession()
     {
         editor.clear();

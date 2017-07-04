@@ -2,6 +2,7 @@ package com.example.rajk.leasingmanagers.CoordinatorLogin;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -11,22 +12,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.rajk.leasingmanagers.EmployeeLogin.EmployeeSession;
 import com.example.rajk.leasingmanagers.R;
-import com.example.rajk.leasingmanagers.employee.Employee;
+import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 public class coordinatorLogin extends AppCompatActivity {
 
     EditText username, password;
     Button button;
-    String Username , Password;
+    String Username,Password;
     DatabaseReference database;
-    EmployeeSession session;
+    CoordinatorSession session;
     TextInputLayout input_email, input_password;
 
     @Override
@@ -34,14 +37,17 @@ public class coordinatorLogin extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.emp_login);
-
-        session = new EmployeeSession(getApplicationContext());
+        session = new CoordinatorSession(getApplicationContext());
+        if(session.isolduser()==true)
+        {
+            goToTabLayout();
+        }
         username = (EditText) findViewById(R.id.editText2);
         password = (EditText) findViewById(R.id.editText3);
         button = (Button) findViewById(R.id.login);
         input_email = (TextInputLayout)findViewById(R.id.input_emaillogin);
         input_password = (TextInputLayout)findViewById(R.id.input_passwordlogin);
-        database = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").getRef();
+        database = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Coordinator").getRef();
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,26 +82,28 @@ public class coordinatorLogin extends AppCompatActivity {
     }
 
     private void login() {
-        DatabaseReference db = database.child(Username).getRef();
 
-            db.addListenerForSingleValueEvent(new ValueEventListener() {
+            database.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if(dataSnapshot.exists())
                     {
 
-                        Employee employee = dataSnapshot.getValue(Employee.class);
-
-                        if (!employee.getPassword().equals(Password)) {
+                        String username = dataSnapshot.child("username").getValue(String.class);
+                        String password = dataSnapshot.child("password").getValue(String.class);
+                        if (!password.equals(Password)) {
                             Toast.makeText(getBaseContext(), "Wrong Password", Toast.LENGTH_SHORT).show();
                         } else
                         {
                             session.create_oldusersession(Username);
+                            DBREF.child("Fcmtokens").child(Username).child("token").setValue(FirebaseInstanceId.getInstance().getToken());
+
+                            goToTabLayout();
                         }
                     }
                     else
                     {
-                        Toast.makeText(getBaseContext(), "Student Not Registered", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), "Coordinator Not Registered", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -104,5 +112,12 @@ public class coordinatorLogin extends AppCompatActivity {
 
                 }
             });
+    }
+    private void goToTabLayout()
+    {
+        Intent intent = new Intent(this, Tabs.class);
+        startActivity(intent);
+        finish();
+
     }
 }
