@@ -563,9 +563,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         progressDialog.dismiss();
     }
 
-        }
-    }
-
     @Override
     public void onImageClicked(int position) {
 
