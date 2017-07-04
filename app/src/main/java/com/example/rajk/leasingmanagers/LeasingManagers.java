@@ -5,6 +5,7 @@ import android.provider.ContactsContract;
 
 import com.example.rajk.leasingmanagers.CheckInternetConnectivity.NetWatcher;
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
+
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
@@ -63,6 +64,8 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
                 }
             });
         }
+
+        Fresco.initialize(getApplicationContext());
 
     }
     public static synchronized LeasingManagers getInstance() {

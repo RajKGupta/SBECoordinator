@@ -18,7 +18,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:largeHeap="true">
         <activity android:name=".MainActivity" />
 
         <receiver android:name=".CheckInternetConnectivity.NetWatcher">
@@ -36,9 +37,10 @@
 
     <activity
             android:name=".DiscussionActivity.Home"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_topic"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity android:name=".CoordinatorLogin.coordinatorLogin"
             android:screenOrientation="portrait">
         <intent-filter>
@@ -58,9 +60,10 @@
         <activity android:name=".ImageComment"
             android:screenOrientation="portrait"/>
         <activity android:name=".tablayout.Tabs"
-            android:screenOrientation="portrait">
+                  android:screenOrientation="portrait">
 
         </activity>
+
         <activity android:name=".chat.ChatActivity"/>
         <service android:name=".services.DownloadFileService"/>
         <service
@@ -95,5 +98,13 @@
             android:screenOrientation="portrait"></activity>
 
    </application>
+        <activity android:name=".SelectedImage.ViewSelectedImage"></activity>
+
+        <service
+            android:name=".services.UploadTaskPhotosServices"
+            android:exported="false">
+        </service>
+
+    </application>
 
 </manifest>
