@@ -21,10 +21,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.MainViews.CreateTask;
 import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.CustomerTasks_Adapter;
+import com.example.rajk.leasingmanagers.chat.ChatActivity;
 import com.example.rajk.leasingmanagers.model.CustomerAccount;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -38,6 +40,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 public class Cust_details extends AppCompatActivity implements CustomerTasks_Adapter.CustomerTaskAdapterListener{
 
     AlertDialog customerEditDetails;
@@ -46,19 +50,23 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
     DatabaseReference db,dbTask,dbaccountinfo;
     RecyclerView rec_customertasks;
     LinearLayoutManager linearLayoutManager;
+    private String dbTablekey,mykey;
     ValueEventListener dblistener,dbtasklistener,dbaccountlistener;
     private ArrayList<Task> TaskList= new ArrayList<>();
     private CustomerTasks_Adapter mAdapter;
     private ProgressDialog progressDialog;
     public AlertDialog customerAccountDialog;
+    CoordinatorSession coordinatorSession;
     private List<String> listoftasks = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cust_details);
+        coordinatorSession = new CoordinatorSession(this);
+
         progressDialog = new ProgressDialog(this);
         id = getIntent().getStringExtra("id");
-
+        mykey = coordinatorSession.getUsername();
         Name = (EditText) findViewById(R.id.name);
         Num = (EditText) findViewById(R.id.num);
         Add = (EditText) findViewById(R.id.add);
@@ -234,6 +242,8 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                 });
                 break;
             case R.id.item4:
+
+                checkChatref(mykey,id);
                 break;
 
             case  R.id.item6:
@@ -270,4 +280,70 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         intent.putExtra("task_id",listoftasks.get(position));
         startActivity(intent);
     }
+    private void checkChatref(final String mykey, final String otheruserkey) {
+        DatabaseReference dbChat = DBREF.child("Chats").child(mykey+otheruserkey).getRef();
+        dbChat.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println("query1" + mykey+otheruserkey);
+                System.out.println("datasnap 1" + dataSnapshot.toString());
+                if (dataSnapshot.exists()) {
+                    System.out.println("datasnap exists1" + dataSnapshot.toString());
+                    dbTablekey = mykey+otheruserkey;
+                    goToChatActivity();
+
+                }
+                else
+                {
+                    checkChatref2(mykey,otheruserkey);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void checkChatref2(final String mykey, final String otheruserkey) {
+        final DatabaseReference dbChat = DBREF.child("MeChat").child("Chats").child(otheruserkey+mykey).getRef();
+        dbTablekey = otheruserkey+mykey;
+        dbChat.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                {
+                    System.out.println("query1" + otheruserkey+mykey);
+                    goToChatActivity();
+
+
+                }
+                else
+                {
+                    DBREF.child("Users").child("Userchats").child(mykey).child(otheruserkey).setValue(dbTablekey);
+                    DBREF.child("Users").child("Userchats").child(otheruserkey).child(mykey).setValue(dbTablekey);
+                    goToChatActivity();
+
+
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void goToChatActivity()
+    {
+        Intent in = new Intent(this, ChatActivity.class);
+        in.putExtra("dbTableKey",dbTablekey);
+        in.putExtra("otheruserkey",id);
+        startActivity(in);
+    }
+
 }

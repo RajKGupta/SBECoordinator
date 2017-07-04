@@ -1,24 +1,68 @@
 package com.example.rajk.leasingmanagers;
 
 
+import android.provider.ContactsContract;
+
 import com.example.rajk.leasingmanagers.CheckInternetConnectivity.NetWatcher;
+import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
+
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Created by RajK on 11-05-2017.
  */
 public class LeasingManagers extends android.support.multidex.MultiDexApplication {
     private static LeasingManagers mInstance;
-
+    public static DatabaseReference DBREF;
+    private CoordinatorSession session;
     @Override
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+        Fresco.initialize(getApplicationContext());
 
         if(!FirebaseApp.getApps(this).isEmpty()){
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        }
+        DBREF = FirebaseDatabase.getInstance().getReference().child("MeChat").getRef();
+        session = new CoordinatorSession(this);
+        String userkey = session.getUsername();
+        if(!userkey.equals("")){
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            final DatabaseReference myConnectionsRef = database.getReference().child("Users").child("Usersession").child(userkey).child("online").getRef();
+
+// stores the timestamp of my last disconnect (the last time I was seen online)
+//            final DatabaseReference lastOnlineRef = database.getReference().child("Users").child("Usersession").child(userkey).child("lastseen").getRef();
+
+            final DatabaseReference connectedRef = database.getReference(".info/connected");
+            connectedRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    boolean connected = snapshot.getValue(Boolean.class);
+                    if (connected) {
+                        // add this device to my connections list
+                        // this value could contain info about the device or a timestamp too
+                        myConnectionsRef.setValue(Boolean.TRUE);
+
+                        // when this device disconnects, remove it
+                        myConnectionsRef.onDisconnect().setValue(Boolean.FALSE);
+
+                        // when I disconnect, update the last time I was seen online
+//                        lastOnlineRef.onDisconnect().setValue(Calendar.getInstance().getTime()+"");
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    System.err.println("Listener was cancelled at .info/connected");
+                }
+            });
         }
 
         Fresco.initialize(getApplicationContext());

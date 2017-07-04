@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:id="@+id/mainCommentLayout"
+android:focusable="true"
+android:focusableInTouchMode="true"
+tools:context="com.example.rajk.leasingmanagers.chat.ChatActivity">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:id="@+id/sendComment"
+
+    android:background="@drawable/edittext_bg_whitebg"
+    android:layout_alignParentBottom="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Type Your Comment"
+            android:padding="10dp"
+            android:id="@+id/typeComment"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/edittext_bg_greystroke"/>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@mipmap/ic_attachment"
+            android:id="@+id/attachment"/>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/sendButton"
+            android:elevation="@dimen/activity_horizontal_margin"
+            android:layout_gravity="center_horizontal"
+            android:background="@mipmap/ic_send"
+            android:layout_marginLeft="5dp"/>
+
+    </LinearLayout>
+</RelativeLayout>
+
+
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/commentView"
+    android:layout_above="@id/sendComment">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/my_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/whitetranslucent"
+        android:scrollbars="vertical"
+        android:nestedScrollingEnabled="false"/>
+
+
+</LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/attachmentpopup"
+    android:background="@color/white"
+    android:paddingBottom="20dp"
+    android:paddingTop="20dp"
+    android:layout_marginBottom="10dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_above="@id/sendComment"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
+    android:visibility="gone">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/takephoto"
+            android:background="@mipmap/ic_takesnap"
+            android:layout_alignParentLeft="true"
+            />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@mipmap/ic_galleryattach"
+            android:id="@+id/photoattach"
+            android:layout_centerHorizontal="true"
+            />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/videoattach"
+            android:background="@mipmap/ic_videoattach"
+            android:layout_alignParentRight="true"
+            />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/docattach"
+            android:background="@mipmap/ic_docattach"
+            android:layout_alignParentLeft="true"/>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@mipmap/ic_audio"
+            android:layout_centerHorizontal="true" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/locationattach"
+            android:background="@mipmap/ic_locattach"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+
+</LinearLayout>
+
+</RelativeLayout>
