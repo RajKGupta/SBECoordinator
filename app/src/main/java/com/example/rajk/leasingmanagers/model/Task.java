@@ -6,8 +6,7 @@ import java.io.Serializable;
  * Created by RajK on 03-06-2017.
  */
 
-public class Task implements Serializable
-{
+public class Task implements Serializable {
     private String taskId,name,startDate,expEndDate,quotationId,qty,desc,customerId;
     private int color = -1;
 
@@ -26,8 +25,6 @@ public class Task implements Serializable
     public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
-
-    ;
 
     public Task() {
     }

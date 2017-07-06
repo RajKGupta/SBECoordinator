@@ -97,9 +97,6 @@
         <activity android:name=".ForwardTask.forwardTaskScreen2"
             android:screenOrientation="portrait"></activity>
 
-   </application>
-        <activity android:name=".SelectedImage.ViewSelectedImage"></activity>
-
         <service
             android:name=".services.UploadTaskPhotosServices"
             android:exported="false">

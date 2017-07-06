@@ -22,7 +22,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,12 +126,9 @@ public class UploadQuotationService extends IntentService
                 .setAutoCancel(true)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(information));
 
-        //Log.d("check","service started"+id);
         synchronized (this) {
             notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.notify(0, mBuilder.build());
         }
     }
 }
-
-

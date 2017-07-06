@@ -12,4 +12,11 @@
         android:title="Upload"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/Forwardtoquotationwala"
+        android:icon="@drawable/ic_upload"
+        android:orderInCategory="100"
+        android:title="Upload"
+        app:showAsAction="always" />
+
 </menu>
