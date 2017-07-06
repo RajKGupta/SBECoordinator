@@ -3,8 +3,12 @@ package com.example.rajk.leasingmanagers.MainViews;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+
 import android.content.ComponentName;
 import android.content.Context;
+
+import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -16,6 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -31,8 +36,12 @@ import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.ForwardTask.forwardTask;
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.adapter.ViewImageAdapter;
 import com.example.rajk.leasingmanagers.adapter.assignedto_adapter;
+import com.example.rajk.leasingmanagers.adapter.bigimage_adapter;
 import com.example.rajk.leasingmanagers.adapter.measurement_adapter;
+import com.example.rajk.leasingmanagers.adapter.taskdetailDescImageAdapter;
+import com.example.rajk.leasingmanagers.adapter.taskimagesadapter;
 import com.example.rajk.leasingmanagers.helper.FilePath;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
@@ -59,19 +68,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaskDetail extends AppCompatActivity {
+public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener{
+    
     DownloadFileService downloadFileService;
     boolean mServiceBound = false;
 
-    private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned,dbMeasurement;
+    private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned,dbMeasurement,dbDescImages;
     ImageButton download;
+    
     private String task_id;
     private Task task;
     private String customername;
     EditText startDate,endDate,custId,taskName,quantity,description;
     private static final int PICK_FILE_REQUEST = 1;
-    RecyclerView rec_assignedto,rec_completedby,rec_measurement ;
+    RecyclerView rec_assignedto,rec_completedby,rec_measurement, rec_DescImages ;
     assignedto_adapter adapter_assignedto,adapter_completedby;
+    taskdetailDescImageAdapter adapter_taskimages;
+    ArrayList<String> DescImages = new ArrayList<>();
     List<CompletedBy> assignedtoList = new ArrayList<>();
     FloatingActionButton forward;
     List<CompletedBy> completedbyList = new ArrayList<>();
@@ -82,6 +95,9 @@ public class TaskDetail extends AppCompatActivity {
     ProgressDialog progressDialog ;
     private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
     private MarshmallowPermissions marshmallowPermissions;
+    private AlertDialog viewSelectedImages ;
+    LinearLayoutManager linearLayoutManager;
+    bigimage_adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +121,7 @@ public class TaskDetail extends AppCompatActivity {
         rec_assignedto = (RecyclerView)findViewById(R.id.rec_assignedto);
         rec_completedby = (RecyclerView)findViewById(R.id.rec_completedby);
         rec_measurement = (RecyclerView)findViewById(R.id.rec_measurement);
+        rec_DescImages = (RecyclerView)findViewById(R.id.rec_DescImages);
         open_assignedto = (TextView)findViewById(R.id.open_assignedto);
         open_completedby = (TextView)findViewById(R.id.open_completedby);
         open_measurement = (TextView)findViewById(R.id.open_measurement);
@@ -115,13 +132,13 @@ public class TaskDetail extends AppCompatActivity {
         rec_assignedto.setLayoutManager(new LinearLayoutManager(this));
         rec_assignedto.setItemAnimator(new DefaultItemAnimator());
         rec_assignedto.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        adapter_assignedto = new assignedto_adapter(assignedtoList, this,"AssignedTo",task_id);
+        adapter_assignedto = new assignedto_adapter(assignedtoList, getApplicationContext(),"AssignedTo",task_id,this);
         rec_assignedto.setAdapter(adapter_assignedto);
 
         rec_completedby.setLayoutManager(new LinearLayoutManager(this));
         rec_completedby.setItemAnimator(new DefaultItemAnimator());
         rec_completedby.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        adapter_completedby = new assignedto_adapter(completedbyList, this,"CompletedBy",task_id);
+        adapter_completedby = new assignedto_adapter(completedbyList, getApplicationContext(),"CompletedBy",task_id,this);
         rec_completedby.setAdapter(adapter_completedby);
 
         rec_measurement.setLayoutManager(new LinearLayoutManager(this));
@@ -130,11 +147,18 @@ public class TaskDetail extends AppCompatActivity {
         adapter_measurement = new measurement_adapter(measurementList, this);
         rec_measurement.setAdapter(adapter_measurement);
 
+        rec_DescImages.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+        rec_DescImages.setItemAnimator(new DefaultItemAnimator());
+        rec_DescImages.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.HORIZONTAL));
+        adapter_taskimages = new taskdetailDescImageAdapter(DescImages, getApplicationContext(),this);
+        rec_DescImages.setAdapter(adapter_taskimages);
+
         dbTask = dbRef.child("Task").child(task_id);
         dbQuotation = dbTask.child("Quotation").getRef();
         dbCompleted = dbTask.child("CompletedBy").getRef();
         dbAssigned = dbTask.child("AssignedTo").getRef();
         dbMeasurement = dbTask.child("Measurement").getRef();
+        dbDescImages = dbTask.child("DescImages").getRef();
 
         prepareListData();
 
@@ -164,7 +188,8 @@ public class TaskDetail extends AppCompatActivity {
                 else
                 {
                     rec_completedby.setVisibility(View.GONE);
-                }            }
+                }
+            }
         });
 
         open_assignedto.setOnClickListener(new View.OnClickListener() {
@@ -245,8 +270,6 @@ public class TaskDetail extends AppCompatActivity {
 
                     launchLibrary();
                     }
-
-
             }
         });
 
@@ -343,7 +366,6 @@ public class TaskDetail extends AppCompatActivity {
                     assignedtoList.add(item);
                     adapter_assignedto.notifyDataSetChanged();
                 }
-
             }
 
             @Override
@@ -402,6 +424,41 @@ public class TaskDetail extends AppCompatActivity {
 
             }
         });
+
+        dbDescImages.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s)
+            {
+                if (dataSnapshot.exists()) {
+                    rec_DescImages.setVisibility(View.VISIBLE);
+                    String item = dataSnapshot.getValue(String.class);
+                    DescImages.add(item);
+                    adapter_taskimages.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                String item = dataSnapshot.getKey();
+                DescImages.remove(item);
+                adapter_taskimages.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     void setValue(Task task)
@@ -410,7 +467,10 @@ public class TaskDetail extends AppCompatActivity {
         endDate.setText(task.getExpEndDate());
         taskName.setText(task.getName());
         quantity.setText(task.getQty());
-        description.setText(task.getDesc());
+        if (!task.getDesc().equals("")) {
+            description.setVisibility(View.VISIBLE);
+            description.setText(task.getDesc());
+        }
         dbQuotation.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -495,6 +555,7 @@ public class TaskDetail extends AppCompatActivity {
     void showpd(String text)
     {
         progressDialog.setMessage(text);
+        progressDialog.setCancelable(false);
         progressDialog.show();
     }
     void hidepd()
@@ -502,4 +563,59 @@ public class TaskDetail extends AppCompatActivity {
         progressDialog.dismiss();
     }
 
+    @Override
+    public void onImageClicked(int position) {
+
+        viewSelectedImages = new AlertDialog.Builder(TaskDetail.this)
+                .setTitle("Images").setView(R.layout.view_image_on_click).create();
+        viewSelectedImages.show();
+
+        RecyclerView bigimage = (RecyclerView)viewSelectedImages.findViewById(R.id.bigimage);
+
+        linearLayoutManager = new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false);
+        bigimage.setLayoutManager(linearLayoutManager);
+        bigimage.setItemAnimator(new DefaultItemAnimator());
+        bigimage.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.HORIZONTAL));
+
+        adapter = new bigimage_adapter(DescImages, this);
+        bigimage.setAdapter(adapter);
+
+        bigimage.scrollToPosition(position);
+
+    }
+
+    @Override
+    public void onRemoveButtonClicked(final int position)
+    {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to un-assign this task")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        DatabaseReference dbCancelJob = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(task_id).child("AssignedTo").child(adapter_assignedto.emp.getEmpId()).getRef();
+                        dbCancelJob.removeValue();
+                        assignedtoList.remove(position);
+
+                        DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(adapter_assignedto.emp.getEmpId()).child("AssignedTask").child(task_id);
+                        dbEmployee.removeValue(); //for employee
+
+                        adapter_assignedto.notifyDataSetChanged();
+
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+
+    }
+
+    @Override
+    public void onRemindButtonClicked(int position) {
+
+    }
 }
