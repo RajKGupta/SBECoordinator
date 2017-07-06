@@ -20,8 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:largeHeap="true">
-        <activity android:name=".MainActivity" />
-
+        
         <receiver android:name=".CheckInternetConnectivity.NetWatcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,13 +33,6 @@
 
         <activity android:name="com.zfdang.multiple_images_selector.ImagesSelectorActivity" android:configChanges="orientation|screenSize"/>
 
-
-    <activity
-            android:name=".DiscussionActivity.Home"
-            android:label="@string/title_activity_topic"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
         <activity android:name=".CoordinatorLogin.coordinatorLogin"
             android:screenOrientation="portrait">
         <intent-filter>
@@ -48,15 +40,7 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
         </activity>
-        <activity android:name=".NewTopic"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".DiscussionActivity.Comment"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".NewUser"
-            android:screenOrientation="portrait"/>
         <activity android:name=".Splash"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ImageComment"
             android:screenOrientation="portrait"/>
         <activity android:name=".tablayout.Tabs"
                   android:screenOrientation="portrait">

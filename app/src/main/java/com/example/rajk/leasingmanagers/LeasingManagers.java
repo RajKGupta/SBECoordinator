@@ -35,7 +35,7 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
         String userkey = session.getUsername();
         if(!userkey.equals("")){
             final FirebaseDatabase database = FirebaseDatabase.getInstance();
-            final DatabaseReference myConnectionsRef = database.getReference().child("Users").child("Usersession").child(userkey).child("online").getRef();
+            final DatabaseReference myConnectionsRef = DBREF.child("Users").child("Usersession").child(userkey).child("online").getRef();
 
 // stores the timestamp of my last disconnect (the last time I was seen online)
 //            final DatabaseReference lastOnlineRef = database.getReference().child("Users").child("Usersession").child(userkey).child("lastseen").getRef();
