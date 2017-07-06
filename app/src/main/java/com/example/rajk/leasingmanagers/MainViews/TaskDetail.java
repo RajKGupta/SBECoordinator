@@ -263,11 +263,11 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             {
                 marshmallowPermissions.requestPermissionForExternalStorage();
                 if(!marshmallowPermissions.checkPermissionForExternalStorage())
-                    showToast("Cannot Download because external storage permission not granted");
+                showToast("Cannot Download because external storage permission not granted");
                 else
-                    launchLibrary();
-            } else
-            {
+                launchLibrary();
+            } else {
+
                     launchLibrary();
                     }
             }
@@ -496,6 +496,61 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
     }
 
+    /*@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK){
+            if(requestCode == PICK_FILE_REQUEST){
+                if(data == null){
+                    //no data present
+                    return;
+                }
+
+                String selectedFilePath="";
+                Uri selectedFileUri = data.getData();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    selectedFilePath = FilePath.getPath(this,selectedFileUri);
+                }
+
+                if(selectedFilePath != null && !selectedFilePath.equals("")){
+                    StorageReference riversRef = mStorageRef.child("Quotation").child(task_id);
+
+                    showpd("Uploading");
+                    riversRef.putFile(selectedFileUri)
+                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    // Get a URL to the uploaded content
+                                    Quotation quotation = new Quotation("No");
+                                    dbQuotation.setValue(quotation);
+                                    Toast.makeText(TaskDetail.this,"Successfully Uploaded",Toast.LENGTH_SHORT).show();
+                                    hidepd();
+                                }
+                            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            //calculating progress percentage
+                            //or create msg with 2 extra nodes
+
+                            int progress = (int) ((100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
+                             showpd("Uploaded " + ((int) progress) + "%...");
+                        }
+                    })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    Toast.makeText(TaskDetail.this,"Failed to Upload",Toast.LENGTH_SHORT).show();
+                                    hidepd();
+                                }
+                            });
+                }else{
+                    Toast.makeText(this,"Cannot upload file to server",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }*/
+
+
 
     void showpd(String text)
     {
@@ -507,7 +562,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     {
         progressDialog.dismiss();
     }
-
 
     @Override
     public void onImageClicked(int position) {

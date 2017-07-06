@@ -306,7 +306,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
     }
 
     private void checkChatref2(final String mykey, final String otheruserkey) {
-        final DatabaseReference dbChat = DBREF.child("MeChat").child("Chats").child(otheruserkey+mykey).getRef();
+        final DatabaseReference dbChat = DBREF.child("Chats").child(otheruserkey+mykey).getRef();
         dbTablekey = otheruserkey+mykey;
         dbChat.addListenerForSingleValueEvent(new ValueEventListener() {
 

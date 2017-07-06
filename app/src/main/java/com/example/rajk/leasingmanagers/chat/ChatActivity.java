@@ -48,7 +48,7 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatAdapterListener,View.OnClickListener{
     private static final int REQUEST_CODE = 101;
     private EditText typeComment;
-    private ImageButton sendButton, attachment;
+    private ImageButton sendButton;
     Intent intent;
     private RecyclerView recyclerView;
     DatabaseReference dbChat;
@@ -67,22 +67,18 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     private ArrayList<ChatMessage> chatList = new ArrayList<>();
     private SharedPreferences sharedPreferences;
     String receiverToken="nil";
-    boolean clicked;
-    LinearLayout layoutToAdd;
     LinearLayout commentView;
     private ChildEventListener dbChatlistener;
-    ImageButton takephoto, photoattach, videoattach;
+    ImageButton photoattach, docattach;
     public String dbTableKey;
     private CoordinatorSession session;
-    private ArrayList<String> docPaths;
+    private ArrayList<String> docPaths,photoPaths;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        clicked = false;
-        layoutToAdd = (LinearLayout) findViewById(R.id.attachmentpopup);
 
         marshmallowPermissions = new MarshmallowPermissions(this);
 
@@ -105,14 +101,12 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
 
         typeComment = (EditText) findViewById(R.id.typeComment);
         sendButton = (ImageButton) findViewById(R.id.sendButton);
-        attachment = (ImageButton) findViewById(R.id.attachment);
 
-        takephoto = (ImageButton) findViewById(R.id.takephoto);
         photoattach = (ImageButton) findViewById(R.id.photoattach);
-        videoattach = (ImageButton) findViewById(R.id.videoattach);
+        docattach = (ImageButton) findViewById(R.id.docattach);
 
-        attachment.setOnClickListener(this);
         photoattach.setOnClickListener(this);
+        docattach.setOnClickListener(this);
 
         linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -149,7 +143,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUEST_CODE) {
+       /* if(requestCode == REQUEST_CODE) {
             if(resultCode == RESULT_OK) {
                 mResults = data.getStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS);
                 assert mResults != null;
@@ -159,17 +153,20 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                     uploadFile(result,"photo");
                 }
             }
-        }
+        }*/
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode)
         {
-/*            case FilePickerConst.REQUEST_CODE_PHOTO:
+          case FilePickerConst.REQUEST_CODE_PHOTO:
                 if(resultCode== Activity.RESULT_OK && data!=null)
                 {
                     photoPaths = new ArrayList<>();
                     photoPaths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA));
-                }
-                break;*/
+                    for(String result : docPaths) {
+                        uploadFile(result, "photo");
+                    }
+                    }
+                break;
             case FilePickerConst.REQUEST_CODE_DOC:
                 if(resultCode== Activity.RESULT_OK && data!=null)
                 {
@@ -249,10 +246,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
 
     @Override
     public void onBackPressed() {
-        if (clicked == true) {
-            layoutToAdd.setVisibility(View.GONE);
-            clicked = false;
-        } else
             super.onBackPressed();
 
     }
@@ -309,8 +302,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                 break;
 
             case R.id.photoattach:
-                layoutToAdd.setVisibility(View.GONE);
-                clicked=false;
                 mResults = new ArrayList<>();
                 if(!marshmallowPermissions.checkPermissionForCamera())
                     marshmallowPermissions.requestPermissionForCamera();
@@ -318,19 +309,14 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                     marshmallowPermissions.requestPermissionForExternalStorage();
 
                 if(marshmallowPermissions.checkPermissionForCamera()&&marshmallowPermissions.checkPermissionForExternalStorage()) {
-                    Intent intent = new Intent(ChatActivity.this, ImagesSelectorActivity.class);
-                    intent.putExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, 10);
-                    intent.putExtra(SelectorSettings.SELECTOR_MIN_IMAGE_SIZE, 100000);
-                    intent.putExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, true);
-                    intent.putStringArrayListExtra(SelectorSettings.SELECTOR_INITIAL_SELECTED_LIST, mResults);
-                    startActivityForResult(intent, REQUEST_CODE);
-                }
+                    FilePickerBuilder.getInstance().setMaxCount(10)
+                            .setActivityTheme(R.style.AppTheme)
+                            .pickPhoto(this);
+                    }
                 break;
 
             case R.id.docattach:
 
-                layoutToAdd.setVisibility(View.GONE);
-                clicked=false;
                 if(!marshmallowPermissions.checkPermissionForExternalStorage())
                     marshmallowPermissions.requestPermissionForExternalStorage();
 
@@ -342,18 +328,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                 }
                 break;
 
-            case R.id.attachment:
-                if (clicked == false) {
-
-                    layoutToAdd.setVisibility(View.VISIBLE);
-                    clicked = true;
-                } else
-                {
-                    layoutToAdd.setVisibility(View.GONE);
-                    clicked = false;
-                }
-                break;
-        }
+           }
     }
 
     @Override
