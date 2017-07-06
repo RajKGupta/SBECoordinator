@@ -89,7 +89,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
 
             case "photo":
                 holder.photo.setVisibility(View.VISIBLE);
-                Glide.with(context).load(Uri.parse(comment.getImgurl())).diskCacheStrategy(DiskCacheStrategy.ALL).plinto(holder.photo);
+                Glide.with(context).load(Uri.parse(comment.getImgurl())).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.photo);
 
                 if (comment.getCommentString()==null) {
                     holder.commentString.setVisibility(View.GONE);
