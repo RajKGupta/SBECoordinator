@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.model.ChatMessage;
@@ -88,7 +89,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
 
             case "photo":
                 holder.photo.setVisibility(View.VISIBLE);
-                Glide.with(context).load(Uri.parse(comment.getImgurl())).into(holder.photo);
+                Glide.with(context).load(Uri.parse(comment.getImgurl())).diskCacheStrategy(DiskCacheStrategy.ALL).plinto(holder.photo);
 
                 if (comment.getCommentString()==null) {
                     holder.commentString.setVisibility(View.GONE);
