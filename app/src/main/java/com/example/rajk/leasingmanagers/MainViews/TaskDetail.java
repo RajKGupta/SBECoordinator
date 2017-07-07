@@ -42,7 +42,6 @@ import com.example.rajk.leasingmanagers.adapter.bigimage_adapter;
 import com.example.rajk.leasingmanagers.adapter.measurement_adapter;
 import com.example.rajk.leasingmanagers.adapter.taskdetailDescImageAdapter;
 import com.example.rajk.leasingmanagers.adapter.taskimagesadapter;
-import com.example.rajk.leasingmanagers.helper.FilePath;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
 import com.example.rajk.leasingmanagers.model.Quotation;

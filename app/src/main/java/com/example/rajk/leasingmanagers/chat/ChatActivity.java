@@ -16,6 +16,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -67,7 +68,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     private ArrayList<ChatMessage> chatList = new ArrayList<>();
     private SharedPreferences sharedPreferences;
     String receiverToken="nil";
-    LinearLayout commentView;
     private ChildEventListener dbChatlistener;
     ImageButton photoattach, docattach;
     public String dbTableKey;
@@ -78,7 +78,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         marshmallowPermissions = new MarshmallowPermissions(this);
 
@@ -95,7 +95,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         mykey = session.getUsername();
         dbChat = DBREF.child("Chats").child(dbTableKey).child("ChatMessages").getRef();
 
-        commentView = (LinearLayout) findViewById(R.id.commentView);
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         emptyView = (LinearLayout) findViewById(R.id.empty_view);
 

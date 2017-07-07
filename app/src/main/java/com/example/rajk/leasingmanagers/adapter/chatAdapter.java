@@ -1,9 +1,13 @@
 package com.example.rajk.leasingmanagers.adapter;
 
 import android.content.Context;
+import android.drm.DrmStore;
+import android.graphics.Color;
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
+import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,25 +61,26 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_row, parent, false);
         return new MyViewHolder(view);
-
     }
 
     @Override
     public void onBindViewHolder(chatAdapter.MyViewHolder holder, int position) {
         ChatMessage comment = list.get(position);
         if (comment.getSenderUId().equals(session.getUsername())) {
-            holder.otherSender.setVisibility(View.GONE);
-            holder.meSender.setVisibility(View.VISIBLE);
+            holder.messageContainer.setBackgroundResource(R.drawable.chatbubble_right);
+            holder.parent_layout.setGravity(Gravity.RIGHT);
+            holder.parent_layout.setPadding(150,0,0,0);  //(left,top,right,bottom)
             holder.status.setVisibility(View.VISIBLE);
-            holder.meSender_sender.setText(comment.getSenderUId());
-            holder.meSender_Timestamp.setText(comment.getSendertimestamp());
+            holder.meSender_Timestampdate.setText(comment.getSendertimestamp().substring(0,11));
+            holder.meSender_Timestamptime.setText(comment.getSendertimestamp().substring(12));
             applyStatus(comment, holder);
 
         } else {
-            holder.meSender.setVisibility(View.GONE);
-            holder.otherSender.setVisibility(View.VISIBLE);
-            holder.otherSender_sender.setText(comment.getSenderUId());
-            holder.otherSender_Timestamp.setText(comment.getSendertimestamp());
+            holder.parent_layout.setGravity(Gravity.LEFT);
+            holder.parent_layout.setPadding(0,0,150,0);
+            holder.messageContainer.setBackgroundResource(R.drawable.chatbubble_left);
+            holder.meSender_Timestampdate.setText(comment.getSendertimestamp().substring(0,11));
+            holder.meSender_Timestamptime.setText(comment.getSendertimestamp().substring(12));
             holder.status.setVisibility(View.GONE);
         }
         applyClickEvents(holder,position);
@@ -100,6 +105,15 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
                 break;
 
             case "doc":
+                holder.photo.setVisibility(View.VISIBLE);
+                Glide.with(context).load(R.drawable.download_pdf).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.photo);
+
+                if (comment.getCommentString()==null) {
+                    holder.commentString.setVisibility(View.GONE);
+                } else {
+                    holder.commentString.setVisibility(View.VISIBLE);
+                    holder.commentString.setText(comment.getCommentString());
+                }
                 break;
         }
     }
@@ -112,18 +126,22 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
                 if (dataSnapshot.exists()) {
                     String status = dataSnapshot.getValue(String.class);
                     switch (status) {
+                        //pending
                         case "0":
-                            holder.status.setImageResource(R.mipmap.ic_pending);
+                            holder.status.setImageResource(R.mipmap.ic_sent);
                             break;
 
+                        //sent
                         case "1":
                             holder.status.setImageResource(R.mipmap.ic_sent);
                             break;
 
+                        //delivered
                         case "2":
                             holder.status.setImageResource(R.mipmap.ic_delivered);
                             break;
 
+                        //read
                         case "3":
                             holder.status.setImageResource(R.mipmap.ic_read);
                             holder.dbCommentStatus.removeEventListener(this);
@@ -133,8 +151,6 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
                 }
 
             }
-
-
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -179,25 +195,22 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView otherSender_sender, otherSender_Timestamp, meSender_sender, meSender_Timestamp, commentString;
-        LinearLayout otherSender, meSender,messageContainer;
-        ImageView status, photo;
+        TextView meSender_Timestampdate, meSender_Timestamptime, commentString;
+        LinearLayout parent_layout,messageContainer;
+        ImageView photo, status;
         DatabaseReference dbCommentStatus;
         ValueEventListener dbCommentStatusListener;
         ProgressBar progressBar;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            messageContainer = (LinearLayout)itemView.findViewById(R.id.message_container);
-            otherSender_sender = (TextView) itemView.findViewById(R.id.otherSender_Sender);
-            otherSender_Timestamp = (TextView) itemView.findViewById(R.id.otherSender_TimeStamp);
-            otherSender = (LinearLayout) itemView.findViewById(R.id.otherSender);
+            messageContainer = (LinearLayout)itemView.findViewById(R.id.sender_message_container);
+            parent_layout = (LinearLayout) itemView.findViewById(R.id.parent_layout);
             progressBar = (ProgressBar)itemView.findViewById(R.id.progress);
             status = (ImageView) itemView.findViewById(R.id.status);
 
-            meSender_sender = (TextView) itemView.findViewById(R.id.meSender_Sender);
-            meSender_Timestamp = (TextView) itemView.findViewById(R.id.meSender_TimeStamp);
-            meSender = (LinearLayout) itemView.findViewById(R.id.meSender);
+            meSender_Timestampdate = (TextView) itemView.findViewById(R.id.meSender_TimeStampdate);
+            meSender_Timestamptime = (TextView) itemView.findViewById(R.id.meSender_TimeStamptime);
 
             commentString = (TextView) itemView.findViewById(R.id.commentString);
 
