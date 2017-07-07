@@ -29,6 +29,7 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
     String empId,empName,empDesig;
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     String curdate,task_id;
+    Boolean forQuotation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,14 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
         empId = intent.getStringExtra("id");
         empName = intent.getStringExtra("name");
         empDesig=intent.getStringExtra("designation");
+        forQuotation = intent.getBooleanExtra("forQuotation",false);
+
+        if(forQuotation==true)
+        {
+            //TODO get the list of tasks
+        }
+
+        else
         task_id = intent.getStringExtra("task_id");
 
         name.setText(empName);
@@ -96,11 +105,17 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(forwardTaskScreen2.this,forwardTask.class);
-        intent.putExtra("task_id",task_id);
-        startActivity(intent);
-        finish();
+        if(forQuotation==false) {
+            Intent intent = new Intent(forwardTaskScreen2.this, forwardTask.class);
+            intent.putExtra("task_id", task_id);
+            startActivity(intent);
+            finish();
+        }
+        else
+        {
+            //TODO for Quotation add to individual tasks list assigned
 
+        }
     }
 
     @Override
