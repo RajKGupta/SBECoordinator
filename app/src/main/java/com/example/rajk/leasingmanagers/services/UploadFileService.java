@@ -69,22 +69,17 @@ public class UploadFileService extends Service
             return UploadFileService.this;
         }
     }
-    public void uploadFile(final String path, String type, final String mykey, final String otheruserkey, final String receiverToken, final String dbTableKey, final DatabaseReference dbChat) {
+    public void uploadFile(final String path, String type, final String mykey, final String otheruserkey, final String receiverToken, final String dbTableKey, final DatabaseReference dbChat, final String timestamp, final long id) {
         //if there is a file to upload
         //put case
         System.out.println("uri found" + Uri.fromFile(new File(path)));
         if (Uri.fromFile(new File(path)) != null) {
             //displaying a progress dialog while upload is going on
-            final String timestamp = formatter.format(Calendar.getInstance().getTime());
-            long curTime = Calendar.getInstance().getTimeInMillis();
-            final long id = curTime;
             StorageReference riversRef = mStorageRef.child(dbTableKey).child("files");
 
             switch (type) {
                 case "photo":
                     //create msg with 2 extra nodes
-                    ChatMessage cm = new ChatMessage(mykey,otheruserkey,timestamp,"photo",id+"","0","nourl",receiverToken,dbTableKey,0,path,"");
-                    dbChat.child(String.valueOf(id)).setValue(cm);
 
                     riversRef.putFile(Uri.fromFile(new File(path)))
                             .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

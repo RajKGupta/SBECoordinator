@@ -244,6 +244,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                                     for(String result : photoPaths) {
                                         String l = compressMe.compressImage(result,getApplicationContext());
                                         uploadFile(l, "photo");
+
                                     }
                                     viewSelectedImages.dismiss();
 
@@ -271,8 +272,14 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
 
     private void uploadFile(String filePath, String type)
     {
+        final String timestamp = formatter.format(Calendar.getInstance().getTime());
+        long curTime = Calendar.getInstance().getTimeInMillis();
+        final long id = curTime;
 
-        uploadFileService.uploadFile(filePath,type,mykey, otheruserkey, receiverToken, dbTableKey,dbChat);
+        ChatMessage cm = new ChatMessage(mykey,otheruserkey,timestamp,"photo",id+"","0","nourl",receiverToken,dbTableKey,0,filePath,"");
+        dbChat.child(String.valueOf(id)).setValue(cm);
+
+        uploadFileService.uploadFile(filePath,type,mykey, otheruserkey, receiverToken, dbTableKey,dbChat,timestamp,id);
     }
 
 
@@ -342,8 +349,8 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     @Override
     protected void onStop() {
         super.onStop();
-        if(dbChatlistener!=null)
-            dbChat.removeEventListener(dbChatlistener);
+        /*if(dbChatlistener!=null)
+            dbChat.removeEventListener(dbChatlistener);*/
         if (mServiceBound) {
             if(mServiceConnection!=null)
             unbindService(mServiceConnection);
@@ -354,14 +361,12 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                 stopService(intent);
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if(dbChatlistener!=null)
-        dbChat.removeEventListener(dbChatlistener);
+            dbChat.removeEventListener(dbChatlistener);
     }
-
 
 ////maintain all the clicks on buttons on this page
     @Override
@@ -377,8 +382,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                 if (TextUtils.isEmpty(commentString)) {
                     Toast.makeText(ChatActivity.this, "What?? No Comment!!", Toast.LENGTH_SHORT).show();
                 } else {
-
-
                     long curTime = Calendar.getInstance().getTimeInMillis();
                     long id = curTime;
                     String timestamp = formatter.format(Calendar.getInstance().getTime());

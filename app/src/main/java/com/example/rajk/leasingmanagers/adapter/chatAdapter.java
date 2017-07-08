@@ -75,7 +75,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
             holder.meSender_Timestampdate.setText(comment.getSendertimestamp().substring(0,11));
             holder.meSender_Timestamptime.setText(comment.getSendertimestamp().substring(12));
             applyStatus(comment, holder);
-
+            applyprogressbar(comment,holder);
         } else {
             holder.parent_layout.setGravity(Gravity.LEFT);
             holder.parent_layout.setPadding(0,0,150,0);
@@ -89,15 +89,19 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
         String type = comment.getType();
         switch (type) {
             case "text":
-                holder.commentString.setText(comment.getCommentString());
+                holder.commentString.setVisibility(View.VISIBLE);
                 holder.photo.setVisibility(View.GONE);
+                holder.progressBar.setVisibility(View.GONE);
+                holder.download_chatimage.setVisibility(View.GONE);
+                holder.commentString.setText(comment.getCommentString());
                 break;
 
             case "photo":
                 holder.commentString.setVisibility(View.GONE);
                 holder.photo.setVisibility(View.VISIBLE);
+                holder.progressBar.setVisibility(View.GONE);
+                holder.download_chatimage.setVisibility(View.GONE);
                 if (comment.getSenderUId().equals(session.getUsername())){
-
                     if (!comment.getMesenderlocal_storage().equals(""))
                     {
                         holder.photo.setImageURI(Uri.parse(comment.getMesenderlocal_storage()));
@@ -113,7 +117,6 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
                                 .into(holder.photo);
                         break;
                     }
-
                 }
                 else
                 {
@@ -138,23 +141,51 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
 
             case "doc":
                 holder.commentString.setVisibility(View.GONE);
-                if (!comment.getSenderUId().equals(session.getUsername())){
-                    holder.download_chatimage.setVisibility(View.VISIBLE);
-                }
                 holder.photo.setVisibility(View.VISIBLE);
-                Glide.with(context)
-                        .load(R.drawable.download_pdf)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .placeholder(R.color.black)
-                        .crossFade()
-                        .centerCrop()
-                        .into(holder.photo);
-                break;
+                holder.progressBar.setVisibility(View.GONE);
+                holder.download_chatimage.setVisibility(View.GONE);
+                if (comment.getSenderUId().equals(session.getUsername())){
+                    if (!comment.getMesenderlocal_storage().equals(""))
+                    {
+                        holder.photo.setImageURI(Uri.parse(comment.getMesenderlocal_storage()));
+                        break;
+                    }
+                    else
+                    {
+                        Glide.with(context)
+                                .load(Uri.parse(comment.getImgurl()))
+                                .placeholder(R.color.black)
+                                .crossFade()
+                                .centerCrop()
+                                .into(holder.photo);
+                        break;
+                    }
+                }
+                else
+                {
+                    if (!comment.getOthersenderlocal_storage().equals(""))
+                    {
+                        holder.download_chatimage.setVisibility(View.GONE);
+                        holder.photo.setImageURI(Uri.parse(comment.getOthersenderlocal_storage()));
+                        break;
+                    }
+                    else
+                    {
+                        holder.download_chatimage.setVisibility(View.VISIBLE);
+                        Glide.with(context)
+                                .load(Uri.parse(comment.getImgurl()))
+                                .placeholder(R.color.black)
+                                .crossFade()
+                                .centerCrop()
+                                .into(holder.photo);
+                        break;
+                    }
+                }
         }
     }
 
     private void applyStatus(ChatMessage comment, final MyViewHolder holder) {
-        holder.dbCommentStatus = FirebaseDatabase.getInstance().getReference().child("Chats").child(dbTablekey).child("ChatMessages").child(comment.getId()).child("status").getRef();
+        holder.dbCommentStatus = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Chats").child(dbTablekey).child("ChatMessages").child(comment.getId()).child("status").getRef();
         holder.dbCommentStatusListener = holder.dbCommentStatus.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -184,6 +215,31 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
             }
         });
     }
+
+    private void applyprogressbar(ChatMessage comment, final MyViewHolder holder) {
+        holder.dbUploadProgress = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Chats").child(dbTablekey).child("ChatMessages").child(comment.getId()).child("imgurl").getRef();
+        holder.dbUploadProgressListener = holder.dbUploadProgress.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String imgurl = dataSnapshot.getValue(String.class);
+                    if (imgurl.equals("nourl"))
+                    {
+                        holder.progressBar.setVisibility(View.VISIBLE);
+                    }
+                    else
+                    {
+                        holder.progressBar.setVisibility(View.INVISIBLE);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
     public void showProgressBar(final MyViewHolder holder)
     {
         holder.download_chatimage.setVisibility(View.GONE);
@@ -203,8 +259,8 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
         TextView meSender_Timestampdate, meSender_Timestamptime, commentString;
         LinearLayout parent_layout,messageContainer;
         ImageView photo, status;
-        DatabaseReference dbCommentStatus;
-        ValueEventListener dbCommentStatusListener;
+        DatabaseReference dbCommentStatus, dbUploadProgress;
+        ValueEventListener dbCommentStatusListener, dbUploadProgressListener;
         ProgressBar progressBar;
         ImageButton download_chatimage;
 
