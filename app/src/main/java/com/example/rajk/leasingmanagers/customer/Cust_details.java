@@ -42,7 +42,7 @@ import java.util.Map;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
-public class Cust_details extends AppCompatActivity implements CustomerTasks_Adapter.CustomerTaskAdapterListener{
+public class Cust_details extends AppCompatActivity implements CustomerTasks_Adapter.CustomerTaskAdapterListener,View.OnClickListener{
 
     AlertDialog customerEditDetails;
     String id,name,num,add,temp_name,temp_add,temp_num;
@@ -57,13 +57,15 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
     private ProgressDialog progressDialog;
     public AlertDialog customerAccountDialog;
     CoordinatorSession coordinatorSession;
+    private Button quotationButton;
     private List<String> listoftasks = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cust_details);
         coordinatorSession = new CoordinatorSession(this);
-
+        quotationButton = (Button)findViewById(R.id.quotation);
+        quotationButton.setOnClickListener(this);
         progressDialog = new ProgressDialog(this);
         id = getIntent().getStringExtra("id");
         mykey = coordinatorSession.getUsername();
@@ -280,6 +282,8 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         intent.putExtra("task_id",listoftasks.get(position));
         startActivity(intent);
     }
+
+
     private void checkChatref(final String mykey, final String otheruserkey) {
         DatabaseReference dbChat = DBREF.child("Chats").child(mykey+otheruserkey).getRef();
         dbChat.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -346,4 +350,14 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         startActivity(in);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.quotation:
+                Intent intent = new Intent(this,UploadQuotationActivity.class);
+                intent.putExtra("custId",id);
+                startActivity(intent);
+            break;
+        }
+    }
 }

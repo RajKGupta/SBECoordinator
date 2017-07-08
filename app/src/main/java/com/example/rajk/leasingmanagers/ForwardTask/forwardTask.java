@@ -36,7 +36,9 @@ public class forwardTask extends AppCompatActivity {
     List<Employee> list = new ArrayList<Employee>();
     Employee emp;
     ProgressDialog pDialog;
-    String task_id;
+    String task_id,custId;
+    ArrayList<String> taskIds;
+    Boolean forQuotation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +46,19 @@ public class forwardTask extends AppCompatActivity {
         setContentView(R.layout.activity_forward_task);
         new net().execute();
         Intent intent = getIntent();
-        task_id = intent.getStringExtra("task_id");
+
+        forQuotation = intent.getBooleanExtra("forQuotation",false);
+        if(forQuotation==true)
+        {
+            taskIds=intent.getStringArrayListExtra("taskIds");
+            custId = intent.getStringExtra("custId");
+            //get the list of taskIds
+        }
+        else
+        {
+            task_id = intent.getStringExtra("task_id");
+        }
+
         recview = (RecyclerView)findViewById(R.id.recview);
         recview.setLayoutManager(new LinearLayoutManager(this));
         recview.setItemAnimator(new DefaultItemAnimator());
@@ -61,7 +75,16 @@ public class forwardTask extends AppCompatActivity {
                 i.putExtra("id", item.getUsername());
                 i.putExtra("name",item.getName());
                 i.putExtra("designation",item.getDesignation());
+                if(forQuotation==false)
                 i.putExtra("task_id",task_id);
+
+                else
+                {
+                    i.putExtra("forQuotation",forQuotation);
+                    i.putStringArrayListExtra("taskIds",taskIds);
+                    i.putExtra("custId",custId);
+                }
+
                 startActivity(i);
                 finish();
             }
@@ -95,7 +118,17 @@ public class forwardTask extends AppCompatActivity {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     emp = dataSnapshot.getValue(Employee.class);
+                    if(forQuotation==true)
+                    {
+                        if(emp.getDesignation().equalsIgnoreCase("quotation"))
+                        {
+                            list.add(emp);
+                        }
+                    }
+
+                    else
                     list.add(emp);
+
                     adapter.notifyDataSetChanged();
 
                     // Dismiss the progress dialog
@@ -130,10 +163,17 @@ public class forwardTask extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        Intent intent =new Intent(forwardTask.this, TaskDetail.class);
-        intent.putExtra("task_id",task_id);
-        startActivity(intent);
-        finish();
+        if (forQuotation == false)
+        {
+            Intent intent = new Intent(forwardTask.this, TaskDetail.class);
+            intent.putExtra("task_id", task_id);
+            startActivity(intent);
+            finish();
+        }
+        else
+        {
+            super.onBackPressed();
+            finish();
+        }
     }
 }
