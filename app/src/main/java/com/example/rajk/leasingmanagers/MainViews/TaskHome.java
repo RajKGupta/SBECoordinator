@@ -99,7 +99,6 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
 
     }
 
-
     @Override
     public void onRowLongClicked(int position) {
         // long press is performed, enable action mode
@@ -107,8 +106,7 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
     }
 
     private void enableActionMode(int position) {
-        if (actionMode == null)
-        {
+        if (actionMode == null) {
             actionMode = ((AppCompatActivity)getActivity()).startSupportActionMode(actionModeCallback);
         }
         toggleSelection(position);
@@ -129,8 +127,7 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
 
     @Override
     public void onIconClicked(int position) {
-        if (actionMode == null)
-        {
+        if (actionMode == null) {
             actionMode = ((AppCompatActivity)getActivity()).startSupportActionMode(actionModeCallback);
         }
         toggleSelection(position);
@@ -142,12 +139,10 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
         if (mAdapter.getSelectedItemCount() > 0) {
             enableActionMode(position);
         }
-        else
-        {
+        else {
             Intent intent = new Intent(getContext(),TaskDetail.class);
             Task task = TaskList.get(position);
             intent.putExtra("task_id",task.getTaskId());
-
             startActivity(intent);
         }
     }
