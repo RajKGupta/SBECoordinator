@@ -1,6 +1,7 @@
 package com.example.rajk.leasingmanagers.chat;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -20,11 +21,13 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.text.method.Touch;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -39,6 +42,7 @@ import com.example.rajk.leasingmanagers.adapter.chatAdapter;
 import com.example.rajk.leasingmanagers.adapter.taskimagesadapter;
 import com.example.rajk.leasingmanagers.helper.CompressMe;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
+import com.example.rajk.leasingmanagers.helper.TouchImageView;
 import com.example.rajk.leasingmanagers.listener.ClickListener;
 import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
 import com.example.rajk.leasingmanagers.model.ChatMessage;
@@ -526,8 +530,54 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         }
         else
         {
-            //TODO: or photos view them
-            //for docs view them
+            ChatMessage comment = chatList.get(position);
+            String type = comment.getType();
+            String uri;
+            if(comment.getSenderUId().equals(session.getUsername()))
+            {
+                uri = comment.getMesenderlocal_storage();
+            }
+            else
+            {
+                uri = comment.getOthersenderlocal_storage();
+            }
+            switch (type){
+                case "photo":
+                    viewSelectedImages = new AlertDialog.Builder(ChatActivity.this)
+                            .setView(R.layout.viewchatimage).create();
+                    viewSelectedImages.show();
+
+                    TouchImageView viewchatimage = (TouchImageView) viewSelectedImages.findViewById(R.id.chatimage);
+                    ImageButton backbutton = (ImageButton)viewSelectedImages.findViewById(R.id.back);
+
+                    viewchatimage.setImageURI(Uri.parse(uri));
+
+                    backbutton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            viewSelectedImages.dismiss();
+                        }
+                    });
+                    break;
+                case "doc":
+                    File file = new File(uri);
+                    if (file.exists()) {
+
+                        Uri pdfPath = Uri.fromFile(file);
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(pdfPath, "application/pdf");
+
+                        try {
+                            startActivity(intent);
+                        } catch (ActivityNotFoundException e) {
+                            //if user doesn't have pdf reader instructing to download a pdf reader
+                        }
+
+                    }
+                    break;
+            }
+
+
         }
     }
 
