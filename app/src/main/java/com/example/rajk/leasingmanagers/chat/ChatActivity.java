@@ -6,10 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -17,14 +22,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
+import com.example.rajk.leasingmanagers.MainViews.CreateTask;
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.adapter.ViewImageAdapter;
 import com.example.rajk.leasingmanagers.adapter.chatAdapter;
+import com.example.rajk.leasingmanagers.adapter.taskimagesadapter;
+import com.example.rajk.leasingmanagers.helper.CompressMe;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
+import com.example.rajk.leasingmanagers.listener.ClickListener;
+import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
 import com.example.rajk.leasingmanagers.model.ChatMessage;
 import com.example.rajk.leasingmanagers.services.UploadFileService;
 import com.google.firebase.database.ChildEventListener;
@@ -66,13 +79,15 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     private String lastDate = "20-01-3000 00:00";
     private chatAdapter mAdapter;
     private ArrayList<ChatMessage> chatList = new ArrayList<>();
-    private SharedPreferences sharedPreferences;
     String receiverToken="nil";
     private ChildEventListener dbChatlistener;
     ImageButton photoattach, docattach;
     public String dbTableKey;
     private CoordinatorSession session;
     private ArrayList<String> docPaths,photoPaths;
+    CompressMe compressMe;
+    private AlertDialog viewSelectedImages ;
+    ViewImageAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +96,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         marshmallowPermissions = new MarshmallowPermissions(this);
-
+        compressMe = new CompressMe(this);
         actionModeCallback = new ActionModeCallback();
 
         intent = getIntent();
@@ -161,10 +176,90 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                 {
                     photoPaths = new ArrayList<>();
                     photoPaths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA));
-                    for(String result : docPaths) {
-                        uploadFile(result, "photo");
+
+                    if (photoPaths.size() > 0)
+                    {
+                        viewSelectedImages = new AlertDialog.Builder(ChatActivity.this)
+                                .setTitle("Selected Images").setView(R.layout.activity_view_selected_image).create();
+                        viewSelectedImages.show();
+
+                        final ImageView ImageViewlarge = (ImageView) viewSelectedImages.findViewById(R.id.ImageViewlarge);
+                        ImageButton cancel = (ImageButton) viewSelectedImages.findViewById(R.id.cancel);
+                        Button canceldone = (Button)viewSelectedImages.findViewById(R.id.canceldone);
+                        Button okdone = (Button)viewSelectedImages.findViewById(R.id.okdone);
+                        RecyclerView rv = (RecyclerView) viewSelectedImages.findViewById(R.id.viewImages);
+
+                        linearLayoutManager = new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false);
+                        rv.setLayoutManager(linearLayoutManager);
+                        rv.setItemAnimator(new DefaultItemAnimator());
+                        rv.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.HORIZONTAL));
+
+                        adapter = new ViewImageAdapter(photoPaths, this);
+                        rv.setAdapter(adapter);
+
+
+                        final String[] item = {photoPaths.get(0)};
+                        ImageViewlarge.setImageURI(Uri.parse(item[0]));
+
+                        rv.addOnItemTouchListener(new RecyclerTouchListener(this, rv, new ClickListener() {
+                            @Override
+                            public void onClick(View view, int position) {
+                                adapter.selectedPosition = position;
+                                adapter.notifyDataSetChanged();
+                                item[0] = photoPaths.get(position);
+                                ImageViewlarge.setImageURI(Uri.parse(item[0]));
+                            }
+
+                            @Override
+                            public void onLongClick(View view, int position) {
+
+                            }
+                        }));
+
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                int i = photoPaths.indexOf(item[0]);
+                                if (i == photoPaths.size() - 1)
+                                    i = 0;
+                                photoPaths.remove(item[0]);
+                                adapter.selectedPosition = i;
+                                adapter.notifyDataSetChanged();
+                                item[0] = photoPaths.get(i);
+                                ImageViewlarge.setImageURI(Uri.parse(item[0]));
+                            }
+                        });
+
+                        canceldone.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                viewSelectedImages.dismiss();
+                            }
+                        });
+
+                        okdone.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                int i = photoPaths.size();
+                                if (i>0)
+                                {
+                                    for(String result : photoPaths) {
+                                        String l = compressMe.compressImage(result,getApplicationContext());
+                                        uploadFile(l, "photo");
+                                    }
+                                    viewSelectedImages.dismiss();
+
+                                } else {
+                                    viewSelectedImages.dismiss();
+                                }
+                                //onpressing save button dont forget to add this
+                                //upload images to storage
+                                //on success add informatio to database
+                            }
+                        });
                     }
-                    }
+
+                }
                 break;
             case FilePickerConst.REQUEST_CODE_DOC:
                 if(resultCode== Activity.RESULT_OK && data!=null)
@@ -187,14 +282,15 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     }
 
 
-    private void loadData() {
+    public void loadData()
+    {
         dbChatlistener = dbChat.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (!dataSnapshot.exists()) {
                     Toast.makeText(ChatActivity.this, "No more comments", Toast.LENGTH_SHORT).show();
                 }
-        else {
+                else {
                     ChatMessage comment = dataSnapshot.getValue(ChatMessage.class);
                     if (!comment.getSenderUId().equals(mykey)) {
 
@@ -440,4 +536,10 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         enableActionMode(position);
     }
 
+    @Override
+    public void download_chatimageClicked(int position)
+    {
+        // download chat image
+        //setothersenderlocaluri afetr downloading the image
+    }
 }

@@ -15,6 +15,8 @@ public class ChatMessage {
     private String id;
     private String status;
     private String imgurl;
+    private String mesenderlocal_storage;
+    private String othersenderlocal_storage;
     private String receiverToken;
     private String chatref;
     private int percentUploaded;
@@ -121,7 +123,7 @@ public class ChatMessage {
 
     }
 
-    public ChatMessage(String senderUId, String receiverUId, String sendertimestamp, String type, String id, String status, String imgurl, String receiverToken, String chatref, int percentUploaded) {
+    public ChatMessage(String senderUId, String receiverUId, String sendertimestamp, String type, String id, String status, String imgurl, String receiverToken, String chatref, int percentUploaded,String mesenderlocal_storage, String othersenderlocal_storage) {
         this.senderUId = senderUId;
         this.receiverUId = receiverUId;
         this.sendertimestamp = sendertimestamp;
@@ -131,6 +133,32 @@ public class ChatMessage {
         this.imgurl = imgurl;
         this.receiverToken = receiverToken;
         this.chatref = chatref;
+        this.percentUploaded = percentUploaded;
+        this.mesenderlocal_storage = mesenderlocal_storage;
+        this.othersenderlocal_storage = othersenderlocal_storage;
+    }
+
+    public String getMesenderlocal_storage() {
+        return mesenderlocal_storage;
+    }
+
+    public void setMesenderlocal_storage(String mesenderlocal_storage) {
+        this.mesenderlocal_storage = mesenderlocal_storage;
+    }
+
+    public String getOthersenderlocal_storage() {
+        return othersenderlocal_storage;
+    }
+
+    public void setOthersenderlocal_storage(String othersenderlocal_storage) {
+        this.othersenderlocal_storage = othersenderlocal_storage;
+    }
+
+    public int getPercentUploaded() {
+        return percentUploaded;
+    }
+
+    public void setPercentUploaded(int percentUploaded) {
         this.percentUploaded = percentUploaded;
     }
 }

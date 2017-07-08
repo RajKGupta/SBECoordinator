@@ -12,6 +12,7 @@ import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -94,19 +95,86 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
 
             case "photo":
                 holder.photo.setVisibility(View.VISIBLE);
-                Glide.with(context).load(Uri.parse(comment.getImgurl())).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.photo);
+                if (comment.getSenderUId().equals(session.getUsername())){
 
-                if (comment.getCommentString()==null) {
-                    holder.commentString.setVisibility(View.GONE);
-                } else {
-                    holder.commentString.setVisibility(View.VISIBLE);
-                    holder.commentString.setText(comment.getCommentString());
+                    if (!comment.getMesenderlocal_storage().equals(""))
+                    {
+                        holder.photo.setImageURI(Uri.parse(comment.getMesenderlocal_storage()));
+
+                        if (comment.getCommentString()==null) {
+                            holder.commentString.setVisibility(View.GONE);
+                        } else {
+                            holder.commentString.setVisibility(View.VISIBLE);
+                            holder.commentString.setText(comment.getCommentString());
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        Glide.with(context)
+                                .load(Uri.parse(comment.getImgurl()))
+                                .placeholder(R.color.black)
+                                .crossFade()
+                                .centerCrop()
+                                .into(holder.photo);
+
+                        if (comment.getCommentString()==null) {
+                            holder.commentString.setVisibility(View.GONE);
+                        } else {
+                            holder.commentString.setVisibility(View.VISIBLE);
+                            holder.commentString.setText(comment.getCommentString());
+                        }
+                        break;
+                    }
+
                 }
-                break;
+                else
+                {
+                    if (!comment.getOthersenderlocal_storage().equals(""))
+                    {
+                        holder.download_chatimage.setVisibility(View.GONE);
+                        holder.photo.setImageURI(Uri.parse(comment.getOthersenderlocal_storage()));
+
+                        if (comment.getCommentString()==null) {
+                            holder.commentString.setVisibility(View.GONE);
+                        } else {
+                            holder.commentString.setVisibility(View.VISIBLE);
+                            holder.commentString.setText(comment.getCommentString());
+                        }
+                        break;
+                    }
+                    else
+                    {
+                        holder.download_chatimage.setVisibility(View.VISIBLE);
+                        Glide.with(context)
+                                .load(Uri.parse(comment.getImgurl()))
+                                .placeholder(R.color.black)
+                                .crossFade()
+                                .centerCrop()
+                                .into(holder.photo);
+
+                        if (comment.getCommentString()==null) {
+                            holder.commentString.setVisibility(View.GONE);
+                        } else {
+                            holder.commentString.setVisibility(View.VISIBLE);
+                            holder.commentString.setText(comment.getCommentString());
+                        }
+                        break;
+                    }
+                }
 
             case "doc":
+                if (!comment.getSenderUId().equals(session.getUsername())){
+                    holder.download_chatimage.setVisibility(View.VISIBLE);
+                }
                 holder.photo.setVisibility(View.VISIBLE);
-                Glide.with(context).load(R.drawable.download_pdf).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.photo);
+                Glide.with(context)
+                        .load(R.drawable.download_pdf)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .placeholder(R.color.black)
+                        .crossFade()
+                        .centerCrop()
+                        .into(holder.photo);
 
                 if (comment.getCommentString()==null) {
                     holder.commentString.setVisibility(View.GONE);
@@ -146,10 +214,8 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
                             holder.status.setImageResource(R.mipmap.ic_read);
                             holder.dbCommentStatus.removeEventListener(this);
                             break;
-
                     }
                 }
-
             }
 
             @Override
@@ -201,6 +267,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
         DatabaseReference dbCommentStatus;
         ValueEventListener dbCommentStatusListener;
         ProgressBar progressBar;
+        ImageButton download_chatimage;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -208,7 +275,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
             parent_layout = (LinearLayout) itemView.findViewById(R.id.parent_layout);
             progressBar = (ProgressBar)itemView.findViewById(R.id.progress);
             status = (ImageView) itemView.findViewById(R.id.status);
-
+            download_chatimage = (ImageButton)itemView.findViewById(R.id.download_chatimage);
             meSender_Timestampdate = (TextView) itemView.findViewById(R.id.meSender_TimeStampdate);
             meSender_Timestamptime = (TextView) itemView.findViewById(R.id.meSender_TimeStamptime);
 
@@ -268,6 +335,8 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
         void onMessageRowClicked(int position);
 
         void onRowLongClicked(int position);
+        void download_chatimageClicked(int position);
+
     }
     private void applyRowAnimation(MyViewHolder holder, int position) {
             if ((reverseAllAnimations && animationItemsIndex.get(position, false)) || currentSelectedIndex == position) {
@@ -294,8 +363,13 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
                 return true;
             }
         });
+
+        holder.download_chatimage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.download_chatimageClicked(position);
+            }
+        });
     }
-
-
 }
 

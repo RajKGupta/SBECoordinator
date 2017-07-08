@@ -9,9 +9,13 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.rajk.leasingmanagers.chat.ChatActivity;
 import com.example.rajk.leasingmanagers.model.ChatMessage;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -65,9 +69,10 @@ public class UploadFileService extends Service {
             return UploadFileService.this;
         }
     }
-    public void uploadFile(String path, String type, final String mykey, final String otheruserkey, final String receiverToken, final String dbTableKey, final DatabaseReference dbChat) {
+    public void uploadFile(final String path, String type, final String mykey, final String otheruserkey, final String receiverToken, final String dbTableKey, final DatabaseReference dbChat) {
         //if there is a file to upload
         //put case
+        String p = path;
         System.out.println("uri found" + Uri.fromFile(new File(path)));
         if (Uri.fromFile(new File(path)) != null) {
             //displaying a progress dialog while upload is going on
@@ -78,21 +83,23 @@ public class UploadFileService extends Service {
 
             /*final ProgressDialog progressDialog = new ProgressDialog();
             progressDialog.setTitle("Uploading");
-            progressDialog.show();
-*/
+            progressDialog.show();*/
+
             switch (type) {
                 case "photo":
 
                     //create msg with 2 extra nodes
-                    ChatMessage cm = new ChatMessage(mykey,otheruserkey,timestamp,"photo",id+"","0","nourl",receiverToken,dbTableKey,0);
+                    ChatMessage cm = new ChatMessage(mykey,otheruserkey,timestamp,"photo",id+"","0","nourl",receiverToken,dbTableKey,0,path,"");
                     dbChat.child(String.valueOf(id)).setValue(cm);
+
+                    new ChatActivity().loadData();
 
                     riversRef.putFile(Uri.fromFile(new File(path)))
                             .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                                    ChatMessage cm = new ChatMessage(mykey,otheruserkey,timestamp,"photo",id+"","0",downloadUrl.toString(),receiverToken,dbTableKey,100);
+                                    ChatMessage cm = new ChatMessage(mykey,otheruserkey,timestamp,"photo",id+"","0",downloadUrl.toString(),receiverToken,dbTableKey,100,path,"");
                                     dbChat.child(String.valueOf(id)).setValue(cm);
                                     Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
 
@@ -115,11 +122,11 @@ public class UploadFileService extends Service {
       //                              progressDialog.setMessage("Uploaded " + ((int) progress) + "%...");
                                 }
                             });
-break;
+                            break;
                     //if there is not any file
                 case "doc":
                     //create msg with 2 extra nodes
-                    ChatMessage cmDoc = new ChatMessage(mykey,otheruserkey,timestamp,"doc",id+"","0","nourl",receiverToken,dbTableKey,0);
+                    ChatMessage cmDoc = new ChatMessage(mykey,otheruserkey,timestamp,"doc",id+"","0","nourl",receiverToken,dbTableKey,0,path,"");
                     dbChat.child(String.valueOf(id)).setValue(cmDoc);
 
                     riversRef.putFile(Uri.fromFile(new File(path)))
@@ -127,7 +134,7 @@ break;
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                                    ChatMessage cm = new ChatMessage(mykey,otheruserkey,timestamp,"doc",id+"","0",downloadUrl.toString(),receiverToken,dbTableKey,100);
+                                    ChatMessage cm = new ChatMessage(mykey,otheruserkey,timestamp,"doc",id+"","0",downloadUrl.toString(),receiverToken,dbTableKey,100,path,"");
                                     dbChat.child(String.valueOf(id)).setValue(cm);
                                     Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
 

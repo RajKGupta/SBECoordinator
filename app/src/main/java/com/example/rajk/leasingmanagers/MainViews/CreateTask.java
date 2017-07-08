@@ -31,6 +31,7 @@ import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.ViewImageAdapter;
 import com.example.rajk.leasingmanagers.adapter.taskimagesadapter;
 import com.example.rajk.leasingmanagers.customer.Cust_details;
+import com.example.rajk.leasingmanagers.helper.CompressMe;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.listener.ClickListener;
 import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
@@ -69,6 +70,7 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
     GridLayoutManager imagegrid;
     ViewImageAdapter adapter;
     taskimagesadapter tadapter;
+    CompressMe compressMe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +79,7 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
         TooLargeTool.startLogging(getApplication());
         //Fresco.initialize(getApplicationContext());
         marshMallowPermission = new MarshmallowPermissions(this);
+        compressMe = new CompressMe(this);
         getSupportActionBar().setTitle("Create New Task");
         dbRef= FirebaseDatabase.getInstance().getReference().child("MeChat");
         Intent intent = getIntent();
@@ -258,9 +261,11 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                 // show results in textview
                 System.out.println(String.format("Totally %d images selected:", mResults.size()));
                 for (String result : mResults) {
-                    picUriList.add(result);
+                    String l = compressMe.compressImage(result,getApplicationContext());
+                    picUriList.add(l);
                 }
-                if (picUriList.size() > 0) {
+                if (picUriList.size() > 0)
+                {
                     viewSelectedImages = new AlertDialog.Builder(CreateTask.this)
                             .setTitle("Selected Images").setView(R.layout.activity_view_selected_image).create();
                     viewSelectedImages.show();
@@ -278,6 +283,7 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
 
                     adapter = new ViewImageAdapter(picUriList, this);
                     rv.setAdapter(adapter);
+
 
                     final String[] item = {picUriList.get(0)};
                     ImageViewlarge.setImageURI(Uri.parse(item[0]));
