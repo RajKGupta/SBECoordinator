@@ -349,8 +349,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     @Override
     protected void onStop() {
         super.onStop();
-        /*if(dbChatlistener!=null)
-            dbChat.removeEventListener(dbChatlistener);*/
         if (mServiceBound) {
             if(mServiceConnection!=null)
             unbindService(mServiceConnection);
@@ -526,6 +524,11 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         if (mAdapter.getSelectedItemCount() > 0) {
             enableActionMode(position);
         }
+        else
+        {
+            //for photos view them
+            //for docs view them
+        }
     }
 
     @Override
@@ -539,29 +542,59 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         mAdapter.showProgressBar(holder);
         final ChatMessage comment = chatList.get(position);
         StorageReference str = FirebaseStorage.getInstance().getReferenceFromUrl(comment.getImgurl());
+        String type = comment.getType();
 
-        File rootPath = new File(Environment.getExternalStorageDirectory(), "MeChat/Images");
-        if(!rootPath.exists()) {
-            rootPath.mkdirs();
+            switch (type)
+            {
+                case "photo":
+                    File rootPath = new File(Environment.getExternalStorageDirectory(), "MeChat/Images");
+                    if (!rootPath.exists()) {
+                        rootPath.mkdirs();
+                }
+                String uriSting = System.currentTimeMillis() + ".jpg";
+
+                final File localFile = new File(rootPath, uriSting);
+                final String localuri = (rootPath.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
+                str.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                        Log.e("firebase ", ";local tem file created  created " + localFile.toString());
+                        dbChat = DBREF.child("Chats").child(dbTableKey).child("ChatMessages").getRef();
+                        dbChat.child(comment.getId()).child("othersenderlocal_storage").setValue(localuri);
+                        mAdapter.dismissProgressBar(holder);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        mAdapter.dismissProgressBar(holder);
+                        Log.e("firebase ", ";local tem file not created  created " + exception.toString());
+                    }
+                });
+                break;
+                case "doc":
+                    rootPath = new File(Environment.getExternalStorageDirectory(), "MeChat/Docs");
+                    if (!rootPath.exists()) {
+                        rootPath.mkdirs();
+                    }
+                    uriSting = System.currentTimeMillis() + ".jpg";
+
+                    final File localdocFile = new File(rootPath, uriSting);
+                    final String localdocuri = (rootPath.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
+                    str.getFile(localdocFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                            dbChat = DBREF.child("Chats").child(dbTableKey).child("ChatMessages").getRef();
+                            dbChat.child(comment.getId()).child("othersenderlocal_storage").setValue(localdocuri);
+                            mAdapter.dismissProgressBar(holder);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            mAdapter.dismissProgressBar(holder);
+                            Log.e("firebase ", ";local tem file not created  created " + exception.toString());
+                        }
+                    });
+                    break;
+            }
         }
-        String uriSting = System.currentTimeMillis() + ".jpg";
-
-        final File localFile = new File(rootPath,uriSting);
-        final String localuri = (rootPath.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
-        str.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                Log.e("firebase ",";local tem file created  created " +localFile.toString());
-                dbChat = DBREF.child("Chats").child(dbTableKey).child("ChatMessages").getRef();
-                dbChat.child(comment.getId()).child("othersenderlocal_storage").setValue(localuri);
-                mAdapter.dismissProgressBar(holder);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                mAdapter.dismissProgressBar(holder);
-                Log.e("firebase ",";local tem file not created  created " +exception.toString());
-            }
-        });
-    }
 }

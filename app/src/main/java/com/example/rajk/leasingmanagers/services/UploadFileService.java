@@ -113,8 +113,6 @@ public class UploadFileService extends Service
                     //if there is not any file
                 case "doc":
                     //create msg with 2 extra nodes
-                    ChatMessage cmDoc = new ChatMessage(mykey,otheruserkey,timestamp,"doc",id+"","0","nourl",receiverToken,dbTableKey,0,path,"");
-                    dbChat.child(String.valueOf(id)).setValue(cmDoc);
 
                     riversRef.putFile(Uri.fromFile(new File(path)))
                             .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

@@ -147,13 +147,18 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
                 if (comment.getSenderUId().equals(session.getUsername())){
                     if (!comment.getMesenderlocal_storage().equals(""))
                     {
-                        holder.photo.setImageURI(Uri.parse(comment.getMesenderlocal_storage()));
+                        Glide.with(context)
+                                .load(R.drawable.download_pdf)
+                                .placeholder(R.color.black)
+                                .crossFade()
+                                .centerCrop()
+                                .into(holder.photo);
                         break;
                     }
                     else
                     {
                         Glide.with(context)
-                                .load(Uri.parse(comment.getImgurl()))
+                                .load(R.drawable.download_pdf)
                                 .placeholder(R.color.black)
                                 .crossFade()
                                 .centerCrop()
@@ -166,14 +171,19 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
                     if (!comment.getOthersenderlocal_storage().equals(""))
                     {
                         holder.download_chatimage.setVisibility(View.GONE);
-                        holder.photo.setImageURI(Uri.parse(comment.getOthersenderlocal_storage()));
+                        Glide.with(context)
+                                .load(R.drawable.download_pdf)
+                                .placeholder(R.color.black)
+                                .crossFade()
+                                .centerCrop()
+                                .into(holder.photo);
                         break;
                     }
                     else
                     {
                         holder.download_chatimage.setVisibility(View.VISIBLE);
                         Glide.with(context)
-                                .load(Uri.parse(comment.getImgurl()))
+                                .load(R.drawable.download_pdf)
                                 .placeholder(R.color.black)
                                 .crossFade()
                                 .centerCrop()
