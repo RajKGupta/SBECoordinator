@@ -526,7 +526,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         }
         else
         {
-            //for photos view them
+            //TODO: or photos view them
             //for docs view them
         }
     }
