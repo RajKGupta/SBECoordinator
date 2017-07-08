@@ -3,6 +3,7 @@ package com.example.rajk.leasingmanagers.MainViews;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -26,15 +27,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.rajk.leasingmanagers.ForwardTask.forwardTask;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.taskAdapter;
+import com.example.rajk.leasingmanagers.customer.UploadQuotationActivity;
 import com.example.rajk.leasingmanagers.helper.FilePath;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
-import com.example.rajk.leasingmanagers.model.Quotation;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.example.rajk.leasingmanagers.services.UploadQuotationService;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,9 +42,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.zfdang.multiple_images_selector.ImagesSelectorActivity;
-import com.zfdang.multiple_images_selector.SelectorSettings;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -58,11 +55,13 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
     private taskAdapter mAdapter;
     private ActionModeCallback actionModeCallback;
     private ActionMode actionMode;
+    Activity context;
     MarshmallowPermissions marshMallowPermission;
     private static final int PICK_FILE_REQUEST = 1;
     private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
     ProgressDialog progressDialog ;
     DatabaseReference dbQuotation;
+    private String custId="nocust";
 
     public TaskHome() {
         // Required empty public constructor
@@ -73,12 +72,17 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.activity_task_home, container, false);
+
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        context = getActivity();
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+           custId = bundle.getString("custId");
+        }
         marshMallowPermission = new MarshmallowPermissions(getActivity());
         progressDialog = new ProgressDialog(getActivity());
         dbTask = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").getRef();
@@ -160,10 +164,26 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
             switch (item.getItemId()) {
                 case R.id.uploadquotation:
                     // delete all the selected messages
-                    UploadQuotation();
+                 UploadQuotation();
                     //mode.finish();
                     mode = null;
                     return true;
+
+                case R.id.Forwardtoquotationwala:
+                Intent intent =new Intent(getActivity(),forwardTask.class);
+                intent.putExtra("forQuotation",true);
+                List<Integer> selectedItems = mAdapter.getSelectedItems();
+                    ArrayList<String> taskIds = new ArrayList<>();
+                    for(Integer x:selectedItems)
+                    {
+                        Task task = TaskList.get(x);
+                        taskIds.add(task.getTaskId());
+                    }
+                    intent.putExtra("custId",custId);
+                intent.putStringArrayListExtra("taskIds",taskIds);
+                startActivity(intent);
+                return true;
+
 
                 default:
                     return false;
@@ -184,29 +204,6 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
         }
     }
 
-    private void UploadQuotation()
-    {
-        if (!marshMallowPermission.checkPermissionForCamera()&&!marshMallowPermission.checkPermissionForExternalStorage()) {
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
-                    2);
-        }
-        else {
-
-            if (Build.VERSION.SDK_INT < 19) {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                intent.setType("*/*");
-                startActivityForResult(Intent.createChooser(intent, "Choose File to Upload.."), PICK_FILE_REQUEST);
-            } else {
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.setType("*/*");
-                intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-                startActivityForResult(Intent.createChooser(intent, "Choose File to Upload.."), PICK_FILE_REQUEST);
-            }
-        }
-    }
 
     void showpd(String text)
     {
@@ -263,7 +260,15 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
             public void onChildAdded(DataSnapshot dataSnapshot, String s)
             {
                 Task task = dataSnapshot.getValue(Task.class);
+                if(context instanceof UploadQuotationActivity)
+                {
+                    if(task.getCustomerId().equals(custId))
+                        TaskList.add(task);
+
+                }
+                else
                 TaskList.add(task);
+
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -275,7 +280,14 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Task task = dataSnapshot.getValue(Task.class);
-                TaskList.remove(task);
+                if(context instanceof UploadQuotationActivity)
+                {
+                    if(task.getCustomerId().equals(custId))
+                        TaskList.remove(task);
+
+                }
+                else
+                    TaskList.remove(task);
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -324,5 +336,15 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
             }
 
         }
+    }
+    private void UploadQuotation()
+    {
+        Intent intent = new Intent();
+        //sets the select file to all types of files
+        intent.setType("*/*");
+        //allows to select data and return it
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        //starts new activity to select file and return data
+        startActivityForResult(Intent.createChooser(intent,"Choose File to Upload.."),PICK_FILE_REQUEST);
     }
 }

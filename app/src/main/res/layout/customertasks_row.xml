@@ -17,11 +17,8 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:orientation="vertical"
-        android:paddingLeft="72dp"
+        android:paddingLeft="60dp"
         android:paddingRight="@dimen/padding_list_row"
-        android:layout_alignTop="@+id/viewdetails"
-        android:layout_alignRight="@+id/viewdetails"
-        android:layout_alignEnd="@+id/viewdetails"
         android:layout_marginRight="17dp"
         android:layout_marginEnd="17dp">
 
@@ -87,17 +84,27 @@
 
     </RelativeLayout>
 
-
-    <Button
+    <RelativeLayout
+        android:layout_alignParentRight="true"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:id="@+id/viewdetails"
-        android:layout_margin="3dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="View Details"
-        android:gravity="center"
-        android:textSize="15dp"
-        android:layout_alignParentRight="true"/>
+        >
+
+        <ImageView
+            android:layout_width="@dimen/icon_width_height"
+            android:layout_height="@dimen/icon_width_height"
+            android:src="@drawable/bg_circle_black_corner"
+            />
+        <TextView
+            android:text="i"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/icon_text" />
 
 
+    </RelativeLayout>
 
 </RelativeLayout>
