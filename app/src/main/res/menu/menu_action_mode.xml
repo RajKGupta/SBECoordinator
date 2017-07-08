@@ -14,7 +14,7 @@
 
     <item
         android:id="@+id/Forwardtoquotationwala"
-        android:icon="@drawable/ic_upload"
+        android:icon="@drawable/ic_forward"
         android:orderInCategory="100"
         android:title="Upload"
         app:showAsAction="always" />

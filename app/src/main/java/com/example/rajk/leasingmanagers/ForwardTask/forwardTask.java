@@ -36,7 +36,8 @@ public class forwardTask extends AppCompatActivity {
     List<Employee> list = new ArrayList<Employee>();
     Employee emp;
     ProgressDialog pDialog;
-    String task_id;
+    String task_id,custId;
+    ArrayList<String> taskIds;
     Boolean forQuotation;
 
     @Override
@@ -49,6 +50,8 @@ public class forwardTask extends AppCompatActivity {
         forQuotation = intent.getBooleanExtra("forQuotation",false);
         if(forQuotation==true)
         {
+            taskIds=intent.getStringArrayListExtra("taskIds");
+            custId = intent.getStringExtra("custId");
             //get the list of taskIds
         }
         else
@@ -78,8 +81,8 @@ public class forwardTask extends AppCompatActivity {
                 else
                 {
                     i.putExtra("forQuotation",forQuotation);
-                    //TODO add the the list of tasks
-
+                    i.putStringArrayListExtra("taskIds",taskIds);
+                    i.putExtra("custId",custId);
                 }
 
                 startActivity(i);

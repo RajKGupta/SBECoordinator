@@ -13,12 +13,16 @@ import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialo
 import com.codetroopers.betterpickers.calendardatepicker.MonthAdapter;
 import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.customer.Cust_details;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
+import com.example.rajk.leasingmanagers.model.QuotationBatch;
+import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -28,7 +32,8 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
     EditText name,designation,enddate,note,startDate;
     String empId,empName,empDesig;
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    String curdate,task_id;
+    String curdate,task_id,custId;
+    ArrayList<String> taskIds;
     Boolean forQuotation;
 
     @Override
@@ -50,7 +55,8 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
 
         if(forQuotation==true)
         {
-            //TODO get the list of tasks
+            taskIds = intent.getStringArrayListExtra("taskIds");
+            custId= intent.getStringExtra("custId");
         }
 
         else
@@ -85,18 +91,41 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
             public void onClick(View v) {
                 String deadline  = enddate.getText().toString().trim();
                 String cooordnote = note.getText().toString().trim();
-                CompletedBy completedBy = new CompletedBy(empId,curdate,deadline,cooordnote);
-                DatabaseReference dbAssigned = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(task_id).child("AssignedTo").child(empId);
-                dbAssigned.setValue(completedBy);
+                if(forQuotation==false) {
+                    CompletedBy completedBy = new CompletedBy(empId, curdate, deadline, cooordnote);
+                    DatabaseReference dbAssigned = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(task_id).child("AssignedTo").child(empId);
+                    dbAssigned.setValue(completedBy);
 
-                DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(empId).child("AssignedTask").child(task_id);
-                dbEmployee.setValue("pending"); //for employee
+                    DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(empId).child("AssignedTask").child(task_id);
+                    dbEmployee.setValue("pending"); //for employee
 
-                Toast.makeText(forwardTaskScreen2.this,"Task Assigned to "+empName,Toast.LENGTH_SHORT).show();
-                Intent intent1 =new Intent(forwardTaskScreen2.this, TaskDetail.class);
-                intent1.putExtra("task_id",task_id);
-                startActivity(intent1);
-                finish();
+                    Toast.makeText(forwardTaskScreen2.this, "Task Assigned to " + empName, Toast.LENGTH_SHORT).show();
+                    Intent intent1 = new Intent(forwardTaskScreen2.this, TaskDetail.class);
+                    intent1.putExtra("task_id", task_id);
+                    startActivity(intent1);
+                    finish();
+                }
+                else
+                {
+                    for(String taskid:taskIds)
+                    {
+                        CompletedBy completedBy = new CompletedBy(empId, curdate, deadline, cooordnote);
+                        DatabaseReference dbAssigned = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(taskid).child("AssignedTo").child(empId);
+                        dbAssigned.setValue(completedBy);
+                        DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(empId).child("AssignedTask").child(custId).child("listoftasks");
+                        dbEmployee.child(taskid).setValue("pending"); //for employee
+                    }
+                    DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(empId).child("AssignedTask").child(custId);
+                    dbEmployee.child("deadline").setValue(deadline);
+                    dbEmployee.child("startDate").setValue(curdate);
+                    dbEmployee.child("coordnote").setValue(cooordnote);
+                    Toast.makeText(forwardTaskScreen2.this, "Task Assigned to " + empName, Toast.LENGTH_SHORT).show();
+                    Intent intent1 = new Intent(forwardTaskScreen2.this, Cust_details.class);
+                    intent1.putExtra("id", custId);
+                    startActivity(intent1);
+                    finish();
+
+                }
             }
         });
 
@@ -113,7 +142,8 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
         }
         else
         {
-            //TODO for Quotation add to individual tasks list assigned
+            //TODO goto customer details activity
+
 
         }
     }

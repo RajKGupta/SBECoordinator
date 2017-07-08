@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
@@ -43,7 +44,7 @@ public class CustomerTasks_Adapter extends  RecyclerView.Adapter<CustomerTasks_A
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView taskname, timestamp, icon_text;
         ImageView imgProfile;
-        Button viewdetail;
+        RelativeLayout viewdetail;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -51,7 +52,7 @@ public class CustomerTasks_Adapter extends  RecyclerView.Adapter<CustomerTasks_A
             timestamp = (TextView) itemView.findViewById(R.id.timestamp);
             icon_text = (TextView) itemView.findViewById(R.id.icon_text);
             imgProfile = (ImageView) itemView.findViewById(R.id.icon_profile);
-            viewdetail = (Button) itemView.findViewById(R.id.viewdetails);
+            viewdetail = (RelativeLayout) itemView.findViewById(R.id.viewdetails);
         }
 
     }
@@ -76,7 +77,7 @@ public class CustomerTasks_Adapter extends  RecyclerView.Adapter<CustomerTasks_A
                     holder.icon_text.setText(iconText.charAt(0) + "");
                     holder.imgProfile.setImageResource(R.drawable.bg_circle);
                     holder.imgProfile.setColorFilter(task.getColor());
-                    holder.timestamp.setText(task.getStartDate());
+                    holder.timestamp.setText("End Date:"+task.getExpEndDate());
                     applyClickEvents(holder, position);
                 }
             }
@@ -87,16 +88,7 @@ public class CustomerTasks_Adapter extends  RecyclerView.Adapter<CustomerTasks_A
             }
         });
 
-        //holder.viewdetail.setVisibility(View.GONE);
-        /*setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context,TaskDetail.class);
-                intent.putExtra("task_id",list.get(position));
-                context.startActivity(intent);
-            }
-        });*/
-    }
+        }
 
     @Override
     public int getItemCount() {

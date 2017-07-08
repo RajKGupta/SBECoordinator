@@ -5,8 +5,16 @@ package com.example.rajk.leasingmanagers.model;
  */
 
 public class QuotationBatch {
-    private String empId;
     private String dateassigned;
     private String datecompleted;
     private String note;
+
+    public QuotationBatch(String dateassigned, String datecompleted, String note) {
+        this.dateassigned = dateassigned;
+        this.datecompleted = datecompleted;
+        this.note = note;
+    }
+
+    public QuotationBatch() {
+    }
 }
