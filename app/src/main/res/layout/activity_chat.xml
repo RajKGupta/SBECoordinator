@@ -1,50 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:id="@+id/mainCommentLayout"
-android:focusable="true"
-android:focusableInTouchMode="true"
-tools:context="com.example.rajk.leasingmanagers.chat.ChatActivity">
-
-<RelativeLayout
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="10dp"
-    android:id="@+id/sendComment"
+    android:layout_height="match_parent"
+    android:id="@+id/mainCommentLayout"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context="com.example.rajk.leasingmanagers.chat.ChatActivity">
 
-    android:background="@drawable/edittext_bg_whitebg"
-    android:layout_alignParentBottom="true">
-    <LinearLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/my_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/grey_300"
+        android:layout_above="@+id/sendComment"
+        android:nestedScrollingEnabled="true"
+        android:padding="6dp"
+        android:windowSoftInputMode="adjustResize"/>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <EditText
+        android:orientation="vertical"
+        android:padding="5dp"
+        android:id="@+id/sendComment"
+        android:background="@drawable/edittext_bg_whitebg"
+        android:layout_alignParentBottom="true"
+        android:windowSoftInputMode="adjustResize">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Type Your Comment"
-            android:padding="10dp"
-            android:id="@+id/typeComment"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/edittext_bg_greystroke"/>
-
+            android:orientation="horizontal">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Type Your Comment"
+                android:padding="10dp"
+                android:id="@+id/typeComment"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/edittext_bg_greystroke"/>
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@mipmap/ic_attach_photo"
                 android:id="@+id/photoattach"
-
                 />
+
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/docattach"
                 android:background="@mipmap/ic_attach_doc"
-
                 />
 
         <ImageButton
@@ -58,25 +66,5 @@ tools:context="com.example.rajk.leasingmanagers.chat.ChatActivity">
 
     </LinearLayout>
 </RelativeLayout>
+        </RelativeLayout>
 
-
-
-<LinearLayout
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/commentView"
-    android:layout_above="@id/sendComment">
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/my_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/whitetranslucent"
-        android:scrollbars="vertical"
-        android:nestedScrollingEnabled="false"/>
-
-
-</LinearLayout>
-
-</RelativeLayout>

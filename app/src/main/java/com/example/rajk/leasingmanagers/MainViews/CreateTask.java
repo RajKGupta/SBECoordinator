@@ -31,6 +31,7 @@ import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.ViewImageAdapter;
 import com.example.rajk.leasingmanagers.adapter.taskimagesadapter;
 import com.example.rajk.leasingmanagers.customer.Cust_details;
+import com.example.rajk.leasingmanagers.helper.CompressMe;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.listener.ClickListener;
 import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
@@ -40,9 +41,11 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.gu.toolargetool.TooLargeTool;
 import com.zfdang.multiple_images_selector.ImagesSelectorActivity;
 import com.zfdang.multiple_images_selector.SelectorSettings;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -67,13 +70,16 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
     GridLayoutManager imagegrid;
     ViewImageAdapter adapter;
     taskimagesadapter tadapter;
+    CompressMe compressMe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_task);
-        Fresco.initialize(getApplicationContext());
+        TooLargeTool.startLogging(getApplication());
+        //Fresco.initialize(getApplicationContext());
         marshMallowPermission = new MarshmallowPermissions(this);
+        compressMe = new CompressMe(this);
         getSupportActionBar().setTitle("Create New Task");
         dbRef= FirebaseDatabase.getInstance().getReference().child("MeChat");
         Intent intent = getIntent();
@@ -145,7 +151,7 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                 }
                 else {
                         Intent intent = new Intent(CreateTask.this, ImagesSelectorActivity.class);
-                        intent.putExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, 10);
+                        intent.putExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, 5);
                         intent.putExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, true);
                         startActivityForResult(intent, REQUEST_CODE);
                     }
@@ -197,16 +203,17 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
 
             if (picUriList.size()>0) {
                 Intent serviceIntent = new Intent(getApplicationContext(), UploadTaskPhotosServices.class);
-                serviceIntent.putExtra("picUriList", picUriList);
+                serviceIntent.putStringArrayListExtra("picUriList", picUriList);
                 serviceIntent.putExtra("taskid", "task" + curTime);
                 startService(serviceIntent);
                 finish();
+
             }
 
-            /*Intent intent = new Intent(CreateTask.this, Cust_details.class);
+            Intent intent = new Intent(CreateTask.this, Cust_details.class);
             intent.putExtra("id",customerId);
             startActivity(intent);
-            finish();*/
+            finish();
         }
 
 
@@ -235,6 +242,11 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
         endDate.setText(dayOfMonth+"/"+(monthOfYear+1)+"/"+year);
     }
@@ -249,9 +261,11 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                 // show results in textview
                 System.out.println(String.format("Totally %d images selected:", mResults.size()));
                 for (String result : mResults) {
-                    picUriList.add(result);
+                    String l = compressMe.compressImage(result,getApplicationContext());
+                    picUriList.add(l);
                 }
-                if (picUriList.size() > 0) {
+                if (picUriList.size() > 0)
+                {
                     viewSelectedImages = new AlertDialog.Builder(CreateTask.this)
                             .setTitle("Selected Images").setView(R.layout.activity_view_selected_image).create();
                     viewSelectedImages.show();
@@ -269,6 +283,7 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
 
                     adapter = new ViewImageAdapter(picUriList, this);
                     rv.setAdapter(adapter);
+
 
                     final String[] item = {picUriList.get(0)};
                     ImageViewlarge.setImageURI(Uri.parse(item[0]));
@@ -328,9 +343,6 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                             } else {
                                 viewSelectedImages.dismiss();
                             }
-                            //set picUriList to a recyclerview in this createtask page
-                            //dismiss dialogue
-
                             //onpressing save button dont forget to add this
                                 //upload images to storage
                                 //on success add informatio to database
@@ -349,7 +361,7 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     Intent intent = new Intent(CreateTask.this, ImagesSelectorActivity.class);
-                    intent.putExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, 10);
+                    intent.putExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, 5);
                     intent.putExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, true);
                     startActivityForResult(intent, REQUEST_CODE);
                 }
@@ -372,7 +384,6 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                 }
                 return;
             }
-
         }
     }
 }

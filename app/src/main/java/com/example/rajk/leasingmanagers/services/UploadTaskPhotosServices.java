@@ -56,8 +56,7 @@ public class UploadTaskPhotosServices extends IntentService
                 .setOngoing(true)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setColor(getApplicationContext().getResources().getColor(R.color.white))
-                .setContentText("Uploading photos...")
-                .setProgress(0, 0, true);
+                .setContentText("Uploading photos...");
         synchronized (this) {
             notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.notify(0, mBuilder.build());
@@ -83,25 +82,29 @@ public class UploadTaskPhotosServices extends IntentService
 
     private void saveImagesToFirebase(ArrayList<String> picUriList)
     {
+        FirebaseStorage storageRef = FirebaseStorage.getInstance();
+        StorageReference mediaRef;
+
         Toast.makeText(getBaseContext(),"Uploading Images in Background", Toast.LENGTH_SHORT).show();
         for (String p: picUriList)
         {
-            FirebaseStorage storageRef = FirebaseStorage.getInstance();
-            final StorageReference mediaRef;
+
 
             final long timestamp = System.currentTimeMillis();
             final String fileNameOnFirebase = String.valueOf(timestamp);
 
             mediaRef = storageRef.getReference().child("TaskImages").child(taskid).child(fileNameOnFirebase);
 
-            try
-            {
+            Uri l = Uri.fromFile(new File(p));
+
                 mediaRef.putFile(Uri.fromFile(new File(p))).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+                    {
+
                         s++;
-                        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(taskid).child("DescImages");
-                        ref.child(fileNameOnFirebase).setValue(taskSnapshot.getDownloadUrl());
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(taskid).child("DescImages");
+                        ref.child(fileNameOnFirebase).setValue(taskSnapshot.getDownloadUrl().toString());
 
                         if (f+s==totalnoofimages)
                         {
@@ -120,13 +123,6 @@ public class UploadTaskPhotosServices extends IntentService
                         }
                     }
                 });
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                updateNotification("Upload Unsuccessful. Please try again ");
-                stopSelf();
-            }
-
         }
     }
 
