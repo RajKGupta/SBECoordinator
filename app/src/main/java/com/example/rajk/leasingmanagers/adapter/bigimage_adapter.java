@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.helper.TouchImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -30,11 +31,11 @@ public class bigimage_adapter extends  RecyclerView.Adapter<bigimage_adapter.MyV
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public ImageButton img;
+        public TouchImageView img;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            img = (ImageButton) itemView.findViewById(R.id.image);
+            img = (TouchImageView) itemView.findViewById(R.id.image);
         }
     }
 

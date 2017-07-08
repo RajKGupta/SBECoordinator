@@ -204,18 +204,6 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
         }
     }
 
-
-    void showpd(String text)
-    {
-        progressDialog.setMessage(text);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-    }
-    void hidepd()
-    {
-        progressDialog.dismiss();
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -232,18 +220,23 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
                     selectedFilePath = FilePath.getPath(getActivity(),selectedFileUri);
                 }
 
-
                 if(selectedFilePath != null && !selectedFilePath.equals(""))
                 {
                     mAdapter.resetAnimationIndex();
                     List<Integer> selectedItemPositions = mAdapter.getSelectedItems();
+                    ArrayList<String> taskid_list = new ArrayList<>();
+
+                    for (int i = selectedItemPositions.size() - 1; i >= 0; i--)
+                    {
+                        selectedItemPositions.get(i);
+                        final Task task = TaskList.get(selectedItemPositions.get(i));
+                        taskid_list.add(task.getTaskId());
+                    }
 
                     Intent serviceIntent = new Intent(getActivity(), UploadQuotationService.class);
-                    serviceIntent.putExtra("TaskList", TaskList);
+                    serviceIntent.putExtra("TaskIdList", taskid_list);
                     serviceIntent.putExtra("selectedFileUri", selectedFileUri.toString());
-                    serviceIntent.putExtra("selectedItemPositions", (Serializable) selectedItemPositions);
                     getActivity().startService(serviceIntent);
-
                 }
                     else{
                     Toast.makeText(getActivity(),"Cannot upload file to server",Toast.LENGTH_SHORT).show();

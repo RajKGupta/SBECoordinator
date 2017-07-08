@@ -134,7 +134,8 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
 
     @Override
     public void onBackPressed() {
-        if(forQuotation==false) {
+        if(forQuotation==false)
+        {
             Intent intent = new Intent(forwardTaskScreen2.this, forwardTask.class);
             intent.putExtra("task_id", task_id);
             startActivity(intent);
@@ -143,7 +144,6 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
         else
         {
             //TODO goto customer details activity
-
 
         }
     }

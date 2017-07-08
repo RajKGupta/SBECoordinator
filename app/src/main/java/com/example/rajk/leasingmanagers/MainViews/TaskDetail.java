@@ -31,6 +31,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +49,7 @@ import com.example.rajk.leasingmanagers.model.Quotation;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.example.rajk.leasingmanagers.model.measurement;
 import com.example.rajk.leasingmanagers.services.DownloadFileService;
+import com.example.rajk.leasingmanagers.services.UploadQuotationService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -69,17 +71,13 @@ import java.util.List;
 
 public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener{
     
-    DownloadFileService downloadFileService;
-    boolean mServiceBound = false;
-
     private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned,dbMeasurement,dbDescImages;
     ImageButton download;
-    
+    ProgressBar progressBar;
     private String task_id;
     private Task task;
     private String customername;
     EditText startDate,endDate,custId,taskName,quantity,description;
-    private static final int PICK_FILE_REQUEST = 1;
     RecyclerView rec_assignedto,rec_completedby,rec_measurement, rec_DescImages ;
     assignedto_adapter adapter_assignedto,adapter_completedby;
     taskdetailDescImageAdapter adapter_taskimages;
@@ -92,7 +90,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     TextView open_assignedto,open_completedby,open_measurement,appByCustomer,uploadStatus;
     DatabaseReference dbQuotation;
     ProgressDialog progressDialog ;
-    private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
     private MarshmallowPermissions marshmallowPermissions;
     private AlertDialog viewSelectedImages ;
     LinearLayoutManager linearLayoutManager;
@@ -105,8 +102,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         marshmallowPermissions =new MarshmallowPermissions(this);
         dbRef = FirebaseDatabase.getInstance().getReference().child("MeChat");
         progressDialog = new ProgressDialog(this);
- //       upload = (ImageButton)findViewById(R.id.upload);
         download = (ImageButton)findViewById(R.id.download);
+        progressBar = (ProgressBar)findViewById(R.id.progress);
         uploadStatus = (TextView)findViewById(R.id.uploadStatus);
         appByCustomer = (TextView)findViewById(R.id.appByCustomer);
 
@@ -281,46 +278,43 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     @Override
     protected void onStop() {
         super.onStop();
-        if (mServiceBound) {
-            if(mServiceConnection!=null)
-                unbindService(mServiceConnection);
-            mServiceBound = false;
-        }
-        Intent intent = new Intent(TaskDetail.this,
-                DownloadFileService.class);
-        stopService(intent);
-
     }
-
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mServiceBound = false;
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            DownloadFileService.MyBinder myBinder = (DownloadFileService.MyBinder) service;
-            downloadFileService = myBinder.getService();
-            mServiceBound = true;
-        }
-    };
 
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = new Intent(this, DownloadFileService.class);
-        startService(intent);
-        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
     }
 
     private void launchLibrary()
- {
-        downloadFileService.downloadFile(dbQuotation,task_id);
- }
+    {
+        //download.setVisibility(View.GONE);
+        //progressBar.setVisibility(View.VISIBLE);
+        final String[] url = new String[1];
+        dbQuotation.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Quotation quotation = dataSnapshot.getValue(Quotation.class);
+                    url[0] = quotation.getUrl();
+                    Intent serviceIntent = new Intent(getApplicationContext(), DownloadFileService.class);
+                    serviceIntent.putExtra("TaskId", task_id);
+                    serviceIntent.putExtra("url", url[0]);
+                    startService(serviceIntent);
+                }
+                else
+                {
+                    Toast.makeText(TaskDetail.this, "No Quotation Uploaded Yet", Toast.LENGTH_SHORT).show();
+                }
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
 
     private void prepareListData()
     {

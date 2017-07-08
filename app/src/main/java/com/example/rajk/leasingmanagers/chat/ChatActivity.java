@@ -600,12 +600,12 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                     File rootPath = new File(Environment.getExternalStorageDirectory(), "MeChat/Images");
                     if (!rootPath.exists()) {
                         rootPath.mkdirs();
-                }
-                String uriSting = System.currentTimeMillis() + ".jpg";
+                    }
+                    String uriSting = System.currentTimeMillis() + ".jpg";
 
-                final File localFile = new File(rootPath, uriSting);
-                final String localuri = (rootPath.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
-                str.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                    final File localFile = new File(rootPath, uriSting);
+                    final String localuri = (rootPath.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
+                    str.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                         Log.e("firebase ", ";local tem file created  created " + localFile.toString());
