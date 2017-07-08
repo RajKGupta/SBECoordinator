@@ -8,7 +8,9 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -18,6 +20,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,14 +43,20 @@ import com.example.rajk.leasingmanagers.listener.ClickListener;
 import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
 import com.example.rajk.leasingmanagers.model.ChatMessage;
 import com.example.rajk.leasingmanagers.services.UploadFileService;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.zfdang.multiple_images_selector.ImagesSelectorActivity;
 import com.zfdang.multiple_images_selector.SelectorSettings;
+
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -157,17 +166,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-       /* if(requestCode == REQUEST_CODE) {
-            if(resultCode == RESULT_OK) {
-                mResults = data.getStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS);
-                assert mResults != null;
-
-                // show results in textview
-                for(String result : mResults) {
-                    uploadFile(result,"photo");
-                }
-            }
-        }*/
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode)
         {
@@ -252,9 +250,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                                 } else {
                                     viewSelectedImages.dismiss();
                                 }
-                                //onpressing save button dont forget to add this
-                                //upload images to storage
-                                //on success add informatio to database
                             }
                         });
                     }
@@ -278,12 +273,12 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     {
 
         uploadFileService.uploadFile(filePath,type,mykey, otheruserkey, receiverToken, dbTableKey,dbChat);
-
     }
 
 
     public void loadData()
     {
+
         dbChatlistener = dbChat.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -308,7 +303,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                     recyclerView.scrollToPosition(chatList.size() - 1);
                 }
             }
-
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
@@ -537,9 +531,34 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     }
 
     @Override
-    public void download_chatimageClicked(int position)
-    {
-        // download chat image
-        //setothersenderlocaluri afetr downloading the image
+    public void download_chatimageClicked(final int position, final chatAdapter.MyViewHolder holder) {
+
+        mAdapter.showProgressBar(holder);
+        final ChatMessage comment = chatList.get(position);
+        StorageReference str = FirebaseStorage.getInstance().getReferenceFromUrl(comment.getImgurl());
+
+        File rootPath = new File(Environment.getExternalStorageDirectory(), "MeChat/Images");
+        if(!rootPath.exists()) {
+            rootPath.mkdirs();
+        }
+        String uriSting = System.currentTimeMillis() + ".jpg";
+
+        final File localFile = new File(rootPath,uriSting);
+        final String localuri = (rootPath.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
+        str.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                Log.e("firebase ",";local tem file created  created " +localFile.toString());
+                dbChat = DBREF.child("Chats").child(dbTableKey).child("ChatMessages").getRef();
+                dbChat.child(comment.getId()).child("othersenderlocal_storage").setValue(localuri);
+                mAdapter.dismissProgressBar(holder);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                mAdapter.dismissProgressBar(holder);
+                Log.e("firebase ",";local tem file not created  created " +exception.toString());
+            }
+        });
     }
 }

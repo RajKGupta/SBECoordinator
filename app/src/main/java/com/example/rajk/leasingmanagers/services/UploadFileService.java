@@ -26,12 +26,12 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class UploadFileService extends Service {
+public class UploadFileService extends Service
+{
     private static String LOG_TAG = "UploadFileService";
     private IBinder mBinder = new MyBinder();
     SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
     StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-
 
     @Override
     public void onCreate() {
@@ -72,7 +72,6 @@ public class UploadFileService extends Service {
     public void uploadFile(final String path, String type, final String mykey, final String otheruserkey, final String receiverToken, final String dbTableKey, final DatabaseReference dbChat) {
         //if there is a file to upload
         //put case
-        String p = path;
         System.out.println("uri found" + Uri.fromFile(new File(path)));
         if (Uri.fromFile(new File(path)) != null) {
             //displaying a progress dialog while upload is going on
@@ -81,18 +80,11 @@ public class UploadFileService extends Service {
             final long id = curTime;
             StorageReference riversRef = mStorageRef.child(dbTableKey).child("files");
 
-            /*final ProgressDialog progressDialog = new ProgressDialog();
-            progressDialog.setTitle("Uploading");
-            progressDialog.show();*/
-
             switch (type) {
                 case "photo":
-
                     //create msg with 2 extra nodes
                     ChatMessage cm = new ChatMessage(mykey,otheruserkey,timestamp,"photo",id+"","0","nourl",receiverToken,dbTableKey,0,path,"");
                     dbChat.child(String.valueOf(id)).setValue(cm);
-
-                    new ChatActivity().loadData();
 
                     riversRef.putFile(Uri.fromFile(new File(path)))
                             .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

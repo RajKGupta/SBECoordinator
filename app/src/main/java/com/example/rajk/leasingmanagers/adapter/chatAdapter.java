@@ -85,7 +85,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
             holder.status.setVisibility(View.GONE);
         }
         applyClickEvents(holder,position);
-        applyProgressBar(holder,comment);
+        //applyProgressBar(holder,comment);
         String type = comment.getType();
         switch (type) {
             case "text":
@@ -94,19 +94,13 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
                 break;
 
             case "photo":
+                holder.commentString.setVisibility(View.GONE);
                 holder.photo.setVisibility(View.VISIBLE);
                 if (comment.getSenderUId().equals(session.getUsername())){
 
                     if (!comment.getMesenderlocal_storage().equals(""))
                     {
                         holder.photo.setImageURI(Uri.parse(comment.getMesenderlocal_storage()));
-
-                        if (comment.getCommentString()==null) {
-                            holder.commentString.setVisibility(View.GONE);
-                        } else {
-                            holder.commentString.setVisibility(View.VISIBLE);
-                            holder.commentString.setText(comment.getCommentString());
-                        }
                         break;
                     }
                     else
@@ -117,13 +111,6 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
                                 .crossFade()
                                 .centerCrop()
                                 .into(holder.photo);
-
-                        if (comment.getCommentString()==null) {
-                            holder.commentString.setVisibility(View.GONE);
-                        } else {
-                            holder.commentString.setVisibility(View.VISIBLE);
-                            holder.commentString.setText(comment.getCommentString());
-                        }
                         break;
                     }
 
@@ -134,13 +121,6 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
                     {
                         holder.download_chatimage.setVisibility(View.GONE);
                         holder.photo.setImageURI(Uri.parse(comment.getOthersenderlocal_storage()));
-
-                        if (comment.getCommentString()==null) {
-                            holder.commentString.setVisibility(View.GONE);
-                        } else {
-                            holder.commentString.setVisibility(View.VISIBLE);
-                            holder.commentString.setText(comment.getCommentString());
-                        }
                         break;
                     }
                     else
@@ -152,18 +132,12 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
                                 .crossFade()
                                 .centerCrop()
                                 .into(holder.photo);
-
-                        if (comment.getCommentString()==null) {
-                            holder.commentString.setVisibility(View.GONE);
-                        } else {
-                            holder.commentString.setVisibility(View.VISIBLE);
-                            holder.commentString.setText(comment.getCommentString());
-                        }
                         break;
                     }
                 }
 
             case "doc":
+                holder.commentString.setVisibility(View.GONE);
                 if (!comment.getSenderUId().equals(session.getUsername())){
                     holder.download_chatimage.setVisibility(View.VISIBLE);
                 }
@@ -175,13 +149,6 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
                         .crossFade()
                         .centerCrop()
                         .into(holder.photo);
-
-                if (comment.getCommentString()==null) {
-                    holder.commentString.setVisibility(View.GONE);
-                } else {
-                    holder.commentString.setVisibility(View.VISIBLE);
-                    holder.commentString.setText(comment.getCommentString());
-                }
                 break;
         }
     }
@@ -194,24 +161,17 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
                 if (dataSnapshot.exists()) {
                     String status = dataSnapshot.getValue(String.class);
                     switch (status) {
-                        //pending
                         case "0":
-                            holder.status.setImageResource(R.mipmap.ic_sent);
+                            holder.status.setImageResource(R.mipmap.ic_sent);                   //pending
                             break;
-
-                        //sent
                         case "1":
-                            holder.status.setImageResource(R.mipmap.ic_sent);
+                            holder.status.setImageResource(R.mipmap.ic_sent);                   //sent
                             break;
-
-                        //delivered
                         case "2":
-                            holder.status.setImageResource(R.mipmap.ic_delivered);
+                            holder.status.setImageResource(R.mipmap.ic_delivered);              //delivered
                             break;
-
-                        //read
                         case "3":
-                            holder.status.setImageResource(R.mipmap.ic_read);
+                            holder.status.setImageResource(R.mipmap.ic_read);                   //read
                             holder.dbCommentStatus.removeEventListener(this);
                             break;
                     }
@@ -224,36 +184,15 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
             }
         });
     }
-    private void applyProgressBar(final MyViewHolder holder, ChatMessage chatMessage)
+    public void showProgressBar(final MyViewHolder holder)
     {
-        if(!chatMessage.getType().equals("text")&&chatMessage.getSenderUId().equals(session.getUsername()))
-        {
-            DatabaseReference dbUploadStatus = FirebaseDatabase.getInstance().getReference().child("Chats").child(dbTablekey).child("ChatMessages").child(chatMessage.getId()).child("percentageUploaded").getRef();
-            dbUploadStatus.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.exists())
-                    {
-                        int percent = dataSnapshot.getValue(int.class);
-                        if(percent!=100)
-                        {
-                            holder.progressBar.setVisibility(View.VISIBLE);
-                        }
-                        else
-                        {
-                            holder.progressBar.setVisibility(View.GONE);
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
+        holder.download_chatimage.setVisibility(View.GONE);
+        holder.progressBar.setVisibility(View.VISIBLE);
     }
-
+    public void dismissProgressBar(final MyViewHolder holder)
+    {
+        holder.progressBar.setVisibility(View.GONE);
+    }
 
     @Override
     public int getItemCount() {
@@ -335,18 +274,18 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
         void onMessageRowClicked(int position);
 
         void onRowLongClicked(int position);
-        void download_chatimageClicked(int position);
+        void download_chatimageClicked(int position,MyViewHolder holder);
 
     }
     private void applyRowAnimation(MyViewHolder holder, int position) {
             if ((reverseAllAnimations && animationItemsIndex.get(position, false)) || currentSelectedIndex == position) {
                 //FlipAnimator.flipView(mContext, holder.iconBack, holder.iconFront, false);
-//TODO
+
                 resetCurrentIndex();
             }
 
     }
-    private void applyClickEvents(MyViewHolder holder, final int position) {
+    private void applyClickEvents(final MyViewHolder holder, final int position) {
 
         holder.messageContainer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -367,7 +306,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
         holder.download_chatimage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.download_chatimageClicked(position);
+                listener.download_chatimageClicked(position,holder);
             }
         });
     }
