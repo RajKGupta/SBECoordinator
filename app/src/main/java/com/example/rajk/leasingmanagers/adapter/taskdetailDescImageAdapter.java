@@ -3,9 +3,11 @@ package com.example.rajk.leasingmanagers.adapter;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -55,6 +57,7 @@ public class taskdetailDescImageAdapter extends  RecyclerView.Adapter<taskdetail
 
     @Override
     public void onBindViewHolder(final taskdetailDescImageAdapter.MyViewHolder holder, final int position) {
+
         String topic = list.get(position);
         holder.progressBar.setVisibility(View.VISIBLE);
         Picasso.with(context).load(Uri.parse(topic)).into(holder.img);

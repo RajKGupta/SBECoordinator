@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:padding="20dp">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -15,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="20dp">
+            >
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -125,6 +126,7 @@
                 android:id="@+id/rec_DescImages"
                 android:visibility="gone"
                 android:nestedScrollingEnabled="true">
+
             </android.support.v7.widget.RecyclerView>
             <TextView
                 android:layout_width="match_parent"
@@ -137,6 +139,7 @@
                 android:layout_marginTop="10dp"
                 android:drawableRight="@mipmap/ic_drop_down"
                 android:id="@+id/open_assignedto"/>
+
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -167,7 +170,6 @@
                 android:nestedScrollingEnabled="true">
 
             </android.support.v7.widget.RecyclerView>
-
 
             <TextView
                 android:layout_width="match_parent"

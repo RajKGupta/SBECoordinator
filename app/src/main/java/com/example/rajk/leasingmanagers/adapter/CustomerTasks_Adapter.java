@@ -34,7 +34,6 @@ public class CustomerTasks_Adapter extends  RecyclerView.Adapter<CustomerTasks_A
     private Context context;
     private CustomerTaskAdapterListener listener;
 
-
     public CustomerTasks_Adapter(List<String> list, Context c, CustomerTaskAdapterListener listener) {
         this.list = list;
         this.context = c;

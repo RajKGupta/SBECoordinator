@@ -520,11 +520,10 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                     public void onClick(DialogInterface dialog, int id) {
                         DatabaseReference dbCancelJob = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(task_id).child("AssignedTo").child(adapter_assignedto.emp.getEmpId()).getRef();
                         dbCancelJob.removeValue();
-                        assignedtoList.remove(position);
 
                         DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(adapter_assignedto.emp.getEmpId()).child("AssignedTask").child(task_id);
                         dbEmployee.removeValue(); //for employee
-
+                        assignedtoList.remove(position);
                         adapter_assignedto.notifyDataSetChanged();
 
                         dialog.dismiss();

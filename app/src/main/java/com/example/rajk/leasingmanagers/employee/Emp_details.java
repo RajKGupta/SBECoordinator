@@ -1,6 +1,11 @@
 package com.example.rajk.leasingmanagers.employee;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -17,6 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.CustomerTasks_Adapter;
 import com.example.rajk.leasingmanagers.adapter.EmployeeTask_Adapter;
@@ -31,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Emp_details extends AppCompatActivity {
+public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapter.EmployeeTask_AdapterListener{
 
     Dialog dialog;
     String id,name,num,add,desig,temp_name,temp_add,temp_num,temp_designation;
@@ -39,8 +45,8 @@ public class Emp_details extends AppCompatActivity {
     DatabaseReference db;
     RecyclerView rec_employeetask;
     LinearLayoutManager linearLayoutManager;
-    private ArrayList<Task> TaskList = new ArrayList<>();
     private EmployeeTask_Adapter mAdapter;
+    List<String> listoftasks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,16 +92,18 @@ public class Emp_details extends AppCompatActivity {
             }
         });
 
-        final List<String> listoftasks = new ArrayList<>();
+        listoftasks = new ArrayList<>();
+        mAdapter = new EmployeeTask_Adapter(listoftasks,getApplicationContext(),id,this);
+        rec_employeetask.setAdapter(mAdapter);
+
         db = db.child("AssignedTask").getRef();
-        db.addValueEventListener(new ValueEventListener() {
+        db.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
                     listoftasks.add(childSnapshot.getKey());
+                    mAdapter.notifyDataSetChanged();
                 }
-                mAdapter = new EmployeeTask_Adapter(listoftasks,getApplication(),id);
-                rec_employeetask.setAdapter(mAdapter);
             }
 
             @Override
@@ -103,9 +111,6 @@ public class Emp_details extends AppCompatActivity {
 
             }
         });
-
-
-
     }
 
     @Override
@@ -168,5 +173,88 @@ public class Emp_details extends AppCompatActivity {
 
         }
         return true;
+    }
+
+    @Override
+    public void onEmployeeRemoveButtonClicked(final int position)
+    {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to un-assign this task")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int i) {
+                        DatabaseReference dbCancelJob = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(listoftasks.get(position)).child("AssignedTo").child(id).getRef();
+                        dbCancelJob.removeValue();
+
+                        DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(id).child("AssignedTask").child(listoftasks.get(position));
+                        dbEmployee.removeValue(); //for employee
+
+                        listoftasks.remove(position);
+                        mAdapter.notifyDataSetChanged();
+
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    @Override
+    public void onEmployeeRemindButtonClicked(int position) {
+
+    }
+
+    @Override
+    public void onEmployeeInfoButtonClicked(int position) {
+        Intent intent = new Intent(this,TaskDetail.class);
+        intent.putExtra("task_id",listoftasks.get(position));
+        startActivity(intent);
+    }
+
+    @Override
+    public void onEmployeedotmenuButtonClicked(int position, final EmployeeTask_Adapter.MyViewHolder holder) {
+        if (holder.buttonshow.getVisibility()==View.INVISIBLE)
+        {
+            holder.buttonshow.setVisibility(View.VISIBLE);
+            holder.buttonshow.setAlpha(0.2f);
+            holder.buttonshow
+                    .animate()
+                    .setDuration(500)
+                    .alpha(1.0f)
+                    .translationXBy(-holder.dotmenu.getWidth())
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            //updateShowElementsButton();
+                            holder.buttonshow.animate().setListener(null);
+                        }
+                    });
+
+        }
+        else {
+
+            holder.buttonshow.setAlpha(0.6f);
+            holder.buttonshow
+                    .animate()
+                    .setDuration(500)
+                    .alpha(0.0f)
+                    .translationXBy(holder.dotmenu.getWidth())
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            //updateShowElementsButton();
+                            holder.buttonshow.setVisibility(View.INVISIBLE);
+                            holder.buttonshow.animate().setListener(null);
+
+                        }
+                    });
+        }
     }
 }
