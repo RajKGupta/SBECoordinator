@@ -238,19 +238,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 finish();
             }
         });
-      //  upload.setOnClickListener(new View.OnClickListener() {
-      //      @Override
-      //      public void onClick(View v) {
-      //          Intent intent = new Intent();
-                //sets the select file to all types of files
-       //         intent.setType("*/*");
-                //allows to select data and return it
-      //          intent.setAction(Intent.ACTION_GET_CONTENT);
-                //starts new activity to select file and return data
-     //           startActivityForResult(Intent.createChooser(intent,"Choose File to Upload.."),PICK_FILE_REQUEST);
-
-      //      }
-      //  });
 
         download.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -288,6 +275,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
     private void launchLibrary()
     {
+        //TODO : loader aur completion of download show karna hai
         //download.setVisibility(View.GONE);
         //progressBar.setVisibility(View.VISIBLE);
         final String[] url = new String[1];
@@ -418,6 +406,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             }
         });
 
+        //TODO : image ko download karwana hai kya ?
+        //image forwarding ka koi option ?
         dbDescImages.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s)
