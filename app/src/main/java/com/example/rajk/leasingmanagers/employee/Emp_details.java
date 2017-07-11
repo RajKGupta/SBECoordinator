@@ -22,10 +22,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.CustomerTasks_Adapter;
 import com.example.rajk.leasingmanagers.adapter.EmployeeTask_Adapter;
+import com.example.rajk.leasingmanagers.chat.ChatActivity;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapter.EmployeeTask_AdapterListener{
 
     Dialog dialog;
@@ -47,6 +51,8 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     LinearLayoutManager linearLayoutManager;
     private EmployeeTask_Adapter mAdapter;
     List<String> listoftasks;
+    CoordinatorSession coordinatorSession;
+    String mykey, dbTablekey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +71,9 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         rec_employeetask.setLayoutManager(linearLayoutManager);
         rec_employeetask.setItemAnimator(new DefaultItemAnimator());
         rec_employeetask.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
+
+        coordinatorSession = new CoordinatorSession(this);
+        mykey = coordinatorSession.getUsername();
 
         db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(id);
         db.addValueEventListener(new ValueEventListener() {
@@ -170,6 +179,10 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
 
                 dialog.show();
                 break;
+            case R.id.item4:
+
+                checkChatref(mykey,id);
+                break;
 
         }
         return true;
@@ -256,5 +269,64 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                         }
                     });
         }
+    }
+
+    private void checkChatref(final String mykey, final String otheruserkey) {
+        DatabaseReference dbChat = DBREF.child("Chats").child(mykey+otheruserkey).getRef();
+        dbChat.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println("query1" + mykey+otheruserkey);
+                System.out.println("datasnap 1" + dataSnapshot.toString());
+                if (dataSnapshot.exists()) {
+                    System.out.println("datasnap exists1" + dataSnapshot.toString());
+                    dbTablekey = mykey+otheruserkey;
+                    goToChatActivity();
+                }
+                else
+                {
+                    checkChatref2(mykey,otheruserkey);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void checkChatref2(final String mykey, final String otheruserkey) {
+        final DatabaseReference dbChat = DBREF.child("Chats").child(otheruserkey+mykey).getRef();
+        dbTablekey = otheruserkey+mykey;
+        dbChat.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                {
+                    System.out.println("query1" + otheruserkey+mykey);
+                    goToChatActivity();
+                }
+                else
+                {
+                    DBREF.child("Users").child("Userchats").child(mykey).child(otheruserkey).setValue(dbTablekey);
+                    DBREF.child("Users").child("Userchats").child(otheruserkey).child(mykey).setValue(dbTablekey);
+                    goToChatActivity();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void goToChatActivity()
+    {
+        Intent in = new Intent(this, ChatActivity.class);
+        in.putExtra("dbTableKey",dbTablekey);
+        in.putExtra("otheruserkey",id);
+        startActivity(in);
     }
 }

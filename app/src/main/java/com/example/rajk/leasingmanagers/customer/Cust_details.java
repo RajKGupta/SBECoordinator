@@ -59,6 +59,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
     CoordinatorSession coordinatorSession;
     private Button quotationButton;
     private List<String> listoftasks = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,7 +121,6 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
 
             }
         });
-
 
     }
 
