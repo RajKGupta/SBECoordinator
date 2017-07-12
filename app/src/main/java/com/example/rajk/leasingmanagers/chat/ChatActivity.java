@@ -295,6 +295,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                     System.out.println(commentString+"time stamp"+timestamp);
                     ChatMessage cm = new ChatMessage(mykey,otheruserkey,timestamp,"text",id+"","0",commentString,receiverToken,dbTableKey);
                     dbChat.child(String.valueOf(id)).setValue(cm);
+                    DBREF.child("Chats").child(dbTableKey).child("lastMsg").setValue(id);
                     typeComment.setText("");
 
                 }

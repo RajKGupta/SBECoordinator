@@ -3,7 +3,6 @@ package com.example.rajk.leasingmanagers.ForwardTask;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -11,12 +10,9 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-
 import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
-import com.example.rajk.leasingmanagers.employee.Emp_Tab;
-import com.example.rajk.leasingmanagers.employee.Emp_add;
-import com.example.rajk.leasingmanagers.employee.Emp_details;
+import com.example.rajk.leasingmanagers.customer.UploadQuotationActivity;
 import com.example.rajk.leasingmanagers.employee.Employee;
 import com.example.rajk.leasingmanagers.employee.RecAdapter_emp;
 import com.example.rajk.leasingmanagers.listener.ClickListener;
@@ -172,7 +168,10 @@ public class forwardTask extends AppCompatActivity {
         }
         else
         {
-            super.onBackPressed();
+            Intent intent =new Intent(this, UploadQuotationActivity.class);
+            intent.putExtra("custId",custId);
+            intent.putExtra("forQuotation",forQuotation);
+            startActivity(intent);
             finish();
         }
     }

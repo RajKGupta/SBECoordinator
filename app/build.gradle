@@ -26,6 +26,9 @@ android {
         pickFirst 'META-INF/LICENSE'
     }
 
+    compileOptions {
+
+    }
 }
 
 dependencies {

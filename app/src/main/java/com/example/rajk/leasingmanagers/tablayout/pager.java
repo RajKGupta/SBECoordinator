@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.example.rajk.leasingmanagers.MainViews.TaskHome;
+import com.example.rajk.leasingmanagers.chat.ChatFragment;
 import com.example.rajk.leasingmanagers.customer.Cust_Tab;
 import com.example.rajk.leasingmanagers.employee.Emp_Tab;
 
@@ -27,10 +28,10 @@ public class pager extends FragmentStatePagerAdapter
                 Cust_Tab a = new Cust_Tab();
                 return a;
             case 1:
-                TaskHome b = new TaskHome();
+                Emp_Tab b = new Emp_Tab();
                 return b;
             case 2:
-                Emp_Tab c = new Emp_Tab();
+                ChatFragment c = new ChatFragment();
                 return c;
             default:
                 return null;

@@ -26,8 +26,9 @@ public class Tabs extends AppCompatActivity implements TabLayout.OnTabSelectedLi
         tab = (TabLayout) findViewById(R.id.tabLayout);
 
         tab.addTab(tab.newTab().setText("Customer"));
-        tab.addTab(tab.newTab().setText("Task"));
         tab.addTab(tab.newTab().setText("Employee"));
+        tab.addTab(tab.newTab().setText("Chat"));
+
         tab.setTabGravity(TabLayout.GRAVITY_FILL);
 
         vpager = (ViewPager) findViewById(R.id.pager);

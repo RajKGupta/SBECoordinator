@@ -22,6 +22,8 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 public class UploadFileService extends Service {
     private static String LOG_TAG = "UploadFileService";
     private IBinder mBinder = new MyBinder();
@@ -95,6 +97,8 @@ public class UploadFileService extends Service {
                                     ChatMessage cm = new ChatMessage(mykey,otheruserkey,timestamp,"photo",id+"","0",downloadUrl.toString(),receiverToken,dbTableKey,100);
                                     dbChat.child(String.valueOf(id)).setValue(cm);
                                     Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
+                                    DBREF.child("Chats").child(dbTableKey).child("lastMsg").setValue(id);
+
 
                                 }
                             })
@@ -130,6 +134,8 @@ break;
                                     ChatMessage cm = new ChatMessage(mykey,otheruserkey,timestamp,"doc",id+"","0",downloadUrl.toString(),receiverToken,dbTableKey,100);
                                     dbChat.child(String.valueOf(id)).setValue(cm);
                                     Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
+                                    DBREF.child("Chats").child(dbTableKey).child("lastMsg").setValue(id);
+
 
                                 }
                             })
