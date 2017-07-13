@@ -22,18 +22,18 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
  * Created by SoumyaAgarwal on 7/3/2017.
  */
-
 public class UploadQuotationService extends IntentService
 {
-    public static ArrayList<Task> TaskList = new ArrayList<Task>();
+    public static ArrayList<String> TaskIdList = new ArrayList<String>();
     public static Uri selectedFileUri;
-    public static List<Integer> selectedItemPositions = new ArrayList<>();
     private NotificationManager notificationManager;
     private NotificationCompat.Builder mBuilder;
 
@@ -65,10 +65,9 @@ public class UploadQuotationService extends IntentService
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
 
-            TaskList = (ArrayList<Task>) intent.getSerializableExtra("TaskList");
+            TaskIdList = intent.getStringArrayListExtra("TaskIdList");
             selectedFileUri = Uri.parse(intent.getStringExtra("selectedFileUri"));
-            selectedItemPositions = intent.getIntegerArrayListExtra("selectedItemPositions");
-            saveQuotationtoFirebase(TaskList,selectedItemPositions);
+            saveQuotationtoFirebase(TaskIdList);
         }
     }
 
@@ -77,38 +76,36 @@ public class UploadQuotationService extends IntentService
         super.onDestroy();
     }
 
-    private void saveQuotationtoFirebase(ArrayList<Task> TaskList,List<Integer> selectedItemPositions)
+    private void saveQuotationtoFirebase(final ArrayList<String> TaskIdList)
     {
 
         Toast.makeText(getBaseContext(),"Uploading Quotation in Background", Toast.LENGTH_SHORT).show();
+        long timestamp = Calendar.getInstance().getTimeInMillis();
+        timestamp = 9999999999999L-timestamp;
 
-        for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
-            selectedItemPositions.get(i);
-
-            final Task task = TaskList.get(selectedItemPositions.get(i));
-
-            StorageReference riversRef = FirebaseStorage.getInstance().getReference().child("Quotation").child(task.getTaskId());
-
-            riversRef.putFile(selectedFileUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            // Get a URL to the uploaded content
-                            Quotation quotation = new Quotation("No");
-                            DatabaseReference dbQuotation = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(task.getTaskId()).child("Quotation").getRef();
+        StorageReference riversRef = FirebaseStorage.getInstance().getReference().child("Quotation").child(timestamp+"");
+        final long finalTimestamp = timestamp;
+        riversRef.putFile(selectedFileUri)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        for (int i = TaskIdList.size() - 1; i >= 0; i--)
+                        {
+                            Quotation quotation = new Quotation("No",taskSnapshot.getDownloadUrl().toString());
+                            DatabaseReference dbQuotation = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(TaskIdList.get(i)).child("Quotation").getRef();
                             dbQuotation.setValue(quotation);
-                            updateNotification("Succesfully Uploaded");
-                            stopSelf();
                         }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            updateNotification("Upload failed");
-                            stopSelf();
-                        }
-                    });
-        }
+                        updateNotification("Succesfully Uploaded");
+                        stopSelf();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        updateNotification("Upload failed");
+                        stopSelf();
+                    }
+                });
      }
 
     private void updateNotification(String information) {

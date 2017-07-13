@@ -31,6 +31,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +49,7 @@ import com.example.rajk.leasingmanagers.model.Quotation;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.example.rajk.leasingmanagers.model.measurement;
 import com.example.rajk.leasingmanagers.services.DownloadFileService;
+import com.example.rajk.leasingmanagers.services.UploadQuotationService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -69,17 +71,13 @@ import java.util.List;
 
 public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener{
     
-    DownloadFileService downloadFileService;
-    boolean mServiceBound = false;
-
     private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned,dbMeasurement,dbDescImages;
     ImageButton download;
-    
+    ProgressBar progressBar;
     private String task_id;
     private Task task;
     private String customername;
     EditText startDate,endDate,custId,taskName,quantity,description;
-    private static final int PICK_FILE_REQUEST = 1;
     RecyclerView rec_assignedto,rec_completedby,rec_measurement, rec_DescImages ;
     assignedto_adapter adapter_assignedto,adapter_completedby;
     taskdetailDescImageAdapter adapter_taskimages;
@@ -92,7 +90,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     TextView open_assignedto,open_completedby,open_measurement,appByCustomer,uploadStatus;
     DatabaseReference dbQuotation;
     ProgressDialog progressDialog ;
-    private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
     private MarshmallowPermissions marshmallowPermissions;
     private AlertDialog viewSelectedImages ;
     LinearLayoutManager linearLayoutManager;
@@ -105,8 +102,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         marshmallowPermissions =new MarshmallowPermissions(this);
         dbRef = FirebaseDatabase.getInstance().getReference().child("MeChat");
         progressDialog = new ProgressDialog(this);
- //       upload = (ImageButton)findViewById(R.id.upload);
         download = (ImageButton)findViewById(R.id.download);
+        progressBar = (ProgressBar)findViewById(R.id.progress);
         uploadStatus = (TextView)findViewById(R.id.uploadStatus);
         appByCustomer = (TextView)findViewById(R.id.appByCustomer);
 
@@ -241,19 +238,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 finish();
             }
         });
-      //  upload.setOnClickListener(new View.OnClickListener() {
-      //      @Override
-      //      public void onClick(View v) {
-      //          Intent intent = new Intent();
-                //sets the select file to all types of files
-       //         intent.setType("*/*");
-                //allows to select data and return it
-      //          intent.setAction(Intent.ACTION_GET_CONTENT);
-                //starts new activity to select file and return data
-     //           startActivityForResult(Intent.createChooser(intent,"Choose File to Upload.."),PICK_FILE_REQUEST);
-
-      //      }
-      //  });
 
         download.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -281,46 +265,44 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     @Override
     protected void onStop() {
         super.onStop();
-        if (mServiceBound) {
-            if(mServiceConnection!=null)
-                unbindService(mServiceConnection);
-            mServiceBound = false;
-        }
-        Intent intent = new Intent(TaskDetail.this,
-                DownloadFileService.class);
-        stopService(intent);
-
     }
-
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mServiceBound = false;
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            DownloadFileService.MyBinder myBinder = (DownloadFileService.MyBinder) service;
-            downloadFileService = myBinder.getService();
-            mServiceBound = true;
-        }
-    };
 
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = new Intent(this, DownloadFileService.class);
-        startService(intent);
-        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
     }
 
     private void launchLibrary()
- {
-        downloadFileService.downloadFile(dbQuotation,task_id);
- }
+    {
+        //TODO : loader aur completion of download show karna hai
+        //download.setVisibility(View.GONE);
+        //progressBar.setVisibility(View.VISIBLE);
+        final String[] url = new String[1];
+        dbQuotation.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Quotation quotation = dataSnapshot.getValue(Quotation.class);
+                    url[0] = quotation.getUrl();
+                    Intent serviceIntent = new Intent(getApplicationContext(), DownloadFileService.class);
+                    serviceIntent.putExtra("TaskId", task_id);
+                    serviceIntent.putExtra("url", url[0]);
+                    startService(serviceIntent);
+                }
+                else
+                {
+                    Toast.makeText(TaskDetail.this, "No Quotation Uploaded Yet", Toast.LENGTH_SHORT).show();
+                }
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
 
     private void prepareListData()
     {
@@ -424,6 +406,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             }
         });
 
+        //TODO : image ko download karwana hai kya ?
+        //image forwarding ka koi option ?
         dbDescImages.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s)
@@ -495,73 +479,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
     }
 
-    /*@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == Activity.RESULT_OK){
-            if(requestCode == PICK_FILE_REQUEST){
-                if(data == null){
-                    //no data present
-                    return;
-                }
-
-                String selectedFilePath="";
-                Uri selectedFileUri = data.getData();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    selectedFilePath = FilePath.getPath(this,selectedFileUri);
-                }
-
-                if(selectedFilePath != null && !selectedFilePath.equals("")){
-                    StorageReference riversRef = mStorageRef.child("Quotation").child(task_id);
-
-                    showpd("Uploading");
-                    riversRef.putFile(selectedFileUri)
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    // Get a URL to the uploaded content
-                                    Quotation quotation = new Quotation("No");
-                                    dbQuotation.setValue(quotation);
-                                    Toast.makeText(TaskDetail.this,"Successfully Uploaded",Toast.LENGTH_SHORT).show();
-                                    hidepd();
-                                }
-                            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            //calculating progress percentage
-                            //or create msg with 2 extra nodes
-
-                            int progress = (int) ((100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
-                             showpd("Uploaded " + ((int) progress) + "%...");
-                        }
-                    })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    Toast.makeText(TaskDetail.this,"Failed to Upload",Toast.LENGTH_SHORT).show();
-                                    hidepd();
-                                }
-                            });
-                }else{
-                    Toast.makeText(this,"Cannot upload file to server",Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    }*/
-
-
-
-    void showpd(String text)
-    {
-        progressDialog.setMessage(text);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-    }
-    void hidepd()
-    {
-        progressDialog.dismiss();
-    }
-
     @Override
     public void onImageClicked(int position) {
 
@@ -593,11 +510,10 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                     public void onClick(DialogInterface dialog, int id) {
                         DatabaseReference dbCancelJob = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(task_id).child("AssignedTo").child(adapter_assignedto.emp.getEmpId()).getRef();
                         dbCancelJob.removeValue();
-                        assignedtoList.remove(position);
 
                         DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(adapter_assignedto.emp.getEmpId()).child("AssignedTask").child(task_id);
                         dbEmployee.removeValue(); //for employee
-
+                        assignedtoList.remove(position);
                         adapter_assignedto.notifyDataSetChanged();
 
                         dialog.dismiss();

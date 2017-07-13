@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/item4"
+        android:icon="@mipmap/ic_chat_white"
+        android:title="Add task"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/item1"
         android:icon="@mipmap/ic_edit_icon"
         android:title="Edit"

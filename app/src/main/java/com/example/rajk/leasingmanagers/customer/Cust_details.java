@@ -59,6 +59,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
     CoordinatorSession coordinatorSession;
     private Button quotationButton;
     private List<String> listoftasks = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,7 +121,6 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
 
             }
         });
-
 
     }
 
@@ -199,7 +199,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                 edit = (Button)customerAccountDialog.findViewById(R.id.edit);
                 submit = (Button)customerAccountDialog.findViewById(R.id.submit);
                 balanceLayout = (LinearLayout)customerAccountDialog.findViewById(R.id.balanceLayout);
-                 dbaccountinfo = db.child("Account").getRef();
+                dbaccountinfo = db.child("Account").getRef();
                 dbaccountlistener =dbaccountinfo.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -249,9 +249,10 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                 break;
 
             case  R.id.item6:
+                // TODO : Null pointer exception (Null Object Refrence)
+                //if nothing is added to account this error would occur
                 dbaccountinfo.removeValue();
                 break;
-
 
         }
         return true;

@@ -3,11 +3,15 @@ package com.example.rajk.leasingmanagers.adapter;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.example.rajk.leasingmanagers.R;
 import com.squareup.picasso.Picasso;
@@ -33,12 +37,14 @@ public class taskdetailDescImageAdapter extends  RecyclerView.Adapter<taskdetail
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView img;
-        public LinearLayout imageContainer;
+        public RelativeLayout imageContainer;
+        public ProgressBar progressBar;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             img = (ImageView) itemView.findViewById(R.id.image_here);
-            imageContainer = (LinearLayout)itemView.findViewById(R.id.container);
+            imageContainer = (RelativeLayout) itemView.findViewById(R.id.container);
+            progressBar = (ProgressBar)itemView.findViewById(R.id.progresshere);
         }
     }
 
@@ -51,7 +57,9 @@ public class taskdetailDescImageAdapter extends  RecyclerView.Adapter<taskdetail
 
     @Override
     public void onBindViewHolder(final taskdetailDescImageAdapter.MyViewHolder holder, final int position) {
+
         String topic = list.get(position);
+        holder.progressBar.setVisibility(View.VISIBLE);
         Picasso.with(context).load(Uri.parse(topic)).into(holder.img);
         applyClickEvents(holder, position);
     }
