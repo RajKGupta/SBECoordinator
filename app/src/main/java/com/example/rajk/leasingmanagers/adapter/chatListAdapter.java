@@ -9,11 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.rajk.leasingmanagers.R;
-import com.example.rajk.leasingmanagers.helper.CircleTransform;
 import com.example.rajk.leasingmanagers.model.ChatListModel;
 import com.example.rajk.leasingmanagers.model.ChatMessage;
 import com.google.firebase.database.ChildEventListener;
@@ -21,31 +17,34 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Iterator;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
-
-/**
- * Created by RajK on 16-05-2017.
- */
 
 public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyViewHolder> {
     ArrayList<ChatListModel> list = new ArrayList<>();
     private Context context;
     private chatListAdapterListener listener;
+    private HashMap<DatabaseReference,ChildEventListener> hashMapCHE;
+    private HashMap<DatabaseReference,ValueEventListener> hashMapVLE;
+    SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
 
 
     public chatListAdapter(ArrayList<ChatListModel> list, Context context, chatListAdapterListener listener) {
         this.context = context;
         this.list = list;
         this.listener = listener;
-
-
+        hashMapCHE = new HashMap<>();
+        hashMapVLE = new HashMap<>();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView author, message, timestamp, icon_text,tvunread;
-        ImageView imgProfile;
+        ImageView imgProfile,onlineStatus;
         LinearLayout messageContainer;
         RelativeLayout relunread;
 
@@ -60,6 +59,8 @@ public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyView
             tvunread = (TextView) itemView.findViewById(R.id.unreadmsgs);
             imgProfile = (ImageView) itemView.findViewById(R.id.icon_profile);
             messageContainer = (LinearLayout) itemView.findViewById(R.id.message_container);
+            onlineStatus = (ImageView) itemView.findViewById(R.id.onlineStatus);
+
         }
 
     }
@@ -78,6 +79,7 @@ public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyView
         applyClickEvents(holder, position);
         applyProfilePicture(holder, topic);
         applyLastMessage(holder, topic);
+        applyOnlineStatus(holder,topic);
         findunreadmsgs(holder,topic);
     }
 
@@ -102,47 +104,45 @@ public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyView
     }
 
     private void applyProfilePicture(MyViewHolder holder, ChatListModel message) {
-        if (!message.getProfpic().equals("nopicfound")) {
-            Glide.with(context).load(message.getProfpic())
-                    .thumbnail(0.5f)
-                    .crossFade()
-                    .transform(new CircleTransform(context))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(holder.imgProfile);
-            holder.imgProfile.setColorFilter(null);
-            holder.icon_text.setVisibility(View.GONE);
-        } else {
+
             holder.imgProfile.setImageResource(R.drawable.bg_circle);
             holder.imgProfile.setColorFilter(message.getColor());
             char icontext = message.getName().toUpperCase().charAt(0);
             holder.icon_text.setText(icontext + "");
             holder.icon_text.setVisibility(View.VISIBLE);
-        }
+
     }
 
     private void applyLastMessage(final MyViewHolder holder, ChatListModel topic) {
         DatabaseReference dbTopicLastComment = DBREF.child("Chats").child(topic.getDbTableKey()).child("ChatMessages").getRef();
-        dbTopicLastComment.limitToLast(1).addChildEventListener(new ChildEventListener() {
+        ChildEventListener childEventListener = dbTopicLastComment.limitToLast(1).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
                     ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                    if (chatMessage.getCommentString() != null) {
-                        if(!chatMessage.getType().equals("text")) {
-                            holder.message.setText(chatMessage.getCommentString());
-
-                        }
-                        else
-                            holder.message.setText(chatMessage.getCommentString());
+                    if(chatMessage.getType().equals("text"))
+                    {
+                        holder.message.setText(chatMessage.getCommentString());
                     }
-                    holder.timestamp.setText(chatMessage.getSendertimestamp());
+
+                    else if(chatMessage.getType().equals("doc"))
+                    {
+                        holder.message.setText("Sent a Document");
+                    }
+                    else if(chatMessage.getType().equals("photo"))
+                    {
+                        holder.message.setText("Sent an Image");
+                    }
+
+                    String timestamp = formatter.format(Calendar.getInstance().getTime());
+                    String senderTimestamp = chatMessage.getSendertimestamp().substring(0,11);
+                    if(timestamp.equals(senderTimestamp))
+                       senderTimestamp = chatMessage.getSendertimestamp().substring(12).trim();
+
+                    holder.timestamp.setText(senderTimestamp);
                 }
 
             }
-
-
-
-
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
@@ -175,15 +175,45 @@ public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyView
 
             }
         });
+        hashMapCHE.put(dbTopicLastComment,childEventListener);
 
     }
+    private void applyOnlineStatus(final MyViewHolder holder, ChatListModel chatListModel)
+    {
+
+        DatabaseReference dbOnlineStatus = DBREF.child("Usersessions").child(chatListModel.getUserkey()).child("online").getRef();
+        ValueEventListener valueEventListener = dbOnlineStatus.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                {
+                    boolean online = dataSnapshot.getValue(Boolean.class);
+                    if(online==true)
+                    {
+                        holder.onlineStatus.setVisibility(View.VISIBLE);
+                    }
+                    else
+                    {
+                        holder.onlineStatus.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        hashMapVLE.put(dbOnlineStatus,valueEventListener);
+    }
+
 
     private void findunreadmsgs(final MyViewHolder holder, final ChatListModel topic) {
         String a="nil";
         DatabaseReference dbTopicLastComment = DBREF.child("Chats").child(topic.getDbTableKey()).child("ChatMessages").getRef();
         System.out.println(topic.getDbTableKey()+" unreadmsgs called " + dbTopicLastComment);
 
-        dbTopicLastComment.orderByChild("status").equalTo("2").addValueEventListener(new ValueEventListener() {
+        ValueEventListener valueEventListener = dbTopicLastComment.orderByChild("status").equalTo("2").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
@@ -204,5 +234,22 @@ public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyView
 
             }
         });
+        hashMapVLE.put(dbTopicLastComment,valueEventListener);
+    }
+
+    public void removeListeners()
+    {
+        Iterator<HashMap.Entry<DatabaseReference,ChildEventListener>> iterator = hashMapCHE.entrySet().iterator();
+        while (iterator.hasNext()) {
+            HashMap.Entry<DatabaseReference,ChildEventListener> entry = (HashMap.Entry<DatabaseReference,ChildEventListener>) iterator.next();
+            if(entry.getValue()!=null)
+                entry.getKey().removeEventListener(entry.getValue());
+        }
+        Iterator<HashMap.Entry<DatabaseReference,ValueEventListener>> iterator2 = hashMapVLE.entrySet().iterator();
+        while (iterator.hasNext()) {
+            HashMap.Entry<DatabaseReference,ValueEventListener> entry = (HashMap.Entry<DatabaseReference,ValueEventListener>) iterator2.next();
+            if(entry.getValue()!=null) entry.getKey().removeEventListener(entry.getValue());
+        }
+
     }
 }

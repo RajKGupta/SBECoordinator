@@ -33,12 +33,25 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
         DBREF = FirebaseDatabase.getInstance().getReference().child("MeChat").getRef();
         session = new CoordinatorSession(this);
         String userkey = session.getUsername();
+        setOnlineStatus(userkey);
+        Fresco.initialize(getApplicationContext());
+
+    }
+    public static synchronized LeasingManagers getInstance() {
+        return mInstance;
+    }
+
+    public void setConnectivityListener(NetWatcher.ConnectivityReceiverListener listener) {
+        NetWatcher.connectivityReceiverListener = listener;
+    }
+    public static void setOnlineStatus(String userkey)
+    {
         if(!userkey.equals("")){
             final FirebaseDatabase database = FirebaseDatabase.getInstance();
-            final DatabaseReference myConnectionsRef = DBREF.child("Users").child("Usersession").child(userkey).child("online").getRef();
+            final DatabaseReference myConnectionsRef = DBREF.child("Users").child("Usersessions").child(userkey).child("online").getRef();
 
 // stores the timestamp of my last disconnect (the last time I was seen online)
-//            final DatabaseReference lastOnlineRef = database.getReference().child("Users").child("Usersession").child(userkey).child("lastseen").getRef();
+//            final DatabaseReference lastOnlineRef = database.getReference().child("Users").child("Usersessions").child(userkey).child("lastseen").getRef();
 
             final DatabaseReference connectedRef = database.getReference(".info/connected");
             connectedRef.addValueEventListener(new ValueEventListener() {
@@ -46,11 +59,7 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
                 public void onDataChange(DataSnapshot snapshot) {
                     boolean connected = snapshot.getValue(Boolean.class);
                     if (connected) {
-                        // add this device to my connections list
-                        // this value could contain info about the device or a timestamp too
                         myConnectionsRef.setValue(Boolean.TRUE);
-
-                        // when this device disconnects, remove it
                         myConnectionsRef.onDisconnect().setValue(Boolean.FALSE);
 
                         // when I disconnect, update the last time I was seen online
@@ -65,14 +74,5 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
             });
         }
 
-        Fresco.initialize(getApplicationContext());
-
-    }
-    public static synchronized LeasingManagers getInstance() {
-        return mInstance;
-    }
-
-    public void setConnectivityListener(NetWatcher.ConnectivityReceiverListener listener) {
-        NetWatcher.connectivityReceiverListener = listener;
     }
 }

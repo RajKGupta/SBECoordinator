@@ -1,8 +1,8 @@
 package com.example.rajk.leasingmanagers.CoordinatorLogin;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -11,7 +11,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
+import com.example.rajk.leasingmanagers.LeasingManagers;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +30,8 @@ public class coordinatorLogin extends AppCompatActivity {
     String Username,Password;
     DatabaseReference database;
     CoordinatorSession session;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
     TextInputLayout input_email, input_password;
 
     @Override
@@ -37,6 +39,15 @@ public class coordinatorLogin extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.emp_login);
+
+        sharedPreferences = getSharedPreferences("myFCMToken",MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        if(FirebaseInstanceId.getInstance().getToken()!=null)
+        {
+            editor.putString("myFCMToken",FirebaseInstanceId.getInstance().getToken());
+            editor.commit();
+        }
+
         session = new CoordinatorSession(getApplicationContext());
         if(session.isolduser()==true)
         {
@@ -89,16 +100,31 @@ public class coordinatorLogin extends AppCompatActivity {
                     if(dataSnapshot.exists())
                     {
 
-                        String username = dataSnapshot.child("username").getValue(String.class);
                         String password = dataSnapshot.child("password").getValue(String.class);
                         if (!password.equals(Password)) {
                             Toast.makeText(getBaseContext(), "Wrong Password", Toast.LENGTH_SHORT).show();
                         } else
                         {
                             session.create_oldusersession(Username);
-                            DBREF.child("Fcmtokens").child(Username).child("token").setValue(FirebaseInstanceId.getInstance().getToken());
+                            LeasingManagers.setOnlineStatus(Username);
+                            String name = dataSnapshot.getValue(String.class);
+                            if(name!=null)
+                                DBREF.child("Users").child("Usersessions").child(Username).child("name").setValue(name);
+                            String myFCMToken;
+                            if(FirebaseInstanceId.getInstance().getToken()==null)
+                            {
+                                myFCMToken =sharedPreferences.getString("myFCMToken","");
+                            }
+                            else
+                                myFCMToken = FirebaseInstanceId.getInstance().getToken();
 
-                            goToTabLayout();
+                            if(!myFCMToken.equals(""))
+                            DBREF.child("Fcmtokens").child(Username).child("token").setValue(myFCMToken);
+                            else
+                            {
+                                Toast.makeText(coordinatorLogin.this,"You will need to clear the app data or reinstall the app to make it work properly",Toast.LENGTH_LONG).show();
+                                goToTabLayout();
+                            }
                         }
                     }
                     else

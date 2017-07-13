@@ -326,6 +326,8 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                 }
                 else
                 {
+
+
                     DBREF.child("Users").child("Userchats").child(mykey).child(otheruserkey).setValue(dbTablekey);
                     DBREF.child("Users").child("Userchats").child(otheruserkey).child(mykey).setValue(dbTablekey);
                     goToChatActivity();
