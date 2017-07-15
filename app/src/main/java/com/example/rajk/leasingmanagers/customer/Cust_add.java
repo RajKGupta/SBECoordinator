@@ -56,7 +56,7 @@ public class Cust_add extends AppCompatActivity {
                     Toast.makeText(Cust_add.this, "Enter Details", Toast.LENGTH_LONG).show();
                 else {
                             Customer customer = new Customer(name,num,add,num,getRandomMaterialColor("400"),password);
-                            database = db.child(Calendar.getInstance().getTimeInMillis()+"");
+                            database = db.child(num);  // TODO : Done phone number is set as key
                             database.setValue(customer);
 
 

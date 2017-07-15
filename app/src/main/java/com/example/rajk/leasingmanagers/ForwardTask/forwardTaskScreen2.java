@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,7 +55,7 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
         }
 
         else
-        task_id = intent.getStringExtra("task_id");
+            task_id = intent.getStringExtra("task_id");
 
         name.setText(empName);
         designation.setText(empDesig);
@@ -85,10 +84,21 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String deadline = enddate.getText().toString().trim();
+                String deadline  = enddate.getText().toString().trim();
                 String cooordnote = note.getText().toString().trim();
-                if (TextUtils.isEmpty(deadline)) {
-                    Toast.makeText(forwardTaskScreen2.this, "Enter details...", Toast.LENGTH_SHORT).show();
+                if(forQuotation==false) {
+                    CompletedBy completedBy = new CompletedBy(empId, curdate, deadline, cooordnote);
+                    DatabaseReference dbAssigned = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(task_id).child("AssignedTo").child(empId);
+                    dbAssigned.setValue(completedBy);
+
+                    DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(empId).child("AssignedTask").child(task_id);
+                    dbEmployee.setValue("pending"); //for employee
+
+                    Toast.makeText(forwardTaskScreen2.this, "Task Assigned to " + empName, Toast.LENGTH_SHORT).show();
+                    Intent intent1 = new Intent(forwardTaskScreen2.this, TaskDetail.class);
+                    intent1.putExtra("task_id", task_id);
+                    startActivity(intent1);
+                    finish();
                 }
                 else
                 {
@@ -96,7 +106,7 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
                     for(String taskid:taskIds)
                     {
                         CompletedBy completedBy = new CompletedBy(empId, curdate, deadline, cooordnote);
-                        DatabaseReference dbAssigned = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(task_id).child("AssignedTo").child(empId);
+                        DatabaseReference dbAssigned = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(taskid).child("AssignedTo").child(empId);
                         dbAssigned.setValue(completedBy);
                         DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(empId).child("AssignedTask").child(timestamp+"").child("listoftasks");
                         dbEmployee.child(taskid).setValue("pending"); //for employee
@@ -111,33 +121,6 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
                     startActivity(intent1);
                     finish();
 
-                        DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(empId).child("AssignedTask").child(task_id);
-                        dbEmployee.setValue("pending"); //for employee
-
-                        Toast.makeText(forwardTaskScreen2.this, "Task Assigned to " + empName, Toast.LENGTH_SHORT).show();
-                        Intent intent1 = new Intent(forwardTaskScreen2.this, TaskDetail.class);
-                        intent1.putExtra("task_id", task_id);
-                        startActivity(intent1);
-                        finish();
-                    } else {
-                        for (String taskid : taskIds) {
-                            CompletedBy completedBy = new CompletedBy(empId, curdate, deadline, cooordnote);
-                            DatabaseReference dbAssigned = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(taskid).child("AssignedTo").child(empId);
-                            dbAssigned.setValue(completedBy);
-                            DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(empId).child("AssignedTask").child(custId).child("listoftasks");
-                            dbEmployee.child(taskid).setValue("pending"); //for employee
-                        }
-                        DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(empId).child("AssignedTask").child(custId);
-                        dbEmployee.child("deadline").setValue(deadline);
-                        dbEmployee.child("startDate").setValue(curdate);
-                        dbEmployee.child("coordnote").setValue(cooordnote);
-                        Toast.makeText(forwardTaskScreen2.this, "Task Assigned to " + empName, Toast.LENGTH_SHORT).show();
-                        Intent intent1 = new Intent(forwardTaskScreen2.this, Cust_details.class);
-                        intent1.putExtra("id", custId);
-                        startActivity(intent1);
-                        finish();
-
-                    }
                 }
             }
         });
@@ -147,8 +130,7 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
 
     @Override
     public void onBackPressed() {
-        if(forQuotation==false)
-        {
+        if(forQuotation==false) {
             Intent intent = new Intent(forwardTaskScreen2.this, forwardTask.class);
             intent.putExtra("task_id", task_id);
             startActivity(intent);
@@ -157,7 +139,6 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
         else
         {
             //TODO goto customer details activity
-
             Intent intent = new Intent(forwardTaskScreen2.this,forwardTask.class);
             intent.putStringArrayListExtra("taskIds",taskIds);
             intent.putExtra("custId",custId);

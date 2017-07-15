@@ -1,8 +1,6 @@
 package com.example.rajk.leasingmanagers;
 
 
-import android.provider.ContactsContract;
-
 import com.example.rajk.leasingmanagers.CheckInternetConnectivity.NetWatcher;
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 

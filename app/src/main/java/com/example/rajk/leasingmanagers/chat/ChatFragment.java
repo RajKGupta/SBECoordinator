@@ -82,8 +82,6 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
         mAdapter = new chatListAdapter(list,getActivity(),this);
         recyclerView.setAdapter(mAdapter);
         LoadData();
-
-
     }
 
     private void LoadData()
@@ -139,11 +137,8 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
                                     sortChatList();
                                     mAdapter.notifyDataSetChanged();
                                     break;
-
                                 }
-
                             }
-
                         }
 
                         @Override
@@ -186,7 +181,6 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
             }
         });
     }
-
 
     @Override
     public void onDestroy() {

@@ -82,5 +82,4 @@ public class taskdetailDescImageAdapter extends  RecyclerView.Adapter<taskdetail
         });
 
     }
-
 }

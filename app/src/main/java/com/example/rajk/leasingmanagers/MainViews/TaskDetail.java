@@ -497,7 +497,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         bigimage.setAdapter(adapter);
 
         bigimage.scrollToPosition(position);
-
     }
 
     @Override

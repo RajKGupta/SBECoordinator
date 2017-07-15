@@ -3,7 +3,8 @@ package com.example.rajk.leasingmanagers.CoordinatorLogin;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class CoordinatorSession {
+public class CoordinatorSession
+{
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     Context _context;
