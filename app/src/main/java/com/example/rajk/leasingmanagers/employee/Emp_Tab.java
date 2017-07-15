@@ -114,18 +114,20 @@ public class Emp_Tab extends Fragment{
         @Override
         protected Void doInBackground(Void... params) {
 
-           db = DBREF.child("Employee").getRef();
-            db.limitToFirst(3).addListenerForSingleValueEvent(new ValueEventListener() {
+            final DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").getRef();
+
+            final int[] n = {0};
+            db.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()){
-                        dbChe = db.addChildEventListener(new ChildEventListener() {
+                    n[0] = (int) dataSnapshot.getChildrenCount();
+                    if (n[0]>0) {
+                        db.addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                                 if (!dataSnapshot.hasChildren()) {
                                     pDialog.dismiss();
                                 }
-
                                 emp = dataSnapshot.getValue(Employee.class);
                                 list.add(emp);
                                 adapter.notifyDataSetChanged();
@@ -155,10 +157,11 @@ public class Emp_Tab extends Fragment{
 
                             }
                         });
-                }
+                    }
                     else
-                    pDialog.dismiss();
-
+                    {
+                        pDialog.dismiss();
+                    }
                 }
 
                 @Override
@@ -166,8 +169,6 @@ public class Emp_Tab extends Fragment{
 
                 }
             });
-
-
             return null;
         }
 
