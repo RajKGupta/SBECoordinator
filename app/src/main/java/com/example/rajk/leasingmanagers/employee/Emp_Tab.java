@@ -31,9 +31,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 public class Emp_Tab extends Fragment{
 
@@ -43,6 +46,9 @@ public class Emp_Tab extends Fragment{
     Employee emp;
     ProgressDialog pDialog;
     FloatingActionButton emp_add;
+
+    DatabaseReference db;
+    ChildEventListener dbChe;
     public Emp_Tab() {
         // Required empty public constructor
     }
@@ -108,38 +114,50 @@ public class Emp_Tab extends Fragment{
         @Override
         protected Void doInBackground(Void... params) {
 
-            DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").getRef();
-
-
-            db.addChildEventListener(new ChildEventListener() {
+           db = DBREF.child("Employee").getRef();
+            db.limitToFirst(3).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    if (!dataSnapshot.hasChildren())
-                    {
-                        pDialog.dismiss();
-                    }
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()){
+                        dbChe = db.addChildEventListener(new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                if (!dataSnapshot.hasChildren()) {
+                                    pDialog.dismiss();
+                                }
 
-                    emp = dataSnapshot.getValue(Employee.class);
-                    list.add(emp);
-                    adapter.notifyDataSetChanged();
+                                emp = dataSnapshot.getValue(Employee.class);
+                                list.add(emp);
+                                adapter.notifyDataSetChanged();
 
-                    // Dismiss the progress dialog
-                    if (pDialog.isShowing())
-                        pDialog.dismiss();
+                                // Dismiss the progress dialog
+                                if (pDialog.isShowing())
+                                    pDialog.dismiss();
+                            }
+
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                 }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                    else
+                    pDialog.dismiss();
 
                 }
 
@@ -148,9 +166,17 @@ public class Emp_Tab extends Fragment{
 
                 }
             });
+
+
             return null;
         }
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(dbChe!=null)
+        db.removeEventListener(dbChe);
+    }
 }

@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 public class Cust_Tab extends Fragment {
 
     RecyclerView recview;
@@ -46,6 +48,8 @@ public class Cust_Tab extends Fragment {
     Customer temp_cust = new Customer();
     ProgressDialog pDialog;
     FloatingActionButton cust_add;
+    DatabaseReference db;
+    ChildEventListener dbChe;
 
     public Cust_Tab() {
         // Required empty public constructor
@@ -110,35 +114,52 @@ public class Cust_Tab extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
 
-            DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Customer").getRef();
-
-            db.addChildEventListener(new ChildEventListener() {
+            db = DBREF.child("Customer").getRef();
+            db.limitToFirst(3).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    pDialog.show();
-                    cust = dataSnapshot.getValue(Customer.class);
-                    cust.setId(dataSnapshot.getKey());
-                    list.add(cust);
-                    adapter.notifyDataSetChanged();
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                    dbChe =  db.addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            if (dataSnapshot.exists())
+                                pDialog.show();
+                            cust = dataSnapshot.getValue(Customer.class);
+                            cust.setId(dataSnapshot.getKey());
+                            list.add(cust);
+                            adapter.notifyDataSetChanged();
 
-                    // Dismiss the progress dialog
-                    if (pDialog.isShowing())
+                            // Dismiss the progress dialog
+                            if (pDialog.isShowing())
+                                pDialog.dismiss();
+
+                        }
+
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+                            Customer removeCustomer = dataSnapshot.getValue(Customer.class);
+                            list.remove(removeCustomer);
+                            adapter.notifyDataSetChanged();
+
+                        }
+
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });}
+                    else
                         pDialog.dismiss();
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
                 }
 
                 @Override
@@ -146,8 +167,17 @@ public class Cust_Tab extends Fragment {
 
                 }
             });
+
+
             return null;
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(dbChe!=null)
+            db.removeEventListener(dbChe);
+
+    }
 }

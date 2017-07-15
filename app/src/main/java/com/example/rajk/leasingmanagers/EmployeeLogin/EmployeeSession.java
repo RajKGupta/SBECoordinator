@@ -10,6 +10,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 public class EmployeeSession {
     SharedPreferences pref;
     SharedPreferences.Editor editor;
@@ -18,7 +20,7 @@ public class EmployeeSession {
     String prefname="SESSION";
     private String is_loggedin = "is_loggedin";
     private String username = "username";
-    private DatabaseReference dbEmp = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").getRef();
+    private DatabaseReference dbEmp = DBREF.child("Employee").getRef();
 
     public EmployeeSession(Context context)
     {

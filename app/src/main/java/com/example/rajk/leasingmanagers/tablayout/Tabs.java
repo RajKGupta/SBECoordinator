@@ -41,6 +41,7 @@ public class Tabs extends AppCompatActivity implements TabLayout.OnTabSelectedLi
         vpager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tab));
 
         vpager.setCurrentItem(page);
+        vpager.setOffscreenPageLimit(2);
     }
 
     @Override

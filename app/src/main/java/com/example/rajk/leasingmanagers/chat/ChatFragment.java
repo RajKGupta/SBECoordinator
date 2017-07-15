@@ -43,7 +43,7 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
     private DatabaseReference dbChatList;
     private String mykey;
     private chatListAdapter mAdapter;
-    private HashMap<DatabaseReference,ChildEventListener> dbLastMessageHashMap = new HashMap<>();
+    private HashMap<DatabaseReference,ValueEventListener> dbLastMessageHashMap = new HashMap<>();
     private ChildEventListener dbChatCHE;
     private HashMap<DatabaseReference,ValueEventListener> dbProfileRefHashMap = new HashMap<>();
 
@@ -68,7 +68,7 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        setupUI(view.findViewById(R.id.relcity));
+//      setupUI(view.findViewById(R.id.relcity));
         fmm = getFragmentManager();
 
         CoordinatorSession coordinatorSession = new CoordinatorSession(getActivity());
@@ -95,59 +95,49 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
                     final String otheruserkey = dataSnapshot.getKey();
                     final DatabaseReference dbLastMsg = DBREF.child("Chats").child(dbTablekey).child("lastMsg").getRef();
 
-                    ChildEventListener dbLastMsgChildEventListener = dbLastMsg.addChildEventListener(new ChildEventListener() {
+                    ValueEventListener dbLastMsgChildEventListener = dbLastMsg.addValueEventListener(new ValueEventListener() {
                         @Override
-                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        public void onDataChange(DataSnapshot dataSnapshot) {
                             if(dataSnapshot.exists())
                             {
-                                final Long lastMsgId = dataSnapshot.getValue(Long.class);
-                                DatabaseReference dbProfileRef = DBREF.child("Users").child("Usersessions").child(otheruserkey).getRef();
-
-                                ValueEventListener valueEventListener = dbProfileRef.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        if(dataSnapshot.exists()) {
-                                            NameAndStatus user = dataSnapshot.getValue(NameAndStatus.class);
-                                            ChatListModel chatListModel = new ChatListModel(user.getName(), otheruserkey, dbTablekey, getRandomMaterialColor("400"),lastMsgId);
-                                            list.add(chatListModel);
-                                            sortChatList();
-                                            mAdapter.notifyDataSetChanged();
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
-                                dbProfileRefHashMap.put(dbProfileRef,valueEventListener);
-
-                            }
-                        }
-
-                        @Override
-                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                            for(ChatListModel chatListModel:list)
-                            {
-                                if(chatListModel.getDbTableKey().equals(dbTablekey))
+                                boolean alreadyexists = false;
+                                for(ChatListModel chatListModel:list)
                                 {
-                                    list.remove(chatListModel);
-                                    chatListModel.setLastMsg(dataSnapshot.getValue(Long.class));
-                                    list.add(chatListModel);
-                                    sortChatList();
-                                    mAdapter.notifyDataSetChanged();
-                                    break;
+                                    if(chatListModel.getDbTableKey().equals(dbTablekey))
+                                    {
+                                        list.remove(chatListModel);
+                                        chatListModel.setLastMsg(dataSnapshot.getValue(Long.class));
+                                        list.add(chatListModel);
+                                        sortChatList();
+                                        alreadyexists=true;
+                                        mAdapter.notifyDataSetChanged();
+                                        break;
+                                    }
+                                }
+                                if(!alreadyexists) {
+                                    final Long lastMsgId = dataSnapshot.getValue(Long.class);
+                                    DatabaseReference dbProfileRef = DBREF.child("Users").child("Usersessions").child(otheruserkey).getRef();
+
+                                    ValueEventListener valueEventListener = dbProfileRef.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.exists()) {
+                                                NameAndStatus user = dataSnapshot.getValue(NameAndStatus.class);
+                                                ChatListModel chatListModel = new ChatListModel(user.getName(), otheruserkey, dbTablekey, getRandomMaterialColor("400"), lastMsgId);
+                                                list.add(chatListModel);
+                                                sortChatList();
+                                                mAdapter.notifyDataSetChanged();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                    dbProfileRefHashMap.put(dbProfileRef, valueEventListener);
                                 }
                             }
-                        }
-
-                        @Override
-                        public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                        }
-
-                        @Override
-                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
                         }
 
@@ -185,9 +175,9 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Iterator<HashMap.Entry<DatabaseReference,ChildEventListener>> iterator = dbLastMessageHashMap.entrySet().iterator();
+        Iterator<HashMap.Entry<DatabaseReference,ValueEventListener>> iterator = dbLastMessageHashMap.entrySet().iterator();
         while (iterator.hasNext()) {
-            HashMap.Entry<DatabaseReference,ChildEventListener> entry = (HashMap.Entry<DatabaseReference,ChildEventListener>) iterator.next();
+            HashMap.Entry<DatabaseReference,ValueEventListener> entry = (HashMap.Entry<DatabaseReference,ValueEventListener>) iterator.next();
             if(entry.getValue()!=null)
             entry.getKey().removeEventListener(entry.getValue());
         }

@@ -47,6 +47,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListener{
     RecyclerView task_list;
     DatabaseReference dbTask;
@@ -85,7 +87,7 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
         }
         marshMallowPermission = new MarshmallowPermissions(getActivity());
         progressDialog = new ProgressDialog(getActivity());
-        dbTask = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").getRef();
+        dbTask = DBREF.child("Task").getRef();
         task_list = (RecyclerView) getView().findViewById(R.id.task_list);
         LoadData();
         mAdapter = new taskAdapter(TaskList,getContext(),this);
