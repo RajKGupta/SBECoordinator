@@ -1,27 +1,18 @@
 package com.example.rajk.leasingmanagers.customer;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.listener.ClickListener;
@@ -35,7 +26,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Cust_Tab extends Fragment {
 
@@ -110,35 +100,57 @@ public class Cust_Tab extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
 
-            DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Customer").getRef();
+            final DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Customer").getRef();
 
-            db.addChildEventListener(new ChildEventListener() {
+            final int[] n = {0};
+            db.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    pDialog.show();
-                    cust = dataSnapshot.getValue(Customer.class);
-                    cust.setId(dataSnapshot.getKey());
-                    list.add(cust);
-                    adapter.notifyDataSetChanged();
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    n[0] = (int) dataSnapshot.getChildrenCount();
 
-                    // Dismiss the progress dialog
-                    if (pDialog.isShowing())
+                    if (n[0]>0) {
+                        db.addChildEventListener(new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                //pDialog.show();
+                                if (!dataSnapshot.hasChildren()) {
+                                    pDialog.dismiss();
+                                }
+                                cust = dataSnapshot.getValue(Customer.class);
+                                cust.setId(dataSnapshot.getKey());
+                                list.add(cust);
+                                adapter.notifyDataSetChanged();
+
+                                // Dismiss the progress dialog
+                                if (pDialog.isShowing())
+                                    pDialog.dismiss();
+                            }
+
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                    else
+                    {
                         pDialog.dismiss();
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                    }
                 }
 
                 @Override
@@ -146,8 +158,8 @@ public class Cust_Tab extends Fragment {
 
                 }
             });
+
             return null;
         }
     }
-
 }

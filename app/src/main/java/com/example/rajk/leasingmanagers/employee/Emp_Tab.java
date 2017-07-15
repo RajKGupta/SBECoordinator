@@ -31,6 +31,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,39 +109,55 @@ public class Emp_Tab extends Fragment{
         @Override
         protected Void doInBackground(Void... params) {
 
-            DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").getRef();
+            final DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").getRef();
 
-
-            db.addChildEventListener(new ChildEventListener() {
+            final int[] n = {0};
+            db.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    if (!dataSnapshot.hasChildren())
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    n[0] = (int) dataSnapshot.getChildrenCount();
+                    if (n[0]>0) {
+                        db.addChildEventListener(new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                if (!dataSnapshot.hasChildren()) {
+                                    pDialog.dismiss();
+                                }
+
+                                emp = dataSnapshot.getValue(Employee.class);
+                                list.add(emp);
+                                adapter.notifyDataSetChanged();
+
+                                // Dismiss the progress dialog
+                                if (pDialog.isShowing())
+                                    pDialog.dismiss();
+                            }
+
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                    else
                     {
                         pDialog.dismiss();
                     }
-
-                    emp = dataSnapshot.getValue(Employee.class);
-                    list.add(emp);
-                    adapter.notifyDataSetChanged();
-
-                    // Dismiss the progress dialog
-                    if (pDialog.isShowing())
-                        pDialog.dismiss();
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
                 }
 
                 @Override
@@ -148,6 +165,7 @@ public class Emp_Tab extends Fragment{
 
                 }
             });
+
             return null;
         }
 
