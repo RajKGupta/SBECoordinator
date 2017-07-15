@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 /**
  * Created by RajK on 16-05-2017.
  */
@@ -64,7 +66,7 @@ public class CustomerTasks_Adapter extends  RecyclerView.Adapter<CustomerTasks_A
 
     @Override
     public void onBindViewHolder(final CustomerTasks_Adapter.MyViewHolder holder, final int position) {
-        DatabaseReference refh = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(list.get(position)).getRef();
+        DatabaseReference refh = DBREF.child("Task").child(list.get(position)).getRef();
 
         refh.addValueEventListener(new ValueEventListener() {
             @Override

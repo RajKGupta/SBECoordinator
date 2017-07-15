@@ -23,12 +23,14 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 public class Cust_add extends AppCompatActivity {
 
     EditText Name, Add, Num,Password;
     String name, add, num,password;
     Button submit;
-    DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Customer").getRef();
+    DatabaseReference db = DBREF.child("Customer").getRef();
     DatabaseReference database;
 
     @Override
@@ -58,14 +60,13 @@ public class Cust_add extends AppCompatActivity {
                             Customer customer = new Customer(name,num,add,num,getRandomMaterialColor("400"),password);
                             database = db.child(num);  // TODO : Done phone number is set as key
                             database.setValue(customer);
+                    DBREF.child("Users").child("Usersessions").child(num).child("name").setValue(name);
+                    DBREF.child("Users").child("Usersessions").child(num).child("online").setValue(Boolean.FALSE);
 
-
-                    Intent intent = new Intent(Cust_add.this, Cust_Tab.class);
+                    Intent intent = new Intent(Cust_add.this, Tabs.class);
                     intent.putExtra("page",0);
                     startActivity(intent);
                     finish();
-                            startActivity(new Intent(Cust_add.this, Cust_Tab.class));
-                            finish();
 
                 }
             }

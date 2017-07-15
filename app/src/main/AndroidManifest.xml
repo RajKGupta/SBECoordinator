@@ -52,7 +52,7 @@
 
         <activity
             android:name=".tablayout.Tabs"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity android:name=".chat.ChatActivity" />
 
         <service android:name=".services.MyFirebaseMessagingService">
@@ -96,15 +96,16 @@
 
         <service
             android:name=".services.UploadTaskPhotosServices"
-            android:exported="false"></service>
-
+            android:exported="false" />
         <service
             android:name=".services.UploadQuotationService"
+            android:exported="false" />
+        <service
+            android:name=".services.DownloadFileService"
             android:exported="false"></service>
-        <service android:name=".services.DownloadFileService"
-            android:exported="false">
-            </service>
-        <activity android:name=".customer.UploadQuotationActivity"></activity>
+
+        <activity android:name=".customer.UploadQuotationActivity" />
+        <activity android:name=".CoordinatorLogin.CoordinatorSignUp"></activity>
     </application>
 
 </manifest>

@@ -26,6 +26,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 /**
  * Created by RajK on 16-05-2017.
  */
@@ -70,7 +72,7 @@ public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter
             holder.tv_dateCompleted.setText("Expected Deadline :");
         }
 
-        DatabaseReference dbEmp = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(emp.getEmpId()).getRef();
+        DatabaseReference dbEmp = DBREF.child("Employee").child(emp.getEmpId()).getRef();
         dbEmp.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

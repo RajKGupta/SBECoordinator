@@ -27,6 +27,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 public class Cust_Tab extends Fragment {
 
     RecyclerView recview;
@@ -36,6 +38,8 @@ public class Cust_Tab extends Fragment {
     Customer temp_cust = new Customer();
     ProgressDialog pDialog;
     FloatingActionButton cust_add;
+    DatabaseReference db;
+    ChildEventListener dbChe;
 
     public Cust_Tab() {
         // Required empty public constructor
@@ -161,5 +165,13 @@ public class Cust_Tab extends Fragment {
 
             return null;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(dbChe!=null)
+            db.removeEventListener(dbChe);
+
     }
 }
