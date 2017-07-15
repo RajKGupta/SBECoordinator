@@ -23,12 +23,14 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 public class Cust_add extends AppCompatActivity {
 
     EditText Name, Add, Num,Password;
     String name, add, num,password;
     Button submit;
-    DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Customer").getRef();
+    DatabaseReference db = DBREF.child("Customer").getRef();
     DatabaseReference database;
 
     @Override

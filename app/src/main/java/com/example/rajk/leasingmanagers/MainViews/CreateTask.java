@@ -52,6 +52,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 public class CreateTask extends AppCompatActivity implements CalendarDatePickerDialogFragment.OnDateSetListener {
     DatabaseReference dbRef;
     EditText taskName,startDate,endDate,quantity,description,custId;
@@ -81,7 +83,7 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
         marshMallowPermission = new MarshmallowPermissions(this);
         compressMe = new CompressMe(this);
         getSupportActionBar().setTitle("Create New Task");
-        dbRef= FirebaseDatabase.getInstance().getReference().child("MeChat");
+        dbRef= DBREF;
         Intent intent = getIntent();
         customerName = intent.getStringExtra("customerName");
         customerId = intent.getStringExtra("customerId");

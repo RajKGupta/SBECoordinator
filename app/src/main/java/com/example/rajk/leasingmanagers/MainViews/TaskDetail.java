@@ -69,6 +69,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener{
     
     private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned,dbMeasurement,dbDescImages;
@@ -100,7 +102,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
         marshmallowPermissions =new MarshmallowPermissions(this);
-        dbRef = FirebaseDatabase.getInstance().getReference().child("MeChat");
+        dbRef = DBREF;
         progressDialog = new ProgressDialog(this);
         download = (ImageButton)findViewById(R.id.download);
         progressBar = (ProgressBar)findViewById(R.id.progress);
@@ -207,7 +209,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 task = dataSnapshot.getValue(Task.class);
                 setValue(task);
                 getSupportActionBar().setTitle(task.getName());
-                DatabaseReference dbCustomerName = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Customer").child(task.getCustomerId()).getRef();
+                DatabaseReference dbCustomerName =DBREF.child("Customer").child(task.getCustomerId()).getRef();
                 dbCustomerName.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -507,10 +509,10 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        DatabaseReference dbCancelJob = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(task_id).child("AssignedTo").child(adapter_assignedto.emp.getEmpId()).getRef();
+                        DatabaseReference dbCancelJob = DBREF.child("Task").child(task_id).child("AssignedTo").child(adapter_assignedto.emp.getEmpId()).getRef();
                         dbCancelJob.removeValue();
 
-                        DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(adapter_assignedto.emp.getEmpId()).child("AssignedTask").child(task_id);
+                        DatabaseReference dbEmployee = DBREF.child("Employee").child(adapter_assignedto.emp.getEmpId()).child("AssignedTask").child(task_id);
                         dbEmployee.removeValue(); //for employee
                         assignedtoList.remove(position);
                         adapter_assignedto.notifyDataSetChanged();

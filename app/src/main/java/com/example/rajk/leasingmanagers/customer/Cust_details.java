@@ -82,7 +82,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
 
         // get name, num and address from database using id and show them in activity
 
-        db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Customer").child(id);
+        db = DBREF.child("Customer").child(id);
         dblistener =db.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot)

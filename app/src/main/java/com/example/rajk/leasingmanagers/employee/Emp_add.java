@@ -20,12 +20,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 public class Emp_add extends AppCompatActivity {
 
     String name, num, add, desig,username,password;
     EditText Name, Num, Add, Desig,Username,Password;
     Button submit;
-    DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").getRef();
+    DatabaseReference db = DBREF.child("Employee").getRef();
     long n;
 
     @Override

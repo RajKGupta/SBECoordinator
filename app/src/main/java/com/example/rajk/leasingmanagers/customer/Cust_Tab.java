@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 public class Cust_Tab extends Fragment {
 
     RecyclerView recview;
@@ -110,7 +112,7 @@ public class Cust_Tab extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
 
-            DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Customer").getRef();
+            DatabaseReference db = DBREF.child("Customer").getRef();
 
             db.addChildEventListener(new ChildEventListener() {
                 @Override

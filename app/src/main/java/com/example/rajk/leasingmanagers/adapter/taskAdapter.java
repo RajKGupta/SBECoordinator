@@ -24,6 +24,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 /**
  * Created by RajK on 16-05-2017.
  */
@@ -94,7 +96,7 @@ public class taskAdapter extends  RecyclerView.Adapter<taskAdapter.MyViewHolder>
                 holder.imgProfile.setImageResource(R.drawable.bg_circle);
                 holder.imgProfile.setColorFilter(task.getColor());
                 holder.timestamp.setText(task.getStartDate());
-                DatabaseReference dbCustomerName = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Customer").child(task.getCustomerId()).getRef();
+                DatabaseReference dbCustomerName = DBREF.child("Customer").child(task.getCustomerId()).getRef();
                 dbCustomerName.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
