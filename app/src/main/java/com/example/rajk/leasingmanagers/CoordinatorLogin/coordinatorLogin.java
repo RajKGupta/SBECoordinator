@@ -13,11 +13,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 import com.example.rajk.leasingmanagers.LeasingManagers;
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.model.Coordinator;
 import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -26,7 +26,7 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 public class coordinatorLogin extends AppCompatActivity {
 
     EditText username, password;
-    Button button;
+    Button button,signUp;
     String Username,Password;
     DatabaseReference database;
     CoordinatorSession session;
@@ -39,6 +39,7 @@ public class coordinatorLogin extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.emp_login);
+        signUp = (Button)findViewById(R.id.signUp);
 
         sharedPreferences = getSharedPreferences("myFCMToken",MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -47,7 +48,13 @@ public class coordinatorLogin extends AppCompatActivity {
             editor.putString("myFCMToken",FirebaseInstanceId.getInstance().getToken());
             editor.commit();
         }
-
+        signUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(coordinatorLogin.this,CoordinatorSignUp.class));
+                finish();
+            }
+        });
         session = new CoordinatorSession(getApplicationContext());
         if(session.isolduser()==true)
         {
@@ -100,31 +107,29 @@ public class coordinatorLogin extends AppCompatActivity {
                     if(dataSnapshot.exists())
                     {
 
-                        String password = dataSnapshot.child("password").getValue(String.class);
-                        if (!password.equals(Password)) {
+                        Coordinator coordinator = dataSnapshot.getValue(Coordinator.class);
+                        if (!Password.equals(coordinator.getPassword())) {
                             Toast.makeText(getBaseContext(), "Wrong Password", Toast.LENGTH_SHORT).show();
                         } else
                         {
                             session.create_oldusersession(Username);
                             LeasingManagers.setOnlineStatus(Username);
-                            String name = dataSnapshot.getValue(String.class);
+                            String name = coordinator.getName();
                             if(name!=null)
                                 DBREF.child("Users").child("Usersessions").child(Username).child("name").setValue(name);
                             String myFCMToken;
                             if(FirebaseInstanceId.getInstance().getToken()==null)
-                            {
                                 myFCMToken =sharedPreferences.getString("myFCMToken","");
-                            }
+
                             else
                                 myFCMToken = FirebaseInstanceId.getInstance().getToken();
 
-                            if(!myFCMToken.equals(""))
-                            DBREF.child("Fcmtokens").child(Username).child("token").setValue(myFCMToken);
-                            else
-                            {
-                                Toast.makeText(coordinatorLogin.this,"You will need to clear the app data or reinstall the app to make it work properly",Toast.LENGTH_LONG).show();
+                            if(!myFCMToken.equals("")) {
+                                DBREF.child("Fcmtokens").child(Username).child("token").setValue(myFCMToken);
                                 goToTabLayout();
                             }
+                            else
+                                Toast.makeText(coordinatorLogin.this,"You will need to clear the app data or reinstall the app to make it work properly",Toast.LENGTH_LONG).show();
                         }
                     }
                     else

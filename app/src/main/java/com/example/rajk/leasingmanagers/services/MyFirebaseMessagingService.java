@@ -45,17 +45,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(TAG1, "data2: " + remoteMessage.getData().get("msgid"));
         Log.d(TAG1, "data3: " + remoteMessage.getData().get("chatref"));
 
-        String msg = remoteMessage.getData().get("body");
+        String type = remoteMessage.getData().get("type");
+        String msg;
+        if(type.equals("text"))
+            msg = remoteMessage.getData().get("body");
+
+        else
+            msg = "Sent a "+type;
         String senderuid = remoteMessage.getData().get("senderuid");
         String title = remoteMessage.getData().get("title");
 
         String timestamp = remoteMessage.getData().get("sendertimestamp");
         String chatref = remoteMessage.getData().get("chatref");
         String msgid = remoteMessage.getData().get("msgid");
-             if (msg != null && timestamp != null && chatref != null && msgid != null)
-                sendNotification(title, msg, timestamp, chatref, msgid,senderuid);
+        if (msg != null && timestamp != null && chatref != null && msgid != null)
+            sendNotification(title, msg, timestamp, chatref, msgid,senderuid);
 
-     }
+    }
 
 
     private void sendNotification(String title, String msg, String timestamp, String chatref, String msgid,String senderuid) throws NullPointerException {
@@ -71,71 +77,37 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        String m = decrypt(msg, timestamp);
-        if (!m.matches("nil")) {
-            System.out.println(dbr + " setting value to 2 for " + chatref);
-            dbr.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        if (!dataSnapshot.getValue().toString().matches("3"))
-                            dbr.setValue("2");
-
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+        System.out.println(dbr + " setting value to 2 for " + chatref);
+        dbr.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if (!dataSnapshot.getValue().toString().matches("3"))
+                        dbr.setValue("2");
 
                 }
-            });
+            }
 
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_chat_white)
-                    .setContentTitle(title)
-                    .setContentText(m)
-                    .setAutoCancel(true)
-                    .setSound(defaultSoundUri)
-                    .setContentIntent(pendingIntent);
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-            NotificationManager notificationManager =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            }
+        });
 
-            notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-        }
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_chat_white)
+                .setContentTitle(title)
+                .setContentText(msg)
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent);
 
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 
-    public String decrypt(String enc, String key) throws NullPointerException {
-        //encryption, first convert text to base 64 then xor it
-        String base64msg = xorMessage(enc, key);
-        System.out.println("decruption xor: " + base64msg);
-        byte[] bytesDecoded = Base64.decode(base64msg.getBytes(), 0);
-        String decoded = new String(bytesDecoded);
-        System.out.println(" bytes decoded: " + decoded);
-        return decoded;
-    }
-
-    public String xorMessage(String message, String key) {
-        try {
-            if (message == null || key == null) return null;
-
-            char[] keys = key.toCharArray();
-            char[] mesg = message.toCharArray();
-
-            int ml = mesg.length;
-            int kl = keys.length;
-            char[] newmsg = new char[ml];
-
-            for (int i = 0; i < ml; i++) {
-                newmsg[i] = (char) (mesg[i] ^ keys[i % kl]);
-            }//for i
-
-            return new String(newmsg);
-        } catch (Exception e) {
-            return null;
-        }
-    }
 
 
     private boolean isAppIsInBackground(Context context) {
