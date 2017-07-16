@@ -6,7 +6,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,17 +16,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.text.method.Touch;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -35,17 +31,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
-import com.example.rajk.leasingmanagers.MainViews.CreateTask;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.ViewImageAdapter;
 import com.example.rajk.leasingmanagers.adapter.chatAdapter;
-import com.example.rajk.leasingmanagers.adapter.taskimagesadapter;
 import com.example.rajk.leasingmanagers.helper.CompressMe;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.helper.TouchImageView;
 import com.example.rajk.leasingmanagers.listener.ClickListener;
 import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
 import com.example.rajk.leasingmanagers.model.ChatMessage;
+import com.example.rajk.leasingmanagers.model.NameAndStatus;
 import com.example.rajk.leasingmanagers.services.UploadFileService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -57,16 +52,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.zfdang.multiple_images_selector.ImagesSelectorActivity;
-import com.zfdang.multiple_images_selector.SelectorSettings;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
-
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
 
@@ -78,7 +68,8 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     private ImageButton sendButton;
     Intent intent;
     private RecyclerView recyclerView;
-    DatabaseReference dbChat;
+    DatabaseReference dbChat,dbOnlineStatus;
+    ValueEventListener dbOnlineStatusVle;
     private String otheruserkey, mykey;
     LinearLayoutManager linearLayoutManager;
     private MarshmallowPermissions marshmallowPermissions;
@@ -115,6 +106,31 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         intent = getIntent();
         dbTableKey = intent.getStringExtra("dbTableKey");
         otheruserkey = intent.getStringExtra("otheruserkey");
+
+        dbOnlineStatus = DBREF.child("Users").child("Usersessions").child(otheruserkey).getRef();
+        dbOnlineStatusVle = dbOnlineStatus.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                {
+                    NameAndStatus nameAndStatus = dataSnapshot.getValue(NameAndStatus.class);
+                    getSupportActionBar().setTitle(nameAndStatus.getName());
+                    if(nameAndStatus.getOnline())
+                    {
+                        getSupportActionBar().setSubtitle("Online");
+                    }
+                    else
+                    {
+                        getSupportActionBar().setSubtitle("Offline");
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         System.out.println("recevier token chat act oncreate"+getRecivertoken(otheruserkey));
 
@@ -368,6 +384,8 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         super.onDestroy();
         if(dbChatlistener!=null)
             dbChat.removeEventListener(dbChatlistener);
+        if(dbOnlineStatusVle!=null)
+            dbOnlineStatus.removeEventListener(dbOnlineStatusVle);
     }
 
 ////maintain all the clicks on buttons on this page
