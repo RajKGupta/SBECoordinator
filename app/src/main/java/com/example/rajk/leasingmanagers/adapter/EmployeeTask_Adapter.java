@@ -24,6 +24,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 /**
  * Created by RajK on 16-05-2017.
  */
@@ -58,7 +60,7 @@ public class EmployeeTask_Adapter extends  RecyclerView.Adapter<EmployeeTask_Ada
         holder.noteAuthor.setText("Coordinator's Note:");
         holder.tv_dateCompleted.setText("Deadline :");
 
-        DatabaseReference refh = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(list.get(position)).child("AssignedTo").child(empId).getRef();
+        DatabaseReference refh = DBREF.child("Task").child(list.get(position)).child("AssignedTo").child(empId).getRef();
 
         refh.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -72,7 +74,7 @@ public class EmployeeTask_Adapter extends  RecyclerView.Adapter<EmployeeTask_Ada
                     holder.dateCompleted.setText(emp.getDatecompleted());
                     holder.noteString.setText(emp.getNote());
 
-                    DatabaseReference dbEmp = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(list.get(position)).getRef();
+                    DatabaseReference dbEmp = DBREF.child("Task").child(list.get(position)).getRef();
                     dbEmp.addListenerForSingleValueEvent(
                             new ValueEventListener() {
                         @Override

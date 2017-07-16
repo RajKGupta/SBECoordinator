@@ -22,6 +22,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 public class forwardTaskScreen2 extends FragmentActivity implements CalendarDatePickerDialogFragment.OnDateSetListener {
     Button submit;
     EditText name,designation,enddate,note,startDate;
@@ -88,10 +90,10 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
                 String cooordnote = note.getText().toString().trim();
                 if(forQuotation==false) {
                     CompletedBy completedBy = new CompletedBy(empId, curdate, deadline, cooordnote);
-                    DatabaseReference dbAssigned = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(task_id).child("AssignedTo").child(empId);
+                    DatabaseReference dbAssigned = DBREF.child("Task").child(task_id).child("AssignedTo").child(empId);
                     dbAssigned.setValue(completedBy);
 
-                    DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(empId).child("AssignedTask").child(task_id);
+                    DatabaseReference dbEmployee = DBREF.child("Employee").child(empId).child("AssignedTask").child(task_id);
                     dbEmployee.setValue("pending"); //for employee
 
                     Toast.makeText(forwardTaskScreen2.this, "Task Assigned to " + empName, Toast.LENGTH_SHORT).show();
@@ -106,12 +108,12 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
                     for(String taskid:taskIds)
                     {
                         CompletedBy completedBy = new CompletedBy(empId, curdate, deadline, cooordnote);
-                        DatabaseReference dbAssigned = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(taskid).child("AssignedTo").child(empId);
+                        DatabaseReference dbAssigned = DBREF.child("Task").child(taskid).child("AssignedTo").child(empId);
                         dbAssigned.setValue(completedBy);
-                        DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(empId).child("AssignedTask").child(timestamp+"").child("listoftasks");
+                        DatabaseReference dbEmployee = DBREF.child("Employee").child(empId).child("AssignedTask").child(timestamp+"").child("listoftasks");
                         dbEmployee.child(taskid).setValue("pending"); //for employee
                     }
-                    DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(empId).child("AssignedTask").child(timestamp+"");
+                    DatabaseReference dbEmployee = DBREF.child("Employee").child(empId).child("AssignedTask").child(timestamp+"");
                     dbEmployee.child("deadline").setValue(deadline);
                     dbEmployee.child("startDate").setValue(curdate);
                     dbEmployee.child("coordnote").setValue(cooordnote);

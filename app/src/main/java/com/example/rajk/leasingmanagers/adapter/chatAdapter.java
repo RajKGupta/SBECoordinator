@@ -31,6 +31,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 /**
  * Created by RajK on 16-05-2017.
  */
@@ -195,7 +197,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
     }
 
     private void applyStatus(ChatMessage comment, final MyViewHolder holder) {
-        holder.dbCommentStatus = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Chats").child(dbTablekey).child("ChatMessages").child(comment.getId()).child("status").getRef();
+        holder.dbCommentStatus = DBREF.child("Chats").child(dbTablekey).child("ChatMessages").child(comment.getId()).child("status").getRef();
         holder.dbCommentStatusListener = holder.dbCommentStatus.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -227,7 +229,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.MyViewHolder> 
     }
 
     private void applyprogressbar(ChatMessage comment, final MyViewHolder holder) {
-        holder.dbUploadProgress = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Chats").child(dbTablekey).child("ChatMessages").child(comment.getId()).child("imgurl").getRef();
+        holder.dbUploadProgress = DBREF.child("Chats").child(dbTablekey).child("ChatMessages").child(comment.getId()).child("imgurl").getRef();
         holder.dbUploadProgressListener = holder.dbUploadProgress.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

@@ -75,7 +75,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         coordinatorSession = new CoordinatorSession(this);
         mykey = coordinatorSession.getUsername();
 
-        db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(id);
+        db = DBREF.child("Employee").child(id);
         db.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -166,7 +166,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
 
                         else{
 
-                            db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(id);
+                            db = DBREF.child("Employee").child(id);
                             db.child("name").setValue(temp_name);
                             db.child("address").setValue(temp_add);
                             db.child("phone_num").setValue(temp_num);
@@ -196,10 +196,10 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int i) {
-                        DatabaseReference dbCancelJob = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(listoftasks.get(position)).child("AssignedTo").child(id).getRef();
+                        DatabaseReference dbCancelJob = DBREF.child("Task").child(listoftasks.get(position)).child("AssignedTo").child(id).getRef();
                         dbCancelJob.removeValue();
 
-                        DatabaseReference dbEmployee = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(id).child("AssignedTask").child(listoftasks.get(position));
+                        DatabaseReference dbEmployee = DBREF.child("Employee").child(id).child("AssignedTask").child(listoftasks.get(position));
                         dbEmployee.removeValue(); //for employee
 
                         listoftasks.remove(position);

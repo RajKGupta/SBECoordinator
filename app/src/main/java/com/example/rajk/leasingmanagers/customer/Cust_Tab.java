@@ -104,7 +104,7 @@ public class Cust_Tab extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
 
-            final DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Customer").getRef();
+            final DatabaseReference db = DBREF.child("Customer").getRef();
 
             final int[] n = {0};
             db.addListenerForSingleValueEvent(new ValueEventListener() {

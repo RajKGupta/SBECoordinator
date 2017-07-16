@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 /**
  * Created by SoumyaAgarwal on 7/3/2017.
  */
@@ -92,7 +94,7 @@ public class UploadQuotationService extends IntentService
                         for (int i = TaskIdList.size() - 1; i >= 0; i--)
                         {
                             Quotation quotation = new Quotation("No",taskSnapshot.getDownloadUrl().toString());
-                            DatabaseReference dbQuotation = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(TaskIdList.get(i)).child("Quotation").getRef();
+                            DatabaseReference dbQuotation = DBREF.child("Task").child(TaskIdList.get(i)).child("Quotation").getRef();
                             dbQuotation.setValue(quotation);
                         }
                         updateNotification("Succesfully Uploaded");
