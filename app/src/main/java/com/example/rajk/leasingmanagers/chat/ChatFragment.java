@@ -220,7 +220,7 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
         Collections.sort(list, new Comparator<ChatListModel>() {
             @Override
             public int compare(ChatListModel o1, ChatListModel o2) {
-                return o1.getLastMsg()<o2.getLastMsg()?-1:0;
+                return o1.getLastMsg()>o2.getLastMsg()?-1:0;
             }
         });
     }
