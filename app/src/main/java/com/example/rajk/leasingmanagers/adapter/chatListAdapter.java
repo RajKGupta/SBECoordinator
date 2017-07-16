@@ -145,18 +145,6 @@ public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyView
             }
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.exists()) {
-                    ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-                    if (chatMessage.getCommentString() != null) {
-                        if(!chatMessage.getType().equals("text")) {
-                            holder.message.setText(chatMessage.getCommentString());
-
-                        }
-                        else
-                        holder.message.setText(chatMessage.getCommentString());
-                    }
-                    holder.timestamp.setText(chatMessage.getSendertimestamp());
-                }
 
             }
 
@@ -246,7 +234,7 @@ public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyView
                 entry.getKey().removeEventListener(entry.getValue());
         }
         Iterator<HashMap.Entry<DatabaseReference,ValueEventListener>> iterator2 = hashMapVLE.entrySet().iterator();
-        while (iterator.hasNext()) {
+        while (iterator2.hasNext()) {
             HashMap.Entry<DatabaseReference,ValueEventListener> entry = (HashMap.Entry<DatabaseReference,ValueEventListener>) iterator2.next();
             if(entry.getValue()!=null) entry.getKey().removeEventListener(entry.getValue());
         }

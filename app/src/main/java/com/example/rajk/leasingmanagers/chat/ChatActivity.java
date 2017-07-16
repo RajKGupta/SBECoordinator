@@ -386,6 +386,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
             dbChat.removeEventListener(dbChatlistener);
         if(dbOnlineStatusVle!=null)
             dbOnlineStatus.removeEventListener(dbOnlineStatusVle);
+        mAdapter.removeListeners();
     }
 
 ////maintain all the clicks on buttons on this page
