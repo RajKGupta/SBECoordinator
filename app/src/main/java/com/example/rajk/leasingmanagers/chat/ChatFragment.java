@@ -122,11 +122,23 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                             if (dataSnapshot.exists()) {
+                                                boolean alreadyexists = false;
                                                 NameAndStatus user = dataSnapshot.getValue(NameAndStatus.class);
-                                                ChatListModel chatListModel = new ChatListModel(user.getName(), otheruserkey, dbTablekey, getRandomMaterialColor("400"), lastMsgId);
-                                                list.add(chatListModel);
-                                                sortChatList();
-                                                mAdapter.notifyDataSetChanged();
+                                                for (ChatListModel chatListModel : list) {
+                                                    if(chatListModel.getUserkey().equals(dataSnapshot.getKey())) {
+                                                        alreadyexists=true;
+                                                        break;
+                                                        }
+
+                                                    }
+                                                    if(!alreadyexists)
+                                                    {
+                                                        ChatListModel chatListModel = new ChatListModel(user.getName(), otheruserkey, dbTablekey, getRandomMaterialColor("400"), lastMsgId);
+                                                        list.add(chatListModel);
+                                                        sortChatList();
+                                                        mAdapter.notifyDataSetChanged();
+
+                                                    }
                                             }
                                         }
 

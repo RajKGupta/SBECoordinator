@@ -181,7 +181,7 @@ public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyView
     private void applyOnlineStatus(final MyViewHolder holder, ChatListModel chatListModel)
     {
 
-        DatabaseReference dbOnlineStatus = DBREF.child("Usersessions").child(chatListModel.getUserkey()).child("online").getRef();
+        DatabaseReference dbOnlineStatus = DBREF.child("Users").child("Usersessions").child(chatListModel.getUserkey()).child("online").getRef();
         ValueEventListener valueEventListener = dbOnlineStatus.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

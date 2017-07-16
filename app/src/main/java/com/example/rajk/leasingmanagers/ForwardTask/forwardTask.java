@@ -22,6 +22,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,44 +110,54 @@ public class forwardTask extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
+            final DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").getRef();
 
-            DatabaseReference db = DBREF.child("Employee").getRef();
-
-            db.addChildEventListener(new ChildEventListener() {
+            final int[] n = {0};
+            db.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    emp = dataSnapshot.getValue(Employee.class);
-                    if(forQuotation==true)
-                    {
-                        if(emp.getDesignation().equalsIgnoreCase("quotation"))
-                        {
-                            list.add(emp);
-                        }
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    n[0] = (int) dataSnapshot.getChildrenCount();
+                    if (n[0]>0) {
+                        db.addChildEventListener(new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                if (!dataSnapshot.hasChildren()) {
+                                    pDialog.dismiss();
+                                }
+                                emp = dataSnapshot.getValue(Employee.class);
+                                list.add(emp);
+                                adapter.notifyDataSetChanged();
+
+                                // Dismiss the progress dialog
+                                if (pDialog.isShowing())
+                                    pDialog.dismiss();
+                            }
+
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
-
                     else
-                    list.add(emp);
-
-                    adapter.notifyDataSetChanged();
-
-                    // Dismiss the progress dialog
-                    if (pDialog.isShowing())
+                    {
                         pDialog.dismiss();
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                    }
                 }
 
                 @Override
@@ -156,6 +167,7 @@ public class forwardTask extends AppCompatActivity {
             });
             return null;
         }
+
 
     }
 
