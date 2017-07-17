@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.chat.ChatActivity;
+import com.example.rajk.leasingmanagers.model.NameAndStatus;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,36 +36,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
     private static final String TAG1 = "MyFireMesgService";
-
-    Bitmap largeIcon;
-
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        System.out.println("remote message downloaded");
-        Log.d(TAG1, "data1: " + remoteMessage.getData().get("sendertimestamp"));
-        Log.d(TAG1, "data2: " + remoteMessage.getData().get("msgid"));
-        Log.d(TAG1, "data3: " + remoteMessage.getData().get("chatref"));
-
-        String type = remoteMessage.getData().get("type");
-        String msg;
-        if(type.equals("text"))
-            msg = remoteMessage.getData().get("body");
-
-        else
-            msg = "Sent a "+type;
+        String msg = remoteMessage.getData().get("body");
         String senderuid = remoteMessage.getData().get("senderuid");
-        String title = remoteMessage.getData().get("title");
-
-        String timestamp = remoteMessage.getData().get("sendertimestamp");
         String chatref = remoteMessage.getData().get("chatref");
         String msgid = remoteMessage.getData().get("msgid");
-        if (msg != null && timestamp != null && chatref != null && msgid != null)
-            sendNotification(title, msg, timestamp, chatref, msgid,senderuid);
+        if (msg != null && chatref != null && msgid != null)
+            sendNotification(msg,chatref, msgid,senderuid);
 
     }
 
 
-    private void sendNotification(String title, String msg, String timestamp, String chatref, String msgid,String senderuid) throws NullPointerException {
+    private void sendNotification(final String msg, String chatref, String msgid, String senderuid) throws NullPointerException {
         final DatabaseReference dbr = DBREF.child("Chats").child(chatref).child("ChatMessages").child(msgid).child("status");
         Intent intent = new Intent(this, ChatActivity.class);
 
@@ -72,10 +56,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.putExtra("dbTableKey",chatref);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+        final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        final Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         System.out.println(dbr + " setting value to 2 for " + chatref);
         dbr.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -94,45 +78,35 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
         });
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_chat_white)
-                .setContentTitle(title)
-                .setContentText(msg)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
+            DatabaseReference dbOnlineStatus = DBREF.child("Users").child("Usersessions").child(senderuid).getRef();
+            dbOnlineStatus.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        NameAndStatus nameAndStatus = dataSnapshot.getValue(NameAndStatus.class);
+                        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(MyFirebaseMessagingService.this)
+                                .setSmallIcon(R.mipmap.ic_chat_white)
+                                .setContentTitle("New Message from " + nameAndStatus.getName())
+                                .setContentText(msg)
+                                .setAutoCancel(true)
+                                .setSound(defaultSoundUri)
+                                .setContentIntent(pendingIntent);
+                        NotificationManager notificationManager =
+                                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-    }
+                        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
 
 
-
-    private boolean isAppIsInBackground(Context context) {
-        boolean isInBackground = true;
-        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-            List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
-            for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-                if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                    for (String activeProcess : processInfo.pkgList) {
-                        if (activeProcess.equals(context.getPackageName())) {
-                            isInBackground = false;
-                        }
                     }
                 }
-            }
-        }
-//        else {
-//            List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-//            ComponentName componentInfo = taskInfo.get(0).topActivity;
-//            if (componentInfo.getPackageName().equals(context.getPackageName())) {
-//                isInBackground = false;
-//            }
-//        }
 
-        return isInBackground;
-    }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+
+
 }

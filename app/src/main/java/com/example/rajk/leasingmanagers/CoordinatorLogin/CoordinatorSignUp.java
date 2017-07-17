@@ -103,7 +103,7 @@ public class CoordinatorSignUp extends AppCompatActivity {
 
     private void login() {
         DBREF.child("Coordinator").child(Username).setValue(new Coordinator(Name,Username,Password));
-        session.create_oldusersession(Username);
+        session.create_oldusersession(Username,Name);
         LeasingManagers.setOnlineStatus(Username);
 
             DBREF.child("Users").child("Usersessions").child(Username).child("name").setValue(Name);

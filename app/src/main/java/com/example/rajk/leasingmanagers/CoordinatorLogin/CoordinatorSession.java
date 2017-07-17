@@ -20,11 +20,12 @@ public class CoordinatorSession
         editor = pref.edit();
     }
 
-    public void create_oldusersession(String username_get)
+    public void create_oldusersession(String username_get,String name)
     {
         editor.putBoolean(is_loggedin,true);
         editor.putString(username,username_get);
         editor.putString("designation","coordinator");
+        editor.putString("name",name);
         editor.commit();
     }
 
@@ -38,6 +39,7 @@ public class CoordinatorSession
         return pref.getString(username,"");
     }
 
+    public String getName(){return pref.getString("name","");}
     public void clearoldusersession()
     {
         editor.clear();
