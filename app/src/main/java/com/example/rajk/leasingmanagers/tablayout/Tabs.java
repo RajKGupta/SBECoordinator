@@ -1,22 +1,31 @@
 package com.example.rajk.leasingmanagers.tablayout;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.model.Coordinator;
+import com.example.rajk.leasingmanagers.notification.NotificationActivity;
 
 public class Tabs extends AppCompatActivity implements TabLayout.OnTabSelectedListener{
 
     private TabLayout tab;
     private ViewPager vpager;
     int page;
+    CoordinatorSession session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs);
+
+        session = new CoordinatorSession(getApplicationContext());
 
         if(getIntent().getExtras()!=null)
             page = getIntent().getIntExtra("page",0);
@@ -57,5 +66,23 @@ public class Tabs extends AppCompatActivity implements TabLayout.OnTabSelectedLi
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.tabsmenu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.notif:
+                Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
+                intent.putExtra("Username",session.getUsername());
+                startActivity(intent);
+                break;
+        }
+        return true;
     }
 }

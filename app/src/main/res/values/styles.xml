@@ -7,8 +7,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
     <style name="label" parent="@android:style/TextAppearance">
-        <item name="android:textSize">16dp</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/grey_500</item>
     </style>
 
     <!-- Activity with no Title -->
@@ -64,6 +64,5 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
 
 </resources>

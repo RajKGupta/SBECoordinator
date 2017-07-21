@@ -101,13 +101,14 @@ public class coordinatorLogin extends AppCompatActivity {
 
     private void login() {
 
+            database = database.child(Username);
             database.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if(dataSnapshot.exists())
                     {
-
                         Coordinator coordinator = dataSnapshot.getValue(Coordinator.class);
+                        String p = coordinator.getPassword();
                         if (!Password.equals(coordinator.getPassword())) {
                             Toast.makeText(getBaseContext(), "Wrong Password", Toast.LENGTH_SHORT).show();
                         } else

@@ -38,6 +38,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <activity
             android:name="com.zfdang.multiple_images_selector.ImagesSelectorActivity"
             android:configChanges="orientation|screenSize" />
@@ -102,10 +103,11 @@
             android:exported="false" />
         <service
             android:name=".services.DownloadFileService"
-            android:exported="false"></service>
+            android:exported="false" />
 
         <activity android:name=".customer.UploadQuotationActivity" />
-        <activity android:name=".CoordinatorLogin.CoordinatorSignUp"></activity>
+        <activity android:name=".CoordinatorLogin.CoordinatorSignUp" />
+        <activity android:name=".notification.NotificationActivity"></activity>
     </application>
 
 </manifest>
