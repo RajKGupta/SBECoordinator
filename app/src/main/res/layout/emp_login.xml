@@ -23,7 +23,7 @@ android:fitsSystemWindows="true">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/light"
+        android:textColor="@color/colorPrimary"
         android:textSize="50dp"
         android:text="Login"
         android:fontFamily="cursive"
