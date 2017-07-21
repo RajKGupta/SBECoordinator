@@ -51,11 +51,12 @@ public class NotificationActivity extends AppCompatActivity implements notificat
         final DatabaseReference db = DBREF.child("Notification").child(Username).getRef();
         db.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s)
-            {
-                notif = dataSnapshot.getValue(Notif.class);
-                list.add(notif);
-                adapter.notifyDataSetChanged();
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot.exists()) {
+                    notif = dataSnapshot.getValue(Notif.class);
+                    list.add(notif);
+                    adapter.notifyDataSetChanged();
+                }
             }
 
             @Override
