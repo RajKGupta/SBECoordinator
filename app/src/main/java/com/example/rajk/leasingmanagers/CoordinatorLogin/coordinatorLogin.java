@@ -101,7 +101,7 @@ public class coordinatorLogin extends AppCompatActivity {
 
     private void login() {
 
-            database.addListenerForSingleValueEvent(new ValueEventListener() {
+            database.child(Username).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if(dataSnapshot.exists())
