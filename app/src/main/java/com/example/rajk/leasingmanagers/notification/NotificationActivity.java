@@ -1,5 +1,6 @@
 package com.example.rajk.leasingmanagers.notification;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -7,6 +8,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.notification_adapter;
 import com.example.rajk.leasingmanagers.model.Notif;
@@ -82,7 +84,11 @@ public class NotificationActivity extends AppCompatActivity implements notificat
     }
 
     @Override
-    public void onNotificationRowClicked(int position) {
-
+    public void onNotificationRowClicked(int position)
+    {
+        Intent intent = new Intent(getApplicationContext(),TaskDetail.class);
+        Notif notif = list.get(position);
+        intent.putExtra("task_id", notif.getTaskId());
+        startActivity(intent);
     }
 }
