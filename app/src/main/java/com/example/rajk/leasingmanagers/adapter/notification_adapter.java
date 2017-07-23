@@ -1,6 +1,8 @@
 package com.example.rajk.leasingmanagers.adapter;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,6 +73,7 @@ public class notification_adapter extends  RecyclerView.Adapter<notification_ada
         Character caps = notif.getSenderId().toUpperCase().charAt(0);
         holder.icon_text.setText(caps);
         applyClickEvents(holder,position);
+        applyProfilePicture(holder);
     }
 
     @Override
@@ -81,6 +84,27 @@ public class notification_adapter extends  RecyclerView.Adapter<notification_ada
     public interface NotificationAdapterListener {
         void onNotificationRowClicked(int position);
     }
+
+    private void applyProfilePicture(MyViewHolder holder) {
+
+        holder.imgProfile.setImageResource(R.drawable.bg_circle);
+        holder.imgProfile.setColorFilter(getRandomMaterialColor("400"));
+
+    }
+
+    private int getRandomMaterialColor(String typeColor) {
+        int returnColor = Color.GRAY;
+        int arrayId = context.getResources().getIdentifier("mdcolor_" + typeColor, "array", context.getPackageName());
+
+        if (arrayId != 0) {
+            TypedArray colors = context.getResources().obtainTypedArray(arrayId);
+            int index = (int) (Math.random() * colors.length());
+            returnColor = colors.getColor(index, Color.GRAY);
+            colors.recycle();
+        }
+        return returnColor;
+    }
+
     private void applyClickEvents(MyViewHolder holder, final int position) {
 
         holder.row.setOnClickListener(new View.OnClickListener()
