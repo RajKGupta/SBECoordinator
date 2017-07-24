@@ -165,9 +165,12 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.uploadquotation:
-                    // delete all the selected messages
-                 UploadQuotation();
-                    //mode.finish();
+                    if(!marshMallowPermission.checkPermissionForExternalStorage())
+                        marshMallowPermission.requestPermissionForExternalStorage();
+                    else {
+                        //TODO check if quotation is already uploaded
+                        UploadQuotation();
+                    }
                     mode = null;
                     return true;
 

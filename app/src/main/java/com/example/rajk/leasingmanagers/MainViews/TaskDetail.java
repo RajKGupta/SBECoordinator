@@ -10,16 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
-import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,7 +18,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -37,41 +27,27 @@ import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.ForwardTask.forwardTask;
 import com.example.rajk.leasingmanagers.R;
-import com.example.rajk.leasingmanagers.adapter.ViewImageAdapter;
 import com.example.rajk.leasingmanagers.adapter.assignedto_adapter;
 import com.example.rajk.leasingmanagers.adapter.bigimage_adapter;
 import com.example.rajk.leasingmanagers.adapter.measurement_adapter;
 import com.example.rajk.leasingmanagers.adapter.taskdetailDescImageAdapter;
-import com.example.rajk.leasingmanagers.adapter.taskimagesadapter;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
 import com.example.rajk.leasingmanagers.model.Quotation;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.example.rajk.leasingmanagers.model.measurement;
 import com.example.rajk.leasingmanagers.services.DownloadFileService;
-import com.example.rajk.leasingmanagers.services.UploadQuotationService;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
-public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener{
+public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener{
     
     private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned,dbMeasurement,dbDescImages;
     ImageButton download;
@@ -485,7 +461,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     public void onImageClicked(int position) {
 
         viewSelectedImages = new AlertDialog.Builder(TaskDetail.this)
-                .setTitle("Images").setView(R.layout.view_image_on_click).create();
+                .setView(R.layout.view_image_on_click).create();
         viewSelectedImages.show();
 
         RecyclerView bigimage = (RecyclerView)viewSelectedImages.findViewById(R.id.bigimage);
@@ -495,7 +471,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         bigimage.setItemAnimator(new DefaultItemAnimator());
         bigimage.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.HORIZONTAL));
 
-        adapter = new bigimage_adapter(DescImages, this);
+        adapter = new bigimage_adapter(DescImages, this,this);
         bigimage.setAdapter(adapter);
 
         bigimage.scrollToPosition(position);
@@ -533,5 +509,10 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     @Override
     public void onRemindButtonClicked(int position) {
 
+    }
+
+    @Override
+    public void ondownloadButtonClicked(int position) {
+        // download task image code here
     }
 }
