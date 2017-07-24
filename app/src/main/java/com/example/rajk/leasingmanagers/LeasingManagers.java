@@ -77,7 +77,6 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
                 }
             });
         }
-
     }
     public static void sendNotif(final String senderId, final String receiverId, final String type, final String content, final String taskId)
     {
@@ -89,7 +88,7 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String receiverFCMToken=dataSnapshot.getValue(String.class);
                 Notif newNotif = new Notif(id,timestamp,type,senderId,receiverId,receiverFCMToken,content,taskId);
-                DBREF.child("Notification").child(receiverId).child("Notifications").child(id).setValue(newNotif);
+                DBREF.child("Notification").child(receiverId).child(id).setValue(newNotif);
             }
 
             @Override
