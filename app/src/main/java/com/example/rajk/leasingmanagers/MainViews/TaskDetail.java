@@ -71,6 +71,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
+
         coordinatorSession = new CoordinatorSession(this);
         mykey = coordinatorSession.getUsername();
         marshmallowPermissions =new MarshmallowPermissions(this);
@@ -381,7 +382,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         });
 
         //TODO : image ko download karwana hai kya ?
-        //image forwarding ka koi option ?
         dbDescImages.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s)
@@ -516,6 +516,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
     @Override
     public void ondownloadButtonClicked(int position) {
-        // download task image code here
+        // TODO :download task image code here
     }
 }

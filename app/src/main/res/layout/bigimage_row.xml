@@ -2,7 +2,8 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/black">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -16,7 +17,7 @@
             android:layout_height="wrap_content"
             android:text="Images"
             android:textSize="20dp"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:gravity="center"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"/>
@@ -24,7 +25,7 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_download_black"
+            android:background="@drawable/ic_download_white"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:id="@+id/download_taskdetail_image"/>
@@ -37,7 +38,7 @@
         android:layout_marginLeft="7dp"
         android:layout_below="@+id/r"
         android:id="@+id/l"
-        android:background="@color/black"
+        android:background="@color/white"
         android:orientation="vertical">
 
     </LinearLayout>

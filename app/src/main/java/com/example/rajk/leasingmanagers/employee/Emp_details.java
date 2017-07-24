@@ -205,7 +205,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                         dbEmployee.removeValue(); //for employee
                         final String task_id = listoftasks.get(position);
                                 String taskName = holder.employeename.getText().toString().trim();
-                                String contentforme = "You relieved "+name+" of "+taskName;//todo get taskname here
+                                String contentforme = "You relieved "+name+" of "+taskName;
                                 sendNotif(mykey,mykey,"cancelJob",contentforme,task_id);
                                 String contentforother= "Coordinator "+coordinatorSession.getName()+" relieved you of "+taskName;
                                 sendNotif(mykey,id,"cancelJob",contentforother,task_id);
@@ -229,7 +229,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     public void onEmployeeRemindButtonClicked(int position, EmployeeTask_Adapter.MyViewHolder holder) {
         final String task_id = listoftasks.get(position);
         String taskName = holder.employeename.getText().toString().trim();
-        String contentforme = "You reminder "+name+" for "+taskName;//todo get taskname here
+        String contentforme = "You reminder "+name+" for "+taskName;
         sendNotif(mykey,mykey,"remindJob",contentforme,task_id);
         String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+taskName;
         sendNotif(mykey,id,"remindJob",contentforother,task_id);

@@ -630,6 +630,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                         Log.e("firebase ", ";local tem file created  created " + localFile.toString());
                         dbChat = DBREF.child("Chats").child(dbTableKey).child("ChatMessages").getRef();
                         dbChat.child(comment.getId()).child("othersenderlocal_storage").setValue(localuri);
+                        comment.setOthersenderlocal_storage(localuri);
                         mAdapter.dismissProgressBar(holder);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -654,6 +655,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                         public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                             dbChat = DBREF.child("Chats").child(dbTableKey).child("ChatMessages").getRef();
                             dbChat.child(comment.getId()).child("othersenderlocal_storage").setValue(localdocuri);
+                            comment.setOthersenderlocal_storage(localdocuri);
                             mAdapter.dismissProgressBar(holder);
                         }
                     }).addOnFailureListener(new OnFailureListener() {

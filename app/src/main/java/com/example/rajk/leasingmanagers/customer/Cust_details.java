@@ -257,7 +257,6 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                         if(dataSnapshot.hasChildren())
                             dbaccountinfo.removeValue();
 
-
                     }
 
                     @Override
