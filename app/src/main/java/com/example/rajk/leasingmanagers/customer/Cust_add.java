@@ -58,7 +58,7 @@ public class Cust_add extends AppCompatActivity {
                     Toast.makeText(Cust_add.this, "Enter Details", Toast.LENGTH_LONG).show();
                 else {
                             Customer customer = new Customer(name,num,add,num,getRandomMaterialColor("400"),password);
-                            database = db.child(num);  // TODO : Done phone number is set as key
+                            database = db.child(num);
                             database.setValue(customer);
                     DBREF.child("Users").child("Usersessions").child(num).child("name").setValue(name);
                     DBREF.child("Users").child("Usersessions").child(num).child("online").setValue(Boolean.FALSE);

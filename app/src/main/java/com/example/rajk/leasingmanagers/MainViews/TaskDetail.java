@@ -40,7 +40,7 @@ import java.util.List;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 
-public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener{
+public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener{
     
     private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned,dbMeasurement,dbDescImages;
     ImageButton download;
@@ -456,7 +456,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     public void onImageClicked(int position) {
 
         viewSelectedImages = new AlertDialog.Builder(TaskDetail.this)
-                .setTitle("Images").setView(R.layout.view_image_on_click).create();
+                .setView(R.layout.view_image_on_click).create();
         viewSelectedImages.show();
 
         RecyclerView bigimage = (RecyclerView)viewSelectedImages.findViewById(R.id.bigimage);
@@ -466,7 +466,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         bigimage.setItemAnimator(new DefaultItemAnimator());
         bigimage.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.HORIZONTAL));
 
-        adapter = new bigimage_adapter(DescImages, this);
+        adapter = new bigimage_adapter(DescImages, this,this);
         bigimage.setAdapter(adapter);
 
         bigimage.scrollToPosition(position);
@@ -514,5 +514,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         sendNotif(mykey,adapter_assignedto.emp.getEmpId(),"cancelJob",contentforother,task_id);
     }
 
-
+    @Override
+    public void ondownloadButtonClicked(int position) {
+        // download task image code here
+    }
 }

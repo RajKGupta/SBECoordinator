@@ -21,7 +21,7 @@ import java.util.Calendar;
  */
 public class LeasingManagers extends android.support.multidex.MultiDexApplication {
     private static LeasingManagers mInstance;
-    public static DatabaseReference DBREF;
+    public static DatabaseReference DBREF,notif;
     public static SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
 
     private CoordinatorSession session;
@@ -35,6 +35,7 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         }
         DBREF = FirebaseDatabase.getInstance().getReference().child("MeChat").getRef();
+        notif = DBREF.child("Notification");
         session = new CoordinatorSession(this);
         String userkey = session.getUsername();
         setOnlineStatus(userkey);
@@ -83,12 +84,17 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
         long idLong = Calendar.getInstance().getTimeInMillis();
         final String id=String.valueOf(idLong);
         final String timestamp = formatter.format(Calendar.getInstance().getTime());
-        DBREF.child("Fcmtokens").child(receiverId).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
+        notif = DBREF.child("Notification");
+        DBREF.child("Fcmtokens").child(receiverId).child("token").addListenerForSingleValueEvent(new ValueEventListener()
+        {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String receiverFCMToken=dataSnapshot.getValue(String.class);
-                Notif newNotif = new Notif(id,timestamp,type,senderId,receiverId,receiverFCMToken,content,taskId);
-                DBREF.child("Notification").child(receiverId).child(id).setValue(newNotif);
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                String receiverFCMToken = dataSnapshot.getValue(String.class);
+                if (!receiverFCMToken.equals("")) {
+                    Notif newNotif = new Notif(id, timestamp, type, senderId, receiverId, receiverFCMToken, content, taskId);
+                    notif.child(receiverId).child(id).setValue(newNotif);
+                }
             }
 
             @Override
