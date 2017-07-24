@@ -101,7 +101,7 @@ public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView dateCompleted,employeename,employeeDesig,dateassigned,tv_dateCompleted,noteAuthor,noteString;
+        public TextView dateCompleted,employeename,employeeDesig,dateassigned,tv_dateCompleted,noteAuthor,noteString;
         RelativeLayout button_rl;
         ImageButton removeButton,remindButton;
 
@@ -136,22 +136,22 @@ public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter
         }
     }
     public interface assignedto_adapterListener {
-        void onRemoveButtonClicked(int position);
-        void onRemindButtonClicked(int position);
+        void onRemoveButtonClicked(int position,MyViewHolder holder);
+        void onRemindButtonClicked(int position, assignedto_adapter.MyViewHolder holder);
     }
-    private void applyClickEvents(MyViewHolder holder, final int position) {
+    private void applyClickEvents(final MyViewHolder holder, final int position) {
 
         holder.removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.onRemoveButtonClicked(position);
+                listener.onRemoveButtonClicked(position,holder);
             }
         });
 
         holder.remindButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.onRemindButtonClicked(position);
+                listener.onRemindButtonClicked(position,holder);
             }
         });
     }
