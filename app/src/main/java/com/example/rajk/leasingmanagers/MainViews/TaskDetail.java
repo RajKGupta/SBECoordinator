@@ -1,25 +1,9 @@
 package com.example.rajk.leasingmanagers.MainViews;
 
-import android.Manifest;
-import android.app.Activity;
 import android.app.ProgressDialog;
-
-import android.content.ComponentName;
-import android.content.Context;
-
 import android.content.DialogInterface;
-
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
-import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,56 +11,41 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.ForwardTask.forwardTask;
 import com.example.rajk.leasingmanagers.R;
-import com.example.rajk.leasingmanagers.adapter.ViewImageAdapter;
 import com.example.rajk.leasingmanagers.adapter.assignedto_adapter;
 import com.example.rajk.leasingmanagers.adapter.bigimage_adapter;
 import com.example.rajk.leasingmanagers.adapter.measurement_adapter;
 import com.example.rajk.leasingmanagers.adapter.taskdetailDescImageAdapter;
-import com.example.rajk.leasingmanagers.adapter.taskimagesadapter;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
 import com.example.rajk.leasingmanagers.model.Quotation;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.example.rajk.leasingmanagers.model.measurement;
 import com.example.rajk.leasingmanagers.services.DownloadFileService;
-import com.example.rajk.leasingmanagers.services.UploadQuotationService;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 
 public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener{
     
     private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned,dbMeasurement,dbDescImages;
     ImageButton download;
     ProgressBar progressBar;
-    private String task_id;
+    private String task_id,mykey;
     private Task task;
     private String customername;
     EditText startDate,endDate,custId,taskName,quantity,description;
@@ -96,11 +65,14 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     private AlertDialog viewSelectedImages ;
     LinearLayoutManager linearLayoutManager;
     bigimage_adapter adapter;
+    private CoordinatorSession coordinatorSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
+        coordinatorSession = new CoordinatorSession(this);
+        mykey = coordinatorSession.getUsername();
         marshmallowPermissions =new MarshmallowPermissions(this);
         dbRef = DBREF;
         progressDialog = new ProgressDialog(this);
@@ -433,7 +405,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 DescImages.remove(item);
                 adapter_taskimages.notifyDataSetChanged();
             }
-
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
@@ -502,23 +473,28 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     }
 
     @Override
-    public void onRemoveButtonClicked(final int position)
+    public void onRemoveButtonClicked(final int position, final assignedto_adapter.MyViewHolder holder)
     {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure you want to un-assign this task")
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+                    public void onClick(final DialogInterface dialog, int id) {
                         DatabaseReference dbCancelJob = DBREF.child("Task").child(task_id).child("AssignedTo").child(adapter_assignedto.emp.getEmpId()).getRef();
                         dbCancelJob.removeValue();
 
                         DatabaseReference dbEmployee = DBREF.child("Employee").child(adapter_assignedto.emp.getEmpId()).child("AssignedTask").child(task_id);
                         dbEmployee.removeValue(); //for employee
-                        assignedtoList.remove(position);
-                        adapter_assignedto.notifyDataSetChanged();
+                                String contentforme = "You relieved "+holder.employeename.getText().toString().trim()+" of "+task.getName();
+                                sendNotif(mykey,mykey,"cancelJob",contentforme,task_id);
+                                String contentforother= "Coordinator "+coordinatorSession.getName()+" relieved you of "+task.getName();
+                                sendNotif(mykey,adapter_assignedto.emp.getEmpId(),"cancelJob",contentforother,task_id);
+                                assignedtoList.remove(position);
+                                adapter_assignedto.notifyDataSetChanged();
+                                dialog.dismiss();
 
-                        dialog.dismiss();
-                    }
+
+                           }
                 })
                 .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -531,7 +507,12 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     }
 
     @Override
-    public void onRemindButtonClicked(int position) {
-
+    public void onRemindButtonClicked(int position, assignedto_adapter.MyViewHolder holder) {
+        String contentforme = "You reminded "+holder.employeename.getText().toString().trim() +" for "+task.getName();
+        sendNotif(mykey,mykey,"cancelJob",contentforme,task_id);
+        String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+task.getName();
+        sendNotif(mykey,adapter_assignedto.emp.getEmpId(),"cancelJob",contentforother,task_id);
     }
+
+
 }

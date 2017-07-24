@@ -28,6 +28,7 @@ import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.CustomerTasks_Adapter;
 import com.example.rajk.leasingmanagers.adapter.EmployeeTask_Adapter;
 import com.example.rajk.leasingmanagers.chat.ChatActivity;
+import com.example.rajk.leasingmanagers.model.CompletedBy;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -40,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 
 public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapter.EmployeeTask_AdapterListener{
 
@@ -189,24 +191,30 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     }
 
     @Override
-    public void onEmployeeRemoveButtonClicked(final int position)
+    public void onEmployeeRemoveButtonClicked(final int position , final EmployeeTask_Adapter.MyViewHolder holder)
     {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure you want to un-assign this task")
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int i) {
+                    public void onClick(final DialogInterface dialog, int i) {
                         DatabaseReference dbCancelJob = DBREF.child("Task").child(listoftasks.get(position)).child("AssignedTo").child(id).getRef();
                         dbCancelJob.removeValue();
 
                         DatabaseReference dbEmployee = DBREF.child("Employee").child(id).child("AssignedTask").child(listoftasks.get(position));
                         dbEmployee.removeValue(); //for employee
+                        final String task_id = listoftasks.get(position);
+                                String taskName = holder.employeename.getText().toString().trim();
+                                String contentforme = "You relieved "+name+" of "+taskName;//todo get taskname here
+                                sendNotif(mykey,mykey,"cancelJob",contentforme,task_id);
+                                String contentforother= "Coordinator "+coordinatorSession.getName()+" relieved you of "+taskName;
+                                sendNotif(mykey,id,"cancelJob",contentforother,task_id);
+                                listoftasks.remove(position);
+                                mAdapter.notifyDataSetChanged();
+                                dialog.dismiss();
 
-                        listoftasks.remove(position);
-                        mAdapter.notifyDataSetChanged();
 
-                        dialog.dismiss();
-                    }
+                            }
                 })
                 .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -218,7 +226,13 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     }
 
     @Override
-    public void onEmployeeRemindButtonClicked(int position) {
+    public void onEmployeeRemindButtonClicked(int position, EmployeeTask_Adapter.MyViewHolder holder) {
+        final String task_id = listoftasks.get(position);
+        String taskName = holder.employeename.getText().toString().trim();
+        String contentforme = "You reminder "+name+" for "+taskName;//todo get taskname here
+        sendNotif(mykey,mykey,"remindJob",contentforme,task_id);
+        String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+taskName;
+        sendNotif(mykey,id,"remindJob",contentforother,task_id);
 
     }
 
@@ -228,6 +242,8 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         intent.putExtra("task_id",listoftasks.get(position));
         startActivity(intent);
     }
+
+
 
     @Override
     public void onEmployeedotmenuButtonClicked(int position, final EmployeeTask_Adapter.MyViewHolder holder) {

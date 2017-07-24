@@ -238,6 +238,7 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
                     Intent serviceIntent = new Intent(getActivity(), UploadQuotationService.class);
                     serviceIntent.putExtra("TaskIdList", taskid_list);
                     serviceIntent.putExtra("selectedFileUri", selectedFileUri.toString());
+
                     getActivity().startService(serviceIntent);
                 }
                     else{

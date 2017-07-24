@@ -98,6 +98,7 @@ public class UploadQuotationService extends IntentService
                             dbQuotation.setValue(quotation);
                         }
                         updateNotification("Succesfully Uploaded");
+
                         stopSelf();
                     }
                 })
