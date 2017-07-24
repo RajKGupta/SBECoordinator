@@ -251,7 +251,20 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
             case  R.id.item6:
                 // TODO : Null pointer exception (Null Object Refrence)
                 //if nothing is added to account this error would occur
-                dbaccountinfo.removeValue();
+                dbaccountinfo.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.hasChildren())
+                            dbaccountinfo.removeValue();
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
                 break;
 
         }

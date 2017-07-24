@@ -79,8 +79,8 @@ public class EmployeeTask_Adapter extends  RecyclerView.Adapter<EmployeeTask_Ada
                             new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            String empname = dataSnapshot.child("name").getValue(String.class);
-                            holder.employeename.setText(empname);
+                            String taskname = dataSnapshot.child("name").getValue(String.class);
+                            holder.employeename.setText(taskname);
 
                             //String empdesig = dataSnapshot.child("designation").getValue(String.class);
                             holder.employeeDesig.setVisibility(View.GONE);
@@ -110,7 +110,7 @@ public class EmployeeTask_Adapter extends  RecyclerView.Adapter<EmployeeTask_Ada
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView dateCompleted,employeename,employeeDesig,dateassigned,tv_dateCompleted,noteAuthor,noteString;
+        public TextView dateCompleted,employeename,employeeDesig,dateassigned,tv_dateCompleted,noteAuthor,noteString;
         public ImageButton removeButton,remindButton,infoButton,dotmenu;
         public LinearLayout buttonshow;
 
@@ -145,8 +145,8 @@ public class EmployeeTask_Adapter extends  RecyclerView.Adapter<EmployeeTask_Ada
     }
 
     public interface EmployeeTask_AdapterListener {
-        void onEmployeeRemoveButtonClicked(int position);
-        void onEmployeeRemindButtonClicked(int position);
+        void onEmployeeRemoveButtonClicked(int position,MyViewHolder holder);
+        void onEmployeeRemindButtonClicked(int position,MyViewHolder holder);
         void onEmployeeInfoButtonClicked(int position);
         void onEmployeedotmenuButtonClicked(int position, MyViewHolder holder);
     }
@@ -156,14 +156,14 @@ public class EmployeeTask_Adapter extends  RecyclerView.Adapter<EmployeeTask_Ada
         {
             @Override
             public void onClick(View view) {
-                listener.onEmployeeRemoveButtonClicked(position);
+                listener.onEmployeeRemoveButtonClicked(position,holder);
             }
         });
 
         holder.remindButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onEmployeeRemindButtonClicked(position);
+                listener.onEmployeeRemindButtonClicked(position,holder);
             }
         });
 
@@ -181,4 +181,5 @@ public class EmployeeTask_Adapter extends  RecyclerView.Adapter<EmployeeTask_Ada
             }
         });
     }
+
 }

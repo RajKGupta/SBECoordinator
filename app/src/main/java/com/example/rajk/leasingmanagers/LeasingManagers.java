@@ -89,7 +89,6 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
                 String receiverFCMToken=dataSnapshot.getValue(String.class);
                 Notif newNotif = new Notif(id,timestamp,type,senderId,receiverId,receiverFCMToken,content,taskId);
                 DBREF.child("Notification").child(receiverId).child(id).setValue(newNotif);
-
             }
 
             @Override

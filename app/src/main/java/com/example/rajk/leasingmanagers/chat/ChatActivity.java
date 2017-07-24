@@ -80,7 +80,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     UploadFileService uploadFileService;
     boolean mServiceBound = false;
     SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
-    private String lastDate = "20-01-3000 00:00";
     private chatAdapter mAdapter;
     private ArrayList<ChatMessage> chatList = new ArrayList<>();
     String receiverToken="nil";
