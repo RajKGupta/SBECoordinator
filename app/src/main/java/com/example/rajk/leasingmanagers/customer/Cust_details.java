@@ -265,7 +265,6 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                     }
                 });
                 break;
-
         }
         return true;
     }
