@@ -73,6 +73,7 @@ public class Emp_add extends AppCompatActivity {
                                 dbnewEmp.setValue(employee);
                                 DBREF.child("Users").child("Usersessions").child(username).child("name").setValue(name);
                                 DBREF.child("Users").child("Usersessions").child(username).child("online").setValue(Boolean.FALSE);
+                                DBREF.child("Fcmtokens").child(username).setValue("nil");
 
                             }
                         }
