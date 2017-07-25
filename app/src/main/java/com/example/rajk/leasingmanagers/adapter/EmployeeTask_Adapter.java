@@ -111,8 +111,7 @@ public class EmployeeTask_Adapter extends  RecyclerView.Adapter<EmployeeTask_Ada
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView dateCompleted,employeename,employeeDesig,dateassigned,tv_dateCompleted,noteAuthor,noteString;
-        public ImageButton removeButton,remindButton,infoButton,dotmenu;
-        public LinearLayout buttonshow;
+        public ImageButton dotmenu;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -136,43 +135,14 @@ public class EmployeeTask_Adapter extends  RecyclerView.Adapter<EmployeeTask_Ada
             noteAuthor = (TextView)itemView.findViewById(R.id.noteAuthor);
             noteString = (TextView) itemView.findViewById(R.id.noteString);
 
-            removeButton = (ImageButton)itemView.findViewById(R.id.remove);
-            remindButton = (ImageButton) itemView.findViewById(R.id.remind);
-            infoButton = (ImageButton) itemView.findViewById(R.id.info);
             dotmenu = (ImageButton) itemView.findViewById(R.id.dotmenu);
-            buttonshow = (LinearLayout)itemView.findViewById(R.id.buttonshow);
         }
     }
 
     public interface EmployeeTask_AdapterListener {
-        void onEmployeeRemoveButtonClicked(int position,MyViewHolder holder);
-        void onEmployeeRemindButtonClicked(int position,MyViewHolder holder);
-        void onEmployeeInfoButtonClicked(int position);
         void onEmployeedotmenuButtonClicked(int position, MyViewHolder holder);
     }
     private void applyClickEvents(final MyViewHolder holder, final int position) {
-
-        holder.removeButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view) {
-                listener.onEmployeeRemoveButtonClicked(position,holder);
-            }
-        });
-
-        holder.remindButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onEmployeeRemindButtonClicked(position,holder);
-            }
-        });
-
-        holder.infoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onEmployeeInfoButtonClicked(position);
-            }
-        });
 
         holder.dotmenu.setOnClickListener(new View.OnClickListener() {
             @Override

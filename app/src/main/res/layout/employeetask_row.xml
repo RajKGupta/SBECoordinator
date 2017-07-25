@@ -98,42 +98,10 @@
                 android:layout_height="40dp"
                 android:id="@+id/dotmenu"
                 android:layout_margin="2dp"
-                android:background="@drawable/dotmenu"
+                android:background="@drawable/ic_options"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"/>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="invisible"
-                android:background="@color/white"
-                android:animateLayoutChanges="true"
-                android:id="@+id/buttonshow"
-                android:layout_alignParentRight="true">
 
-                <ImageButton
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:id="@+id/remind"
-                    android:layout_margin="2dp"
-                    android:background="@mipmap/ic_remind" />
-
-                <ImageButton
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:id="@+id/remove"
-                    android:layout_margin="2dp"
-                    android:background="@mipmap/ic_remove"
-                    />
-                <ImageButton
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:id="@+id/info"
-                    android:layout_margin="2dp"
-                    android:background="@mipmap/ic_info"
-                    />
-
-            </LinearLayout>
 
         </RelativeLayout>
     </RelativeLayout>
