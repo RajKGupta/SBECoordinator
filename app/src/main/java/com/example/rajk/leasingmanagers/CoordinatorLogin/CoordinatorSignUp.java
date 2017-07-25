@@ -24,17 +24,18 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 public class CoordinatorSignUp extends AppCompatActivity {
-    EditText username, password,name;
+    EditText username, password, name;
     Button signUp;
-    String Username,Password,Name;
+    String Username, Password, Name;
     CoordinatorSession session;
     SharedPreferences sharedPreferences;
-    TextInputLayout input_email, input_password,input_name;
+    TextInputLayout input_email, input_password, input_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coordinator_sign_up);
+
         sharedPreferences = getSharedPreferences("myFCMToken",MODE_PRIVATE);
         name = (EditText)findViewById(R.id.editTextName);
         username = (EditText) findViewById(R.id.editText2);
