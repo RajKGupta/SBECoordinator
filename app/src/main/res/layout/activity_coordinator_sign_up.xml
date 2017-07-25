@@ -128,9 +128,9 @@
                 android:layout_marginBottom="3dp"
                 android:layout_marginTop="2dp"
                 android:background="@drawable/register"
-                android:drawableRight="@drawable/ic_password"
-                android:hint="Enter Password"
-                android:inputType="textPassword"
+                android:drawableRight="@drawable/ic_call"
+                android:hint="Enter Contact"
+                android:inputType="text"
                 android:padding="5dp"
                 android:textColorHint="@color/black" />
 
@@ -155,9 +155,9 @@
                 android:layout_marginBottom="3dp"
                 android:layout_marginTop="2dp"
                 android:background="@drawable/register"
-                android:drawableRight="@drawable/ic_password"
-                android:hint="Enter Password"
-                android:inputType="textPassword"
+                android:drawableRight="@drawable/ic_address"
+                android:hint="Enter Address"
+                android:inputType="text"
                 android:padding="5dp"
                 android:textColorHint="@color/black" />
 

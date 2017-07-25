@@ -24,12 +24,12 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 public class CoordinatorSignUp extends AppCompatActivity {
-    EditText username, password, name;
+    EditText username, password, name, contact, address;
     Button signUp;
-    String Username, Password, Name;
+    String Username, Password, Name, Contact, Address;
     CoordinatorSession session;
     SharedPreferences sharedPreferences;
-    TextInputLayout input_email, input_password, input_name;
+    TextInputLayout input_email, input_password, input_name, input_address, input_contact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +40,13 @@ public class CoordinatorSignUp extends AppCompatActivity {
         name = (EditText)findViewById(R.id.editTextName);
         username = (EditText) findViewById(R.id.editText2);
         password = (EditText) findViewById(R.id.editText3);
+        contact = (EditText) findViewById(R.id.editText4);
+        address = (EditText) findViewById(R.id.editText5);
         input_email = (TextInputLayout)findViewById(R.id.input_emaillogin);
         input_password = (TextInputLayout)findViewById(R.id.input_passwordlogin);
         input_name = (TextInputLayout)findViewById(R.id.input_name);
+        input_contact = (TextInputLayout)findViewById(R.id.input_phonelogin);
+        input_address = (TextInputLayout)findViewById(R.id.input_addresslogin);
         signUp = (Button)findViewById(R.id.signUpButton);
         session = new CoordinatorSession(getApplicationContext());
 
@@ -53,6 +57,9 @@ public class CoordinatorSignUp extends AppCompatActivity {
                 Name = name.getText().toString().trim();
                 Username = username.getText().toString().trim();
                 Password = password.getText().toString().trim();
+                Contact = contact.getText().toString().trim();
+                Address = address.getText().toString().trim();
+
                 if (TextUtils.isEmpty(Name)) {
                     input_name.setError("Enter Name");
                     if (input_name.requestFocus()) {
@@ -74,7 +81,23 @@ public class CoordinatorSignUp extends AppCompatActivity {
                     }
                 }
 
-                if(!TextUtils.isEmpty(Username) && !TextUtils.isEmpty(Password)&& !TextUtils.isEmpty(Name)){
+                if (TextUtils.isEmpty(Contact)) {
+                    input_contact.setError("Enter Contact");
+                    if (input_contact.requestFocus()) {
+                        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+                    }
+                }
+
+                if (TextUtils.isEmpty(Address)) {
+                    input_address.setError("Enter Address");
+                    if (input_address.requestFocus()) {
+                        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+                    }
+                }
+
+                if(!TextUtils.isEmpty(Username) && !TextUtils.isEmpty(Password)&& !TextUtils.isEmpty(Name) && !TextUtils.isEmpty(Contact) && !TextUtils.isEmpty(Address)){
                     DBREF.child("Coordinator").child(Username).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -93,8 +116,6 @@ public class CoordinatorSignUp extends AppCompatActivity {
 
                         }
                     });
-
-
                 }
                 else
                     Toast.makeText(getBaseContext(),"Enter Complete Details", Toast.LENGTH_SHORT).show();
@@ -104,8 +125,8 @@ public class CoordinatorSignUp extends AppCompatActivity {
     }
 
     private void login() {
-        DBREF.child("Coordinator").child(Username).setValue(new Coordinator(Name,Username,Password));
-        session.create_oldusersession(Username,Name);
+        DBREF.child("Coordinator").child(Username).setValue(new Coordinator(Name,Username,Password,Contact,Address));
+        session.create_oldusersession(Username,Name, Contact, Address);
         LeasingManagers.setOnlineStatus(Username);
 
             DBREF.child("Users").child("Usersessions").child(Username).child("name").setValue(Name);

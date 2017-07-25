@@ -114,7 +114,7 @@ public class coordinatorLogin extends AppCompatActivity {
                             Toast.makeText(getBaseContext(), "Wrong Password", Toast.LENGTH_SHORT).show();
                         } else
                         {
-                            session.create_oldusersession(Username,coordinator.getName());
+                            session.create_oldusersession(Username,coordinator.getName(),coordinator.getContact(),coordinator.getAddress());
                             LeasingManagers.setOnlineStatus(Username);
                             String myFCMToken;
                             if(FirebaseInstanceId.getInstance().getToken()==null)

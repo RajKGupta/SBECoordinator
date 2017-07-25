@@ -134,7 +134,6 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.item1:
-
                 final EditText name_new,num_new,add_new;
                 Button sub;
                 customerEditDetails = new AlertDialog.Builder(this)
