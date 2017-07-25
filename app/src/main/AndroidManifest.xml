@@ -107,7 +107,7 @@
 
         <activity android:name=".customer.UploadQuotationActivity" />
         <activity android:name=".CoordinatorLogin.CoordinatorSignUp" />
-        <activity android:name=".notification.NotificationActivity"></activity>
+        <activity android:name=".notification.NotificationActivity"/>
     </application>
 
 </manifest>

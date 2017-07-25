@@ -155,6 +155,17 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         mAdapter = new chatAdapter(chatList, this, dbTableKey,this);
         recyclerView.setAdapter(mAdapter);
         sendButton.setOnClickListener(this);
+
+
+        typeComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(chatList.size()>0)
+                    recyclerView.scrollToPosition(chatList.size()-1);
+            }
+        });
+
+
         loadData();
 
     }
@@ -326,7 +337,9 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
 
                     chatList.add(comment);
                     mAdapter.notifyDataSetChanged();
-                    recyclerView.scrollToPosition(chatList.size() - 1);
+
+                    if(chatList.size()>0)
+                        recyclerView.scrollToPosition(chatList.size()-1);
                 }
             }
 

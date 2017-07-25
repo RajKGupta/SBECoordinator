@@ -19,17 +19,20 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
+import com.example.rajk.leasingmanagers.Quotation.QAdapter;
+import com.example.rajk.leasingmanagers.Quotation.QuotaionTasks;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.CustomerTasks_Adapter;
 import com.example.rajk.leasingmanagers.adapter.EmployeeTask_Adapter;
 import com.example.rajk.leasingmanagers.chat.ChatActivity;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
+import com.example.rajk.leasingmanagers.model.QuotationBatch;
 import com.example.rajk.leasingmanagers.model.Task;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,8 +45,9 @@ import java.util.Map;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
+import static java.security.AccessController.getContext;
 
-public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapter.EmployeeTask_AdapterListener{
+public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapter.EmployeeTask_AdapterListener,QAdapter.QAdapterListener{
 
     Dialog dialog;
     String id,name,num,add,desig,temp_name,temp_add,temp_num,temp_designation;
@@ -51,8 +55,9 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     DatabaseReference db;
     RecyclerView rec_employeetask;
     LinearLayoutManager linearLayoutManager;
-    private EmployeeTask_Adapter mAdapter;
+    private RecyclerView.Adapter mAdapter;
     List<String> listoftasks;
+    List<QuotationBatch> listofquotations;
     CoordinatorSession coordinatorSession;
     String mykey, dbTablekey;
 
@@ -78,6 +83,8 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         mykey = coordinatorSession.getUsername();
 
         db = DBREF.child("Employee").child(id);
+
+
         db.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -95,6 +102,8 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                 Desig.setText(desig);
                 getSupportActionBar().setTitle(name);
                 getSupportActionBar().setSubtitle(desig);
+
+                setAdapternlist();
             }
 
             @Override
@@ -103,25 +112,72 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
             }
         });
 
+
+    }
+
+    private void setAdapternlist() {
         listoftasks = new ArrayList<>();
-        mAdapter = new EmployeeTask_Adapter(listoftasks,getApplicationContext(),id,this);
+        listofquotations = new ArrayList<>();
+
+        if(desig.toLowerCase().equals("quotation")){
+            mAdapter = new QAdapter(listofquotations, getApplicationContext(), this);
+            }
+
+        else
+            mAdapter = new EmployeeTask_Adapter(listoftasks,getApplicationContext(),id,this);
+
         rec_employeetask.setAdapter(mAdapter);
 
         db = db.child("AssignedTask").getRef();
-        db.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
-                    listoftasks.add(childSnapshot.getKey());
+
+        if(desig.toLowerCase().equals("quotation")){
+            db.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    QuotationBatch m = new QuotationBatch();
+                    Map<String,Object> map = 
+                    listofquotations.add(m);
                     mAdapter.notifyDataSetChanged();
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-            }
-        });
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        else {
+            db.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                        listoftasks.add(childSnapshot.getKey());
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     @Override
@@ -344,5 +400,17 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         in.putExtra("dbTableKey",dbTablekey);
         in.putExtra("otheruserkey",id);
         startActivity(in);
+    }
+
+    @Override
+    public void onTaskRowClicked(int position) {
+        Intent intent = new Intent(Emp_details.this, QuotaionTasks.class);
+        QuotationBatch batch = listofquotations.get(position);
+        intent.putExtra("id", batch.getId());
+        intent.putExtra("note",batch.getNote());
+        intent.putExtra("end",batch.getEndDate());
+        intent.putExtra("start",batch.getStartDate());
+        startActivity(intent);
+
     }
 }
