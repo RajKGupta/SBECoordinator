@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.model.Coordinator;
 import com.example.rajk.leasingmanagers.notification.NotificationActivity;
 
@@ -19,11 +20,18 @@ public class Tabs extends AppCompatActivity implements TabLayout.OnTabSelectedLi
     private ViewPager vpager;
     int page;
     CoordinatorSession session;
-
+    private MarshmallowPermissions marshmallowPermissions;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs);
+        marshmallowPermissions = new MarshmallowPermissions(this);
+        if(!marshmallowPermissions.checkPermissionForCamera())
+            marshmallowPermissions.requestPermissionForCamera();
+        if(!marshmallowPermissions.checkPermissionForExternalStorage())
+            marshmallowPermissions.requestPermissionForExternalStorage();
+        if(!marshmallowPermissions.checkPermissionForLocations())
+            marshmallowPermissions.requestPermissionForLocations();
 
         session = new CoordinatorSession(getApplicationContext());
 
