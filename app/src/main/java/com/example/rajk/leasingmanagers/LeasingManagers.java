@@ -4,6 +4,7 @@ package com.example.rajk.leasingmanagers;
 import com.example.rajk.leasingmanagers.CheckInternetConnectivity.NetWatcher;
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 
+import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.model.Notif;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.firebase.FirebaseApp;
@@ -30,7 +31,6 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
         super.onCreate();
         mInstance = this;
         Fresco.initialize(getApplicationContext());
-
         if(!FirebaseApp.getApps(this).isEmpty()){
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         }
@@ -82,6 +82,7 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
     public static void sendNotif(final String senderId, final String receiverId, final String type, final String content, final String taskId)
     {
         long idLong = Calendar.getInstance().getTimeInMillis();
+        idLong = 9999999999999L - idLong;
         final String id=String.valueOf(idLong);
         final String timestamp = formatter.format(Calendar.getInstance().getTime());
         notif = DBREF.child("Notification");

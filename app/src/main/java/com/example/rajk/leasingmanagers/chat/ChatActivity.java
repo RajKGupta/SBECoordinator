@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.support.v4.widget.Space;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -24,13 +23,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Toast;
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.R;
@@ -55,17 +52,15 @@ import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
-
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+import static com.example.rajk.leasingmanagers.LeasingManagers.formatter;
 
 public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatAdapterListener, View.OnClickListener {
-    private static final int REQUEST_CODE = 101;
     private EditText typeComment;
     private ImageButton sendButton;
     Intent intent;
@@ -76,13 +71,11 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     LinearLayoutManager linearLayoutManager;
     private MarshmallowPermissions marshmallowPermissions;
     LinearLayout emptyView;
-    private ArrayList<String> mResults = new ArrayList<>();
+    private ArrayList<String> mResults ;
     private ActionModeCallback actionModeCallback;
     private ActionMode actionMode;
     UploadFileService uploadFileService;
     boolean mServiceBound = false;
-    SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
-    private String lastDate = "20-01-3000 00:00";
     private chatAdapter mAdapter;
     private ArrayList<ChatMessage> chatList = new ArrayList<>();
     String receiverToken = "nil";
@@ -94,8 +87,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     CompressMe compressMe;
     private AlertDialog viewSelectedImages;
     ViewImageAdapter adapter;
-    Space space;
-    ScrollView scroll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +94,13 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         setContentView(R.layout.activity_chat);
 
         marshmallowPermissions = new MarshmallowPermissions(this);
+        if(!marshmallowPermissions.checkPermissionForExternalStorage())
+        {
+            marshmallowPermissions.requestPermissionForExternalStorage();
+        }
+        if(!marshmallowPermissions.checkPermissionForExternalStorage())
+            Toast.makeText(this,"You wont be able to see the images and documents sent and received",Toast.LENGTH_LONG).show();
+
         compressMe = new CompressMe(this);
         actionModeCallback = new ActionModeCallback();
 
@@ -313,7 +311,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
 
     public void loadData() {
 
-        dbChatlistener = dbChat.addChildEventListener(new ChildEventListener() {
+        dbChatlistener = dbChat.orderByKey().addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (!dataSnapshot.exists()) {
