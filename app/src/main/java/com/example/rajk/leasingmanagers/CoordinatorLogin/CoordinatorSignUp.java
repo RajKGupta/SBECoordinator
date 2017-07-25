@@ -30,6 +30,7 @@ public class CoordinatorSignUp extends AppCompatActivity {
     CoordinatorSession session;
     SharedPreferences sharedPreferences;
     TextInputLayout input_email, input_password,input_name;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

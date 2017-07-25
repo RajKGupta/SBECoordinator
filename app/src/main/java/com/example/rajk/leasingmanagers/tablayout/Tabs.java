@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
+import com.example.rajk.leasingmanagers.MyProfile.MyProfile;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.model.Coordinator;
@@ -88,6 +89,10 @@ public class Tabs extends AppCompatActivity implements TabLayout.OnTabSelectedLi
             case R.id.notif:
                 Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.profile:
+                Intent intent2 = new Intent(getApplicationContext(), MyProfile.class);
+                startActivity(intent2);
                 break;
         }
         return true;

@@ -13,6 +13,7 @@ import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.notification_adapter;
 import com.example.rajk.leasingmanagers.model.Notif;
+import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -49,6 +50,13 @@ public class NotificationActivity extends AppCompatActivity implements notificat
         recview.setAdapter(adapter);
 
         preparelist();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, Tabs.class);
+        startActivity(intent);
+        finish();
     }
 
     private void preparelist()
