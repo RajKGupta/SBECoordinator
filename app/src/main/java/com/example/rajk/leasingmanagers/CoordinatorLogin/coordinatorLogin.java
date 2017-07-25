@@ -101,7 +101,7 @@ public class coordinatorLogin extends AppCompatActivity {
 
     private void login() {
 
-            database = database.child(Username);
+            database = DBREF.child("Coordinator").child(Username).getRef();
             database.addListenerForSingleValueEvent(new ValueEventListener() {
 
                 @Override
