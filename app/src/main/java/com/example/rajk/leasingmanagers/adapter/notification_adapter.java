@@ -19,7 +19,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
@@ -32,6 +34,7 @@ public class notification_adapter extends  RecyclerView.Adapter<notification_ada
     List<Notif> list = new ArrayList<>();
     private Context context;
     private NotificationAdapterListener listener;
+    private SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
 
     public notification_adapter(List<Notif> list, Context c, NotificationAdapterListener listener) {
         this.list = list;
@@ -69,11 +72,18 @@ public class notification_adapter extends  RecyclerView.Adapter<notification_ada
 
         holder.notif_sender.setText(notif.getSenderId());
         holder.notif_message.setText(notif.getContent());
-        holder.notif_timestamp.setText(notif.getTimestamp());
         String caps = notif.getSenderId().toUpperCase();
         holder.icon_text.setText(caps.charAt(0)+"");
         applyClickEvents(holder,position);
         applyProfilePicture(holder);
+
+        String timestamp = formatter.format(Calendar.getInstance().getTime());
+        String senderTimestamp = notif.getTimestamp().substring(0,11);
+        if(timestamp.equals(senderTimestamp))
+            senderTimestamp = notif.getTimestamp().substring(12).trim();
+
+        holder.notif_timestamp.setText(senderTimestamp);
+
     }
 
     @Override

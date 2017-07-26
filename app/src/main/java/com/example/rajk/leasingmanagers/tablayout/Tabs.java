@@ -9,7 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
+import com.example.rajk.leasingmanagers.MyProfile.MyProfile;
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.model.Coordinator;
 import com.example.rajk.leasingmanagers.notification.NotificationActivity;
 
@@ -19,11 +21,18 @@ public class Tabs extends AppCompatActivity implements TabLayout.OnTabSelectedLi
     private ViewPager vpager;
     int page;
     CoordinatorSession session;
-
+    private MarshmallowPermissions marshmallowPermissions;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs);
+        marshmallowPermissions = new MarshmallowPermissions(this);
+        if(!marshmallowPermissions.checkPermissionForCamera())
+            marshmallowPermissions.requestPermissionForCamera();
+        if(!marshmallowPermissions.checkPermissionForExternalStorage())
+            marshmallowPermissions.requestPermissionForExternalStorage();
+        if(!marshmallowPermissions.checkPermissionForLocations())
+            marshmallowPermissions.requestPermissionForLocations();
 
         session = new CoordinatorSession(getApplicationContext());
 
@@ -79,8 +88,11 @@ public class Tabs extends AppCompatActivity implements TabLayout.OnTabSelectedLi
         switch (item.getItemId()){
             case R.id.notif:
                 Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
-                intent.putExtra("Username",session.getUsername());
                 startActivity(intent);
+                break;
+            case R.id.profile:
+                Intent intent2 = new Intent(getApplicationContext(), MyProfile.class);
+                startActivity(intent2);
                 break;
         }
         return true;

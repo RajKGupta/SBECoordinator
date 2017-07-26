@@ -8,10 +8,12 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.notification_adapter;
 import com.example.rajk.leasingmanagers.model.Notif;
+import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,13 +31,15 @@ public class NotificationActivity extends AppCompatActivity implements notificat
     List<Notif> list = new ArrayList<>();
     Notif notif  = new Notif();
     String Username;
+    CoordinatorSession session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
 
-        Username = getIntent().getStringExtra("Username");
+        session = new CoordinatorSession(getApplicationContext());
+        Username = session.getUsername();
 
         recview = (RecyclerView) findViewById(R.id.notification_list);
         recview.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -46,6 +50,13 @@ public class NotificationActivity extends AppCompatActivity implements notificat
         recview.setAdapter(adapter);
 
         preparelist();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, Tabs.class);
+        startActivity(intent);
+        finish();
     }
 
     private void preparelist()

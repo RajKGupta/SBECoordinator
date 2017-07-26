@@ -78,7 +78,6 @@ public class UploadQuotationService extends IntentService
         timestamp = 9999999999999L-timestamp;
 
         StorageReference riversRef = FirebaseStorage.getInstance().getReference().child("Quotation").child(timestamp+"");
-        final long finalTimestamp = timestamp;
         riversRef.putFile(selectedFileUri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
