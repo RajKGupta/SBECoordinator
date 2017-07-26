@@ -47,11 +47,11 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 import static java.security.AccessController.getContext;
 
-public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapter.EmployeeTask_AdapterListener,QAdapter.QAdapterListener{
+public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapter.EmployeeTask_AdapterListener, QAdapter.QAdapterListener {
 
     Dialog dialog;
-    String id,name,num,add,desig,temp_name,temp_add,temp_num,temp_designation;
-    EditText Name,Num,Add,Desig;
+    String id, name, num, add, desig, temp_name, temp_add, temp_num, temp_designation;
+    EditText Name, Num, Add, Desig;
     DatabaseReference db;
     RecyclerView rec_employeetask;
     LinearLayoutManager linearLayoutManager;
@@ -60,6 +60,8 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     List<QuotationBatch> listofquotations;
     CoordinatorSession coordinatorSession;
     String mykey, dbTablekey;
+    public static String emp_id;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,14 +69,15 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         setContentView(R.layout.activity_emp_details);
 
         id = getIntent().getStringExtra("id");
+        emp_id = id;
 
         Name = (EditText) findViewById(R.id.name);
         Num = (EditText) findViewById(R.id.num);
         Add = (EditText) findViewById(R.id.add);
         Desig = (EditText) findViewById(R.id.desig);
 
-        rec_employeetask = (RecyclerView)findViewById(R.id.rec_employeetask);
-        linearLayoutManager=new LinearLayoutManager(getApplicationContext());
+        rec_employeetask = (RecyclerView) findViewById(R.id.rec_employeetask);
+        linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         rec_employeetask.setLayoutManager(linearLayoutManager);
         rec_employeetask.setItemAnimator(new DefaultItemAnimator());
         rec_employeetask.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
@@ -119,23 +122,29 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         listoftasks = new ArrayList<>();
         listofquotations = new ArrayList<>();
 
-        if(desig.toLowerCase().equals("quotation")){
+        if (desig.toLowerCase().equals("quotation")) {
             mAdapter = new QAdapter(listofquotations, getApplicationContext(), this);
-            }
-
-        else
-            mAdapter = new EmployeeTask_Adapter(listoftasks,getApplicationContext(),id,this);
+        } else
+            mAdapter = new EmployeeTask_Adapter(listoftasks, getApplicationContext(), id, this);
 
         rec_employeetask.setAdapter(mAdapter);
 
         db = db.child("AssignedTask").getRef();
 
-        if(desig.toLowerCase().equals("quotation")){
+        if (desig.toLowerCase().equals("quotation")) {
             db.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     QuotationBatch m = new QuotationBatch();
-                    Map<String,Object> map = 
+                    Map<String, Object> map = (Map) dataSnapshot.getValue();
+
+                    m.setEndDate((String) map.get("endDate"));
+                    long c = (long) map.get("color");
+                    m.setColor((int) c);
+                    m.setStartDate((String) map.get("startDate"));
+                    m.setNote((String) map.get("note"));
+                    m.setId((String) map.get("id"));
+
                     listofquotations.add(m);
                     mAdapter.notifyDataSetChanged();
                 }
@@ -160,9 +169,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
 
                 }
             });
-        }
-
-        else {
+        } else {
             db.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -182,16 +189,16 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.emp_menu,menu);
+        getMenuInflater().inflate(R.menu.emp_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.item1:
 
-                final EditText name_new,num_new,add_new,desig_new;
+                final EditText name_new, num_new, add_new, desig_new;
                 Button sub;
 
                 dialog = new Dialog(Emp_details.this);
@@ -219,10 +226,10 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                         temp_num = num_new.getText().toString().trim();
                         temp_designation = desig_new.getText().toString().trim();
 
-                        if(TextUtils.isEmpty(temp_add) || TextUtils.isEmpty(temp_name) || TextUtils.isEmpty(temp_num) || TextUtils.isEmpty(temp_designation))
-                            Toast.makeText(Emp_details.this,"Enter details...",Toast.LENGTH_SHORT).show();
+                        if (TextUtils.isEmpty(temp_add) || TextUtils.isEmpty(temp_name) || TextUtils.isEmpty(temp_num) || TextUtils.isEmpty(temp_designation))
+                            Toast.makeText(Emp_details.this, "Enter details...", Toast.LENGTH_SHORT).show();
 
-                        else{
+                        else {
 
                             db = DBREF.child("Employee").child(id);
                             db.child("name").setValue(temp_name);
@@ -239,7 +246,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                 break;
             case R.id.item4:
 
-                checkChatref(mykey,id);
+                checkChatref(mykey, id);
                 break;
 
         }
@@ -247,8 +254,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     }
 
     @Override
-    public void onEmployeeRemoveButtonClicked(final int position , final EmployeeTask_Adapter.MyViewHolder holder)
-    {
+    public void onEmployeeRemoveButtonClicked(final int position, final EmployeeTask_Adapter.MyViewHolder holder) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure you want to un-assign this task")
                 .setCancelable(false)
@@ -260,19 +266,19 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                         DatabaseReference dbEmployee = DBREF.child("Employee").child(id).child("AssignedTask").child(listoftasks.get(position));
                         dbEmployee.removeValue(); //for employee
                         final String task_id = listoftasks.get(position);
-                                String taskName = holder.employeename.getText().toString().trim();
-                                String contentforme = "You relieved "+name+" of "+taskName;//todo get taskname here
-                                sendNotif(mykey,mykey,"cancelJob",contentforme,task_id);
-                                String contentforother= "Coordinator "+coordinatorSession.getName()+" relieved you of "+taskName;
-                                sendNotif(mykey,id,"cancelJob",contentforother,task_id);
-                                listoftasks.remove(position);
-                                mAdapter.notifyDataSetChanged();
-                                dialog.dismiss();
+                        String taskName = holder.employeename.getText().toString().trim();
+                        String contentforme = "You relieved " + name + " of " + taskName;//todo get taskname here
+                        sendNotif(mykey, mykey, "cancelJob", contentforme, task_id);
+                        String contentforother = "Coordinator " + coordinatorSession.getName() + " relieved you of " + taskName;
+                        sendNotif(mykey, id, "cancelJob", contentforother, task_id);
+                        listoftasks.remove(position);
+                        mAdapter.notifyDataSetChanged();
+                        dialog.dismiss();
 
 
-                            }
+                    }
                 })
-                .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
                     }
@@ -285,26 +291,24 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     public void onEmployeeRemindButtonClicked(int position, EmployeeTask_Adapter.MyViewHolder holder) {
         final String task_id = listoftasks.get(position);
         String taskName = holder.employeename.getText().toString().trim();
-        String contentforme = "You reminder "+name+" for "+taskName;//todo get taskname here
-        sendNotif(mykey,mykey,"remindJob",contentforme,task_id);
-        String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+taskName;
-        sendNotif(mykey,id,"remindJob",contentforother,task_id);
+        String contentforme = "You reminder " + name + " for " + taskName;//todo get taskname here
+        sendNotif(mykey, mykey, "remindJob", contentforme, task_id);
+        String contentforother = "Coordinator " + coordinatorSession.getName() + " reminded you of " + taskName;
+        sendNotif(mykey, id, "remindJob", contentforother, task_id);
 
     }
 
     @Override
     public void onEmployeeInfoButtonClicked(int position) {
-        Intent intent = new Intent(this,TaskDetail.class);
-        intent.putExtra("task_id",listoftasks.get(position));
+        Intent intent = new Intent(this, TaskDetail.class);
+        intent.putExtra("task_id", listoftasks.get(position));
         startActivity(intent);
     }
 
 
-
     @Override
     public void onEmployeedotmenuButtonClicked(int position, final EmployeeTask_Adapter.MyViewHolder holder) {
-        if (holder.buttonshow.getVisibility()==View.INVISIBLE)
-        {
+        if (holder.buttonshow.getVisibility() == View.INVISIBLE) {
             holder.buttonshow.setVisibility(View.VISIBLE);
             holder.buttonshow.setAlpha(0.2f);
             holder.buttonshow
@@ -321,8 +325,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                         }
                     });
 
-        }
-        else {
+        } else {
 
             holder.buttonshow.setAlpha(0.6f);
             holder.buttonshow
@@ -344,20 +347,18 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     }
 
     private void checkChatref(final String mykey, final String otheruserkey) {
-        DatabaseReference dbChat = DBREF.child("Chats").child(mykey+otheruserkey).getRef();
+        DatabaseReference dbChat = DBREF.child("Chats").child(mykey + otheruserkey).getRef();
         dbChat.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println("query1" + mykey+otheruserkey);
+                System.out.println("query1" + mykey + otheruserkey);
                 System.out.println("datasnap 1" + dataSnapshot.toString());
                 if (dataSnapshot.exists()) {
                     System.out.println("datasnap exists1" + dataSnapshot.toString());
-                    dbTablekey = mykey+otheruserkey;
+                    dbTablekey = mykey + otheruserkey;
                     goToChatActivity();
-                }
-                else
-                {
-                    checkChatref2(mykey,otheruserkey);
+                } else {
+                    checkChatref2(mykey, otheruserkey);
                 }
             }
 
@@ -368,19 +369,16 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     }
 
     private void checkChatref2(final String mykey, final String otheruserkey) {
-        final DatabaseReference dbChat = DBREF.child("Chats").child(otheruserkey+mykey).getRef();
-        dbTablekey = otheruserkey+mykey;
+        final DatabaseReference dbChat = DBREF.child("Chats").child(otheruserkey + mykey).getRef();
+        dbTablekey = otheruserkey + mykey;
         dbChat.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists())
-                {
-                    System.out.println("query1" + otheruserkey+mykey);
+                if (dataSnapshot.exists()) {
+                    System.out.println("query1" + otheruserkey + mykey);
                     goToChatActivity();
-                }
-                else
-                {
+                } else {
                     DBREF.child("Users").child("Userchats").child(mykey).child(otheruserkey).setValue(dbTablekey);
                     DBREF.child("Users").child("Userchats").child(otheruserkey).child(mykey).setValue(dbTablekey);
                     goToChatActivity();
@@ -394,11 +392,10 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         });
     }
 
-    private void goToChatActivity()
-    {
+    private void goToChatActivity() {
         Intent in = new Intent(this, ChatActivity.class);
-        in.putExtra("dbTableKey",dbTablekey);
-        in.putExtra("otheruserkey",id);
+        in.putExtra("dbTableKey", dbTablekey);
+        in.putExtra("otheruserkey", id);
         startActivity(in);
     }
 
@@ -407,9 +404,9 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         Intent intent = new Intent(Emp_details.this, QuotaionTasks.class);
         QuotationBatch batch = listofquotations.get(position);
         intent.putExtra("id", batch.getId());
-        intent.putExtra("note",batch.getNote());
-        intent.putExtra("end",batch.getEndDate());
-        intent.putExtra("start",batch.getStartDate());
+        intent.putExtra("note", batch.getNote());
+        intent.putExtra("end", batch.getEndDate());
+        intent.putExtra("start", batch.getStartDate());
         startActivity(intent);
 
     }

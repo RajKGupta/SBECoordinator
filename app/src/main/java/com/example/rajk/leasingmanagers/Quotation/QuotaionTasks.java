@@ -15,6 +15,7 @@ import android.widget.EditText;
 import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.taskAdapter;
+import com.example.rajk.leasingmanagers.employee.Emp_details;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -39,6 +40,7 @@ public class QuotaionTasks extends AppCompatActivity implements taskAdapter.Task
     ChildEventListener ch;
     ValueEventListener vl;
     int i = 0;
+    String emp_id;
 
 
     @Override
@@ -50,6 +52,7 @@ public class QuotaionTasks extends AppCompatActivity implements taskAdapter.Task
         id = getIntent().getStringExtra("id");
         end = getIntent().getStringExtra("end");
         note = getIntent().getStringExtra("note");
+        emp_id = Emp_details.emp_id;
 
         start_edit = (EditText) findViewById(R.id.start_edit);
         end_edit = (EditText) findViewById(R.id.end_edit);
@@ -61,7 +64,7 @@ public class QuotaionTasks extends AppCompatActivity implements taskAdapter.Task
 
         recycler = (RecyclerView) findViewById(R.id.recycler);
 
-        dbTask = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Quotation").child(id).child("tasks").getRef();
+        dbTask = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(emp_id).child("AssignedTask").child(id).child("tasks").getRef();
 
         mAdapter = new taskAdapter(TaskList, QuotaionTasks.this, this);
         linearLayoutManager = new LinearLayoutManager(QuotaionTasks.this);
@@ -183,7 +186,10 @@ public class QuotaionTasks extends AppCompatActivity implements taskAdapter.Task
     public void onPause() {
         super.onPause();
 
-        db.removeEventListener(vl);
+        if(vl!=null)
+            db.removeEventListener(vl);
+
+        if(ch!=null)
         dbTask.removeEventListener(ch);
     }
 
