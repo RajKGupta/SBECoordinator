@@ -45,6 +45,8 @@ import com.gu.toolargetool.TooLargeTool;
 import com.zfdang.multiple_images_selector.ImagesSelectorActivity;
 import com.zfdang.multiple_images_selector.SelectorSettings;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -179,10 +181,12 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
     void createTask()
     {
         String taskname = taskName.getText().toString().trim();
+        taskname = WordUtils.capitalizeFully(taskname);
 
         String qty = quantity.getText().toString().trim();
 
         String desc = description.getText().toString().trim();
+        desc = WordUtils.capitalize(desc);
 
         String enddate = endDate.getText().toString().trim();
 
