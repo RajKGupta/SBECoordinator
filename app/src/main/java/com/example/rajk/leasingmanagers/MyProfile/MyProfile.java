@@ -119,6 +119,4 @@ public class MyProfile extends AppCompatActivity {
         }
         return true;
     }
-
-
 }
