@@ -66,6 +66,7 @@ public class Cust_add extends AppCompatActivity {
                             database.setValue(customer);
                     DBREF.child("Users").child("Usersessions").child(num).child("name").setValue(name);
                     DBREF.child("Users").child("Usersessions").child(num).child("online").setValue(Boolean.FALSE);
+                    DBREF.child("Users").child("Usersessions").child(num).child("num").setValue(num);
                     DBREF.child("Fcmtokens").child(num).child("token").setValue("nil");
 
                     Intent intent = new Intent(Cust_add.this, Tabs.class);
