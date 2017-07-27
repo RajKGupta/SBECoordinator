@@ -17,6 +17,8 @@ import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.DatabaseReference;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 public class MyProfile extends AppCompatActivity {
@@ -76,6 +78,7 @@ public class MyProfile extends AppCompatActivity {
                 customerEditDetails.show();
 
                 name_new = (EditText) customerEditDetails.findViewById(R.id.name);
+
                 num_new = (EditText) customerEditDetails.findViewById(R.id.num);
                 add_new = (EditText) customerEditDetails.findViewById(R.id.add);
                 sub = (Button) customerEditDetails.findViewById(R.id.submit);
@@ -87,8 +90,10 @@ public class MyProfile extends AppCompatActivity {
                 sub.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        temp_add = add_new.getText().toString();
-                        temp_name = name_new.getText().toString();
+                        temp_add = add_new.getText().toString().trim();
+                        temp_add= WordUtils.capitalizeFully(temp_add);
+                        temp_name = name_new.getText().toString().trim();
+                        temp_name = WordUtils.capitalizeFully(temp_name);
                         temp_num = num_new.getText().toString();
 
                         if(TextUtils.isEmpty(temp_add) || TextUtils.isEmpty(temp_name) || TextUtils.isEmpty(temp_num))

@@ -20,6 +20,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 public class Emp_add extends AppCompatActivity {
@@ -48,9 +50,12 @@ public class Emp_add extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 name = Name.getText().toString().trim();
+                name = WordUtils.capitalizeFully(name);
                 num = Num.getText().toString().trim();
                 add = Add.getText().toString().trim();
+                add = WordUtils.capitalizeFully(add);
                 desig = Desig.getText().toString().trim();
+                desig = WordUtils.capitalize(desig);
                 username = Username.getText().toString().trim();
                 password = Password.getText().toString().trim();
 

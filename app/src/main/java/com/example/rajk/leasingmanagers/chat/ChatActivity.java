@@ -161,7 +161,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
 
         typeComment.setFocusableInTouchMode(true);
         typeComment.setFocusable(true);
-
         typeComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -171,8 +170,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         });
 
         loadData();
-
-
 
     }
 
@@ -333,7 +330,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
 
                     if(chatList.size()>0)
                         recyclerView.scrollToPosition(chatList.size()-1);
-
                 }
             }
 
@@ -459,6 +455,22 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         startService(intent);
         bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.chat_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.item1:
+                //TODO Phone call
+                break;
+        }
+        return true;
     }
 
     ////////////////////binding the service
@@ -624,7 +636,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                 String uriSting = System.currentTimeMillis() + ".jpg";
 
                 final File localFile = new File(rootPath, uriSting);
-                final String localuri = (rootPath.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
+                final String localuri = (rootPath.getAbsolutePath() + "/" + uriSting);
                 str.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
@@ -650,7 +662,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                 uriSting = System.currentTimeMillis() + ".jpg";
 
                 final File localdocFile = new File(rootPath, uriSting);
-                final String localdocuri = (rootPath.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
+                final String localdocuri = (rootPath.getAbsolutePath() + "/" + uriSting);
                 str.getFile(localdocFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {

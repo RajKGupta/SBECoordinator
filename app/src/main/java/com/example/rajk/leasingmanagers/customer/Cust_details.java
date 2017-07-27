@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +35,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.apache.commons.lang3.text.WordUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +62,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
     CoordinatorSession coordinatorSession;
     private Button quotationButton;
     private List<String> listoftasks = new ArrayList<>();
+    ImageButton callme, msgme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +77,8 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         Name = (EditText) findViewById(R.id.name);
         Num = (EditText) findViewById(R.id.num);
         Add = (EditText) findViewById(R.id.add);
+        callme = (ImageButton) findViewById(R.id.callme);
+        msgme = (ImageButton) findViewById(R.id.msgme);
 
         rec_customertasks = (RecyclerView)findViewById(R.id.rec_customertasks);
         linearLayoutManager=new LinearLayoutManager(getApplicationContext());
@@ -122,6 +128,20 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
             }
         });
 
+        msgme.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkChatref(mykey, id);
+            }
+        });
+
+        callme.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO phone call
+            }
+        });
+
     }
 
     @Override
@@ -156,7 +176,9 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                     public void onClick(View v) {
                         // update database accordingly
                         temp_add = add_new.getText().toString();
+                        temp_add = WordUtils.capitalizeFully(temp_add);
                         temp_name = name_new.getText().toString();
+                        temp_name = WordUtils.capitalizeFully(temp_name);
                         temp_num = num_new.getText().toString();
 
                         if(TextUtils.isEmpty(temp_add) || TextUtils.isEmpty(temp_name) || TextUtils.isEmpty(temp_num))
@@ -242,11 +264,6 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                     }
                 });
                 break;
-            case R.id.item4:
-
-                checkChatref(mykey,id);
-                break;
-
             case  R.id.item6:
                 // TODO : Null pointer exception (Null Object Refrence)
                 //if nothing is added to account this error would occur
