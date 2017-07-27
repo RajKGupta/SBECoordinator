@@ -14,9 +14,7 @@
         android:layout_height="match_parent"
         android:background="@color/grey_300"
         android:layout_above="@+id/sendComment"
-        android:nestedScrollingEnabled="true"
-        android:padding="6dp"
-        android:windowSoftInputMode="adjustResize"/>
+        android:padding="3dp"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

@@ -6,13 +6,22 @@ package com.example.rajk.leasingmanagers.model;
 
 public class Quotation {
     private String approvedByCust;
-    private String url;
+    String url;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public Quotation() {
 
     }
 
     public Quotation(String approvedByCust, String url) {
+
         this.approvedByCust = approvedByCust;
         this.url = url;
     }
@@ -25,11 +34,5 @@ public class Quotation {
         this.approvedByCust = approvedByCust;
     }
 
-    public String getUrl() {
-        return url;
-    }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
 }

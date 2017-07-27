@@ -161,7 +161,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
 
         typeComment.setFocusableInTouchMode(true);
         typeComment.setFocusable(true);
-
         typeComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -171,8 +170,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         });
 
         loadData();
-
-
 
     }
 
@@ -333,7 +330,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
 
                     if(chatList.size()>0)
                         recyclerView.scrollToPosition(chatList.size()-1);
-
                 }
             }
 
