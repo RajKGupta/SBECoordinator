@@ -36,6 +36,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -174,7 +176,9 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                     public void onClick(View v) {
                         // update database accordingly
                         temp_add = add_new.getText().toString();
+                        temp_add = WordUtils.capitalizeFully(temp_add);
                         temp_name = name_new.getText().toString();
+                        temp_name = WordUtils.capitalizeFully(temp_name);
                         temp_num = num_new.getText().toString();
 
                         if(TextUtils.isEmpty(temp_add) || TextUtils.isEmpty(temp_name) || TextUtils.isEmpty(temp_num))

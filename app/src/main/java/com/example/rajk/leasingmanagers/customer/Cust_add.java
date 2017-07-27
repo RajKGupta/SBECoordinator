@@ -21,6 +21,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import java.util.Calendar;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
@@ -51,7 +53,9 @@ public class Cust_add extends AppCompatActivity {
             public void onClick(View v) {
 
                 name = Name.getText().toString().trim();
+                name = WordUtils.capitalizeFully(name);
                 add = Add.getText().toString().trim();
+                add = WordUtils.capitalizeFully(add);
                 num = Num.getText().toString().trim();
                 password = Password.getText().toString().trim();
                 if (TextUtils.isEmpty(name) || TextUtils.isEmpty(add) || TextUtils.isEmpty(num))

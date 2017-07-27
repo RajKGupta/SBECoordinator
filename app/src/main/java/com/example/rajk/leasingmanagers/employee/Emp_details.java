@@ -37,6 +37,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -234,9 +236,12 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                         // update database accordingly
 
                         temp_add = add_new.getText().toString().trim();
+                        temp_add = WordUtils.capitalizeFully(temp_add);
                         temp_name = name_new.getText().toString().trim();
+                        temp_name = WordUtils.capitalizeFully(temp_name);
                         temp_num = num_new.getText().toString().trim();
                         temp_designation = desig_new.getText().toString().trim();
+                        temp_designation = WordUtils.capitalizeFully(temp_designation);
 
                         if (TextUtils.isEmpty(temp_add) || TextUtils.isEmpty(temp_name) || TextUtils.isEmpty(temp_num) || TextUtils.isEmpty(temp_designation))
                             Toast.makeText(Emp_details.this, "Enter details...", Toast.LENGTH_SHORT).show();

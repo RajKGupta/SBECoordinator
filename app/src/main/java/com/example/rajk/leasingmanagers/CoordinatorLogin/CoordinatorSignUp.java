@@ -21,7 +21,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import org.apache.commons.lang3.text.WordUtils;
+
+import java.util.jar.Attributes;
+
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+import static com.example.rajk.leasingmanagers.LeasingManagers.firstLetterCaps;
 
 public class CoordinatorSignUp extends AppCompatActivity {
     EditText username, password, name, contact, address;
@@ -55,10 +60,12 @@ public class CoordinatorSignUp extends AppCompatActivity {
             public void onClick(View v) {
 
                 Name = name.getText().toString().trim();
+                Name = WordUtils.capitalizeFully(Name);
                 Username = username.getText().toString().trim();
                 Password = password.getText().toString().trim();
                 Contact = contact.getText().toString().trim();
                 Address = address.getText().toString().trim();
+                Address = WordUtils.capitalizeFully(Address);
 
                 if (TextUtils.isEmpty(Name)) {
                     input_name.setError("Enter Name");
