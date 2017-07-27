@@ -137,6 +137,7 @@ public class CoordinatorSignUp extends AppCompatActivity {
         LeasingManagers.setOnlineStatus(Username);
 
             DBREF.child("Users").child("Usersessions").child(Username).child("name").setValue(Name);
+            DBREF.child("Users").child("Usersessions").child(Username).child("num").setValue(Contact);
         String myFCMToken;
         if (FirebaseInstanceId.getInstance().getToken() == null)
             myFCMToken = sharedPreferences.getString("myFCMToken", "");
