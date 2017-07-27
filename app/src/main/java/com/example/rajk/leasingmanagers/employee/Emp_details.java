@@ -253,6 +253,8 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                             db.child("address").setValue(temp_add);
                             db.child("phone_num").setValue(temp_num);
                             db.child("designation").setValue(temp_designation);
+                            DBREF.child("Users").child("Usersessions").child(emp_id).child("num").setValue(num);
+
                             dialog.dismiss();
                         }
 

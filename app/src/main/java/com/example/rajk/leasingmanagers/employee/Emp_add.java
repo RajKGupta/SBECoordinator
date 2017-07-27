@@ -79,6 +79,7 @@ public class Emp_add extends AppCompatActivity {
                                 DBREF.child("Users").child("Usersessions").child(username).child("name").setValue(name);
                                 DBREF.child("Users").child("Usersessions").child(username).child("online").setValue(Boolean.FALSE);
                                 DBREF.child("Fcmtokens").child(username).child("token").setValue("nil");
+                                DBREF.child("Users").child("Usersessions").child(username).child("num").setValue(num);
 
                             }
                         }
