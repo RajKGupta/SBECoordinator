@@ -107,9 +107,10 @@
 
         <activity android:name=".customer.UploadQuotationActivity" />
         <activity android:name=".CoordinatorLogin.CoordinatorSignUp" />
-        <activity android:name=".notification.NotificationActivity"/>
         <activity android:name=".Quotation.QuotaionTasks"
             android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity android:name=".notification.NotificationActivity" />
+        <activity android:name=".MyProfile.MyProfile"></activity>
     </application>
 
 </manifest>

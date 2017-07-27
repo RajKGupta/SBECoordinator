@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,7 +49,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     private String task_id,mykey;
     private Task task;
     private String customername;
-    EditText startDate,endDate,custId,taskName,quantity,description;
+    EditText startDate,endDate,quantity,description;
     RecyclerView rec_assignedto,rec_completedby,rec_measurement, rec_DescImages ;
     assignedto_adapter adapter_assignedto,adapter_completedby;
     taskdetailDescImageAdapter adapter_taskimages;
@@ -58,11 +59,11 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     List<CompletedBy> completedbyList = new ArrayList<>();
     ArrayList<measurement> measurementList = new ArrayList<>();
     measurement_adapter adapter_measurement;
-    TextView open_assignedto,open_completedby,open_measurement,appByCustomer,uploadStatus;
+    TextView measure_and_hideme, assign_and_hideme, complete_and_hideme, appByCustomer,uploadStatus;
     DatabaseReference dbQuotation;
     ProgressDialog progressDialog ;
     private MarshmallowPermissions marshmallowPermissions;
-    private AlertDialog viewSelectedImages ;
+    private AlertDialog viewSelectedImages, open_options ;
     LinearLayoutManager linearLayoutManager;
     bigimage_adapter adapter;
     private CoordinatorSession coordinatorSession;
@@ -71,6 +72,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
+
         coordinatorSession = new CoordinatorSession(this);
         mykey = coordinatorSession.getUsername();
         marshmallowPermissions =new MarshmallowPermissions(this);
@@ -80,21 +82,19 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         progressBar = (ProgressBar)findViewById(R.id.progress);
         uploadStatus = (TextView)findViewById(R.id.uploadStatus);
         appByCustomer = (TextView)findViewById(R.id.appByCustomer);
+        measure_and_hideme = (TextView)findViewById(R.id.measure_and_hideme);
+        assign_and_hideme = (TextView)findViewById(R.id.assign_and_hideme);
+        complete_and_hideme = (TextView)findViewById(R.id.complete_and_hideme);
 
         forward = (FloatingActionButton)findViewById(R.id.forward);
-        taskName = (EditText) findViewById(R.id.taskName);
         startDate = (EditText) findViewById(R.id.startDate);
         endDate = (EditText) findViewById(R.id.endDate);
         quantity=(EditText) findViewById(R.id.quantity);
         description = (EditText) findViewById(R.id.description);
-        custId = (EditText) findViewById(R.id.custId);
         rec_assignedto = (RecyclerView)findViewById(R.id.rec_assignedto);
         rec_completedby = (RecyclerView)findViewById(R.id.rec_completedby);
         rec_measurement = (RecyclerView)findViewById(R.id.rec_measurement);
         rec_DescImages = (RecyclerView)findViewById(R.id.rec_DescImages);
-        open_assignedto = (TextView)findViewById(R.id.open_assignedto);
-        open_completedby = (TextView)findViewById(R.id.open_completedby);
-        open_measurement = (TextView)findViewById(R.id.open_measurement);
 
         Intent intent = getIntent();
         task_id = intent.getStringExtra("task_id");
@@ -132,49 +132,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
         prepareListData();
 
-        open_measurement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                if (rec_measurement.getVisibility()== View.GONE)
-                {
-                    rec_measurement.setVisibility(View.VISIBLE);
-                }
-                else
-                {
-                    rec_measurement.setVisibility(View.GONE);
-                }
-            }
-        });
-
-
-        open_completedby.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (rec_completedby.getVisibility()== View.GONE)
-                {
-                    rec_completedby.setVisibility(View.VISIBLE);
-                }
-                else
-                {
-                    rec_completedby.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        open_assignedto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (rec_assignedto.getVisibility()== View.GONE)
-                {
-                    rec_assignedto.setVisibility(View.VISIBLE);
-                }
-                else
-                {
-                    rec_assignedto.setVisibility(View.GONE);
-                }
-            }
-        });
         dbTask.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -187,8 +144,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         customername = dataSnapshot.child("name").getValue(String.class);
                         getSupportActionBar().setSubtitle(customername);
-                        custId.setText(task.getCustomerId()+ ": "+customername);
-
                     }
 
                     @Override
@@ -284,9 +239,14 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
+                    complete_and_hideme.setVisibility(View.GONE);
                     CompletedBy item = dataSnapshot.getValue(CompletedBy.class);
                     completedbyList.add(item);
                     adapter_completedby.notifyDataSetChanged();
+                }
+                else
+                {
+                    complete_and_hideme.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -317,9 +277,14 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
+                    assign_and_hideme.setVisibility(View.GONE);
                     CompletedBy item = dataSnapshot.getValue(CompletedBy.class);
                     assignedtoList.add(item);
                     adapter_assignedto.notifyDataSetChanged();
+                }
+                else
+                {
+                    assign_and_hideme.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -351,9 +316,14 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             public void onChildAdded(DataSnapshot dataSnapshot, String s)
             {
                 if (dataSnapshot.exists()) {
+                    measure_and_hideme.setVisibility(View.GONE);
                     measurement item = dataSnapshot.getValue(measurement.class);
                     measurementList.add(item);
                     adapter_measurement.notifyDataSetChanged();
+                }
+                else
+                {
+                    measure_and_hideme.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -381,7 +351,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         });
 
         //TODO : image ko download karwana hai kya ?
-        //image forwarding ka koi option ?
         dbDescImages.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s)
@@ -421,7 +390,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     {
         startDate.setText(task.getStartDate());
         endDate.setText(task.getExpEndDate());
-        taskName.setText(task.getName());
         quantity.setText(task.getQty());
         if (!task.getDesc().equals("")) {
             description.setVisibility(View.VISIBLE);
@@ -449,7 +417,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
             }
         });
-
     }
 
     @Override
@@ -472,50 +439,64 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         bigimage.scrollToPosition(position);
     }
 
-    @Override
-    public void onRemoveButtonClicked(final int position, final assignedto_adapter.MyViewHolder holder)
-    {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to un-assign this task")
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, int id) {
-                        DatabaseReference dbCancelJob = DBREF.child("Task").child(task_id).child("AssignedTo").child(adapter_assignedto.emp.getEmpId()).getRef();
-                        dbCancelJob.removeValue();
 
-                        DatabaseReference dbEmployee = DBREF.child("Employee").child(adapter_assignedto.emp.getEmpId()).child("AssignedTask").child(task_id);
-                        dbEmployee.removeValue(); //for employee
+    @Override
+    public void ondownloadButtonClicked(int position) {
+        // TODO :download task image code here
+    }
+
+    @Override
+    public void onOptionsButtonClicked(final int position, final assignedto_adapter.MyViewHolder holder) {
+        open_options = new AlertDialog.Builder(TaskDetail.this)
+                .setView(R.layout.options_forassignedtask).create();
+        open_options.show();
+
+        LinearLayout remove = (LinearLayout)open_options.findViewById(R.id.remove);
+        LinearLayout remind = (LinearLayout)open_options.findViewById(R.id.remind);
+
+        remove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(TaskDetail.this);
+                builder.setMessage("Are you sure you want to un-assign this task")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int id) {
+                                DatabaseReference dbCancelJob = DBREF.child("Task").child(task_id).child("AssignedTo").child(adapter_assignedto.emp.getEmpId()).getRef();
+                                dbCancelJob.removeValue();
+
+                                DatabaseReference dbEmployee = DBREF.child("Employee").child(adapter_assignedto.emp.getEmpId()).child("AssignedTask").child(task_id);
+                                dbEmployee.removeValue(); //for employee
                                 String contentforme = "You relieved "+holder.employeename.getText().toString().trim()+" of "+task.getName();
                                 sendNotif(mykey,mykey,"cancelJob",contentforme,task_id);
                                 String contentforother= "Coordinator "+coordinatorSession.getName()+" relieved you of "+task.getName();
                                 sendNotif(mykey,adapter_assignedto.emp.getEmpId(),"cancelJob",contentforother,task_id);
+                                Toast.makeText(TaskDetail.this, contentforme, Toast.LENGTH_SHORT).show();
                                 assignedtoList.remove(position);
                                 adapter_assignedto.notifyDataSetChanged();
                                 dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
 
+        remind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String contentforme = "You reminded "+holder.employeename.getText().toString().trim() +" for "+task.getName();
+                sendNotif(mykey,mykey,"cancelJob",contentforme,task_id);
+                String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+task.getName();
+                sendNotif(mykey,adapter_assignedto.emp.getEmpId(),"cancelJob",contentforother,task_id);
+                Toast.makeText(TaskDetail.this, contentforme, Toast.LENGTH_SHORT).show();
+            }
+        });
 
-                           }
-                })
-                .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
-
-    }
-
-    @Override
-    public void onRemindButtonClicked(int position, assignedto_adapter.MyViewHolder holder) {
-        String contentforme = "You reminded "+holder.employeename.getText().toString().trim() +" for "+task.getName();
-        sendNotif(mykey,mykey,"cancelJob",contentforme,task_id);
-        String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+task.getName();
-        sendNotif(mykey,adapter_assignedto.emp.getEmpId(),"cancelJob",contentforother,task_id);
-    }
-
-    @Override
-    public void ondownloadButtonClicked(int position) {
-        // download task image code here
     }
 }

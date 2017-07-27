@@ -5,15 +5,33 @@ package com.example.rajk.leasingmanagers.model;
  */
 
 public class Coordinator {
-    private String name,username,password;
+    private String name,username,password,contact, address;
 
     public Coordinator() {
     }
 
-    public Coordinator(String name, String username, String password) {
+    public Coordinator(String name, String username, String password, String contact, String address) {
         this.name = name;
         this.username = username;
         this.password = password;
+        this.address = address;
+        this.contact = contact;
+    }
+
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getName() {

@@ -1,7 +1,5 @@
 package com.example.rajk.leasingmanagers.employee;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +17,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
@@ -26,7 +25,6 @@ import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.Quotation.QAdapter;
 import com.example.rajk.leasingmanagers.Quotation.QuotaionTasks;
 import com.example.rajk.leasingmanagers.R;
-import com.example.rajk.leasingmanagers.adapter.CustomerTasks_Adapter;
 import com.example.rajk.leasingmanagers.adapter.EmployeeTask_Adapter;
 import com.example.rajk.leasingmanagers.chat.ChatActivity;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
@@ -36,7 +34,6 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -58,6 +55,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     private RecyclerView.Adapter mAdapter;
     List<String> listoftasks;
     List<QuotationBatch> listofquotations;
+    private AlertDialog open_options ;
     CoordinatorSession coordinatorSession;
     String mykey, dbTablekey;
     public static String emp_id;
@@ -254,96 +252,71 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     }
 
     @Override
-    public void onEmployeeRemoveButtonClicked(final int position, final EmployeeTask_Adapter.MyViewHolder holder) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to un-assign this task")
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, int i) {
-                        DatabaseReference dbCancelJob = DBREF.child("Task").child(listoftasks.get(position)).child("AssignedTo").child(id).getRef();
-                        dbCancelJob.removeValue();
+    public void onEmployeedotmenuButtonClicked(final int position, final EmployeeTask_Adapter.MyViewHolder holder) {
+        open_options = new AlertDialog.Builder(Emp_details.this)
+                .setView(R.layout.optionsfor_employeestask).create();
+        open_options.show();
 
-                        DatabaseReference dbEmployee = DBREF.child("Employee").child(id).child("AssignedTask").child(listoftasks.get(position));
-                        dbEmployee.removeValue(); //for employee
-                        final String task_id = listoftasks.get(position);
-                        String taskName = holder.employeename.getText().toString().trim();
-                        String contentforme = "You relieved " + name + " of " + taskName;//todo get taskname here
-                        sendNotif(mykey, mykey, "cancelJob", contentforme, task_id);
-                        String contentforother = "Coordinator " + coordinatorSession.getName() + " relieved you of " + taskName;
-                        sendNotif(mykey, id, "cancelJob", contentforother, task_id);
-                        listoftasks.remove(position);
-                        mAdapter.notifyDataSetChanged();
-                        dialog.dismiss();
+        LinearLayout remove = (LinearLayout)open_options.findViewById(R.id.remove);
+        LinearLayout remind = (LinearLayout)open_options.findViewById(R.id.remind);
+        LinearLayout info = (LinearLayout)open_options.findViewById(R.id.info);
 
+        remove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(Emp_details.this);
+                builder.setMessage("Are you sure you want to un-assign this task")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int i) {
+                                DatabaseReference dbCancelJob = DBREF.child("Task").child(listoftasks.get(position)).child("AssignedTo").child(id).getRef();
+                                dbCancelJob.removeValue();
 
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
-    @Override
-    public void onEmployeeRemindButtonClicked(int position, EmployeeTask_Adapter.MyViewHolder holder) {
-        final String task_id = listoftasks.get(position);
-        String taskName = holder.employeename.getText().toString().trim();
-        String contentforme = "You reminder " + name + " for " + taskName;//todo get taskname here
-        sendNotif(mykey, mykey, "remindJob", contentforme, task_id);
-        String contentforother = "Coordinator " + coordinatorSession.getName() + " reminded you of " + taskName;
-        sendNotif(mykey, id, "remindJob", contentforother, task_id);
-
-    }
-
-    @Override
-    public void onEmployeeInfoButtonClicked(int position) {
-        Intent intent = new Intent(this, TaskDetail.class);
-        intent.putExtra("task_id", listoftasks.get(position));
-        startActivity(intent);
-    }
+                                DatabaseReference dbEmployee = DBREF.child("Employee").child(id).child("AssignedTask").child(listoftasks.get(position));
+                                dbEmployee.removeValue(); //for employee
+                                final String task_id = listoftasks.get(position);
+                                String taskName = holder.employeename.getText().toString().trim();
+                                String contentforme = "You relieved "+name+" of "+taskName;
+                                sendNotif(mykey,mykey,"cancelJob",contentforme,task_id);
+                                String contentforother= "Coordinator "+coordinatorSession.getName()+" relieved you of "+taskName;
+                                sendNotif(mykey,id,"cancelJob",contentforother,task_id);
+                                listoftasks.remove(position);
+                                mAdapter.notifyDataSetChanged();
+                                dialog.dismiss();
 
 
-    @Override
-    public void onEmployeedotmenuButtonClicked(int position, final EmployeeTask_Adapter.MyViewHolder holder) {
-        if (holder.buttonshow.getVisibility() == View.INVISIBLE) {
-            holder.buttonshow.setVisibility(View.VISIBLE);
-            holder.buttonshow.setAlpha(0.2f);
-            holder.buttonshow
-                    .animate()
-                    .setDuration(500)
-                    .alpha(1.0f)
-                    .translationXBy(-holder.dotmenu.getWidth())
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            //updateShowElementsButton();
-                            holder.buttonshow.animate().setListener(null);
-                        }
-                    });
+                            }
+                        })
+                        .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
 
-        } else {
+        remind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String task_id = listoftasks.get(position);
+                String taskName = holder.employeename.getText().toString().trim();
+                String contentforme = "You reminder "+name+" for "+taskName;
+                sendNotif(mykey,mykey,"remindJob",contentforme,task_id);
+                String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+taskName;
+                sendNotif(mykey,id,"remindJob",contentforother,task_id);
+            }
+        });
 
-            holder.buttonshow.setAlpha(0.6f);
-            holder.buttonshow
-                    .animate()
-                    .setDuration(500)
-                    .alpha(0.0f)
-                    .translationXBy(holder.dotmenu.getWidth())
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            //updateShowElementsButton();
-                            holder.buttonshow.setVisibility(View.INVISIBLE);
-                            holder.buttonshow.animate().setListener(null);
-
-                        }
-                    });
-        }
+        info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),TaskDetail.class);
+                intent.putExtra("task_id",listoftasks.get(position));
+                startActivity(intent);
+            }
+        });
     }
 
     private void checkChatref(final String mykey, final String otheruserkey) {

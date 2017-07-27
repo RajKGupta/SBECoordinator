@@ -146,7 +146,7 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
                             dbEmployee.child("startDate").setValue(curdate);
                             dbEmployee.child("coordnote").setValue(cooordnote);
                             String contentforme = "You assigned "+customername+" tasks for quotation to "+empName;
-                            sendNotif(mykey,mykey,"forquotation",contentforme, timestamp+"");//TODO handle logic in onClickListener of notification to open quotationwaala activity
+                            sendNotif(mykey,mykey,"forquotation",contentforme, timestamp+"");
                             String contentforother = "Coordinator "+coordinatorSession.getName()+"forquotation"+" "+customername+ " tasks for quotation";
                             sendNotif(mykey,empId,"assignment",contentforother,timestamp+"");
 
@@ -181,7 +181,6 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
         }
         else
         {
-            //TODO goto customer details activity
             Intent intent = new Intent(forwardTaskScreen2.this,forwardTask.class);
             intent.putStringArrayListExtra("taskIds",taskIds);
             intent.putExtra("custId",custId);

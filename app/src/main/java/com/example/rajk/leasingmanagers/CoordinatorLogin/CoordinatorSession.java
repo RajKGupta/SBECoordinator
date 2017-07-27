@@ -20,12 +20,23 @@ public class CoordinatorSession
         editor = pref.edit();
     }
 
-    public void create_oldusersession(String username_get,String name)
+    public void create_oldusersession(String username_get,String name, String contact, String address)
     {
         editor.putBoolean(is_loggedin,true);
         editor.putString(username,username_get);
         editor.putString("designation","coordinator");
         editor.putString("name",name);
+        editor.putString("contact",contact);
+        editor.putString("address",address);
+        editor.commit();
+    }
+
+    public void edit_oldusersession(String name, String contact, String address)
+    {
+        editor.putBoolean(is_loggedin,true);
+        editor.putString("name",name);
+        editor.putString("contact",contact);
+        editor.putString("address",address);
         editor.commit();
     }
 
@@ -40,6 +51,11 @@ public class CoordinatorSession
     }
 
     public String getName(){return pref.getString("name","");}
+
+    public String getContact (){return pref.getString("contact","");}
+
+    public String getAddress(){return pref.getString("address","");}
+
     public void clearoldusersession()
     {
         editor.clear();
