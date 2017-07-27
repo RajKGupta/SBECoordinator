@@ -3,6 +3,7 @@ package com.example.rajk.leasingmanagers.employee;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -128,6 +129,10 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
             @Override
             public void onClick(View v) {
                 //TODO phone call
+
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse("tel:"+ num));
+                startActivity(callIntent);
             }
         });
     }
