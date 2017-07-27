@@ -216,9 +216,10 @@ public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyView
                         if(chatMessage.getReceiverUId().equals(mykey))
                             countunreadmessages[0]++;
                         }
-                    holder.relunread.setVisibility(View.VISIBLE);
-                    holder.tvunread.setText(String.valueOf(countunreadmessages[0]));
-                }
+                    if(countunreadmessages[0]!=0) {
+                        holder.relunread.setVisibility(View.VISIBLE);
+                        holder.tvunread.setText(String.valueOf(countunreadmessages[0]));
+                    }}
                 else
                 {
                     holder.relunread.setVisibility(View.GONE);
