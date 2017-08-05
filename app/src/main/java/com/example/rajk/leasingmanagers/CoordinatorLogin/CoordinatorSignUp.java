@@ -22,11 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.apache.commons.lang3.text.WordUtils;
-
-import java.util.jar.Attributes;
-
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
-import static com.example.rajk.leasingmanagers.LeasingManagers.firstLetterCaps;
 
 public class CoordinatorSignUp extends AppCompatActivity {
     EditText username, password, name, contact, address;

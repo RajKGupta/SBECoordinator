@@ -149,4 +149,5 @@ public class UploadTaskPhotosServices extends IntentService
             notificationManager.notify(0, mBuilder.build());
         }
     }
+
 }

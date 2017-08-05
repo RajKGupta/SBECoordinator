@@ -6,7 +6,6 @@ package com.example.rajk.leasingmanagers.model;
 
 public class Coordinator {
     private String name,username,password,contact, address;
-
     public Coordinator() {
     }
 

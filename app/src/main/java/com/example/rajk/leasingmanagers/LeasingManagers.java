@@ -1,10 +1,6 @@
 package com.example.rajk.leasingmanagers;
 
-
-import com.example.rajk.leasingmanagers.CheckInternetConnectivity.NetWatcher;
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
-
-import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.model.Notif;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.firebase.FirebaseApp;
@@ -13,7 +9,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -46,9 +41,6 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
         return mInstance;
     }
 
-    public void setConnectivityListener(NetWatcher.ConnectivityReceiverListener listener) {
-        NetWatcher.connectivityReceiverListener = listener;
-    }
     public static void setOnlineStatus(String userkey)
     {
         if(!userkey.equals("")){
@@ -103,11 +95,5 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
 
             }
         });
-    }
-    static public String firstLetterCaps ( String data )
-    {
-        String firstLetter = data.substring(0,1).toUpperCase();
-        String restLetters = data.substring(1).toLowerCase();
-        return firstLetter + restLetters;
     }
 }

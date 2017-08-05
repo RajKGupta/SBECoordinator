@@ -3,6 +3,7 @@ package com.example.rajk.leasingmanagers.MainViews;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -25,11 +29,13 @@ import com.example.rajk.leasingmanagers.adapter.assignedto_adapter;
 import com.example.rajk.leasingmanagers.adapter.bigimage_adapter;
 import com.example.rajk.leasingmanagers.adapter.measurement_adapter;
 import com.example.rajk.leasingmanagers.adapter.taskdetailDescImageAdapter;
+import com.example.rajk.leasingmanagers.customer.Cust_details;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
 import com.example.rajk.leasingmanagers.model.Quotation;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.example.rajk.leasingmanagers.model.measurement;
+import com.example.rajk.leasingmanagers.services.DeleteTask;
 import com.example.rajk.leasingmanagers.services.DownloadFileService;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -453,6 +459,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
         LinearLayout remove = (LinearLayout)open_options.findViewById(R.id.remove);
         LinearLayout remind = (LinearLayout)open_options.findViewById(R.id.remind);
+        LinearLayout repeatedreminder =(LinearLayout)open_options.findViewById(R.id.repeatedreminder);
 
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -491,12 +498,122 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             @Override
             public void onClick(View v) {
                 String contentforme = "You reminded "+holder.employeename.getText().toString().trim() +" for "+task.getName();
-                sendNotif(mykey,mykey,"cancelJob",contentforme,task_id);
+                sendNotif(mykey,mykey,"remindJob",contentforme,task_id);
                 String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+task.getName();
-                sendNotif(mykey,adapter_assignedto.emp.getEmpId(),"cancelJob",contentforother,task_id);
+                sendNotif(mykey,adapter_assignedto.emp.getEmpId(),"remindJob",contentforother,task_id);
                 Toast.makeText(TaskDetail.this, contentforme, Toast.LENGTH_SHORT).show();
             }
         });
 
+        repeatedreminder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater layoutInflaterAndroid = LayoutInflater.from(TaskDetail.this);
+                View mView = layoutInflaterAndroid.inflate(R.layout.repeatedreminderlayout, null);
+                AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(TaskDetail.this);
+                alertDialogBuilderUserInput.setView(mView);
+
+                final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
+                alertDialogBuilderUserInput
+                        .setCancelable(false)
+                        .setPositiveButton("SET", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogBox, int id) {
+                                String minutes = userInputDialogEditText.getText().toString().trim();
+                                if(minutes!=null){
+                                Integer Minutes = Integer.parseInt(minutes);
+                                if(Minutes>0)
+                                {
+                                    String contentforme = "You reminded "+holder.employeename.getText().toString().trim() +" for "+task.getName();
+                                    sendNotif(mykey,mykey,"repeatedReminder",contentforme,task_id);
+                                    String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+task.getName();
+                                    sendNotif(mykey,adapter_assignedto.emp.getEmpId(),"repeatedReminder"+" "+minutes,contentforother,task_id);
+                                    Toast.makeText(TaskDetail.this, contentforme, Toast.LENGTH_SHORT).show();
+                                }
+                            }}
+                        })
+
+                        .setNegativeButton("CANCEL",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialogBox, int id) {
+                                        dialogBox.cancel();
+                                    }
+                                });
+
+                AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+                alertDialogAndroid.show();
+            }
+        });
+
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.task_details_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item1:
+
+                break;
+
+            case R.id.item2:
+                final AlertDialog.Builder builder = new AlertDialog.Builder(TaskDetail.this);
+                builder.setMessage("Are you sure you want to delete this task??")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, final int id) {
+                                final ProgressDialog progressDialog = new ProgressDialog(TaskDetail.this);
+                                progressDialog.setMessage("Deleting Task");
+                                progressDialog.setCancelable(false);
+                                progressDialog.show();
+                                Intent serviceIntent = new Intent(TaskDetail.this, DeleteTask.class);
+                                serviceIntent.putExtra("task_id",task_id);
+                                serviceIntent.putExtra("taskName",task.getName());
+                                serviceIntent.putExtra("custId",task.getCustomerId());
+
+                                startService(serviceIntent);
+                                final DatabaseReference dbDelete = DBREF.child("DeleteTask").child(task_id).getRef();
+                                dbDelete.setValue(Boolean.FALSE);
+                                dbDelete.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if(dataSnapshot.exists())
+                                        {
+                                            Boolean status = dataSnapshot.getValue(Boolean.class);
+                                            if(status==true)
+                                            {
+                                                dbDelete.removeEventListener(this);
+                                                dbDelete.removeValue();
+                                                progressDialog.dismiss();
+                                                sendNotif(mykey,mykey,"deleteTask","You deleted the "+task.getName()+" task of "+customername,task_id);
+                                                Intent intent = new Intent(TaskDetail.this,Cust_details.class);
+                                                intent.putExtra("id",task.getCustomerId());
+                                                startActivity(intent);
+                                                finish();
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+                        })
+                        .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+                break;
+
+        }
+        return true;
+    }
+
 }
