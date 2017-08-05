@@ -1,16 +1,19 @@
 package com.example.rajk.leasingmanagers.chat;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -29,6 +32,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.ViewImageAdapter;
@@ -51,12 +55,15 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
+
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.formatter;
 
@@ -71,7 +78,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     LinearLayoutManager linearLayoutManager;
     private MarshmallowPermissions marshmallowPermissions;
     LinearLayout emptyView;
-    private ArrayList<String> mResults ;
+    private ArrayList<String> mResults;
     private ActionModeCallback actionModeCallback;
     private ActionMode actionMode;
     UploadFileService uploadFileService;
@@ -87,6 +94,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     CompressMe compressMe;
     private AlertDialog viewSelectedImages;
     ViewImageAdapter adapter;
+    String num="8889432471";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,12 +102,11 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         setContentView(R.layout.activity_chat);
 
         marshmallowPermissions = new MarshmallowPermissions(this);
-        if(!marshmallowPermissions.checkPermissionForExternalStorage())
-        {
+        if (!marshmallowPermissions.checkPermissionForExternalStorage()) {
             marshmallowPermissions.requestPermissionForExternalStorage();
         }
-        if(!marshmallowPermissions.checkPermissionForExternalStorage())
-            Toast.makeText(this,"You wont be able to see the images and documents sent and received",Toast.LENGTH_LONG).show();
+        if (!marshmallowPermissions.checkPermissionForExternalStorage())
+            Toast.makeText(this, "You wont be able to see the images and documents sent and received", Toast.LENGTH_LONG).show();
 
         compressMe = new CompressMe(this);
         actionModeCallback = new ActionModeCallback();
@@ -109,19 +116,18 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         otheruserkey = intent.getStringExtra("otheruserkey");
 
         dbOnlineStatus = DBREF.child("Users").child("Usersessions").child(otheruserkey).getRef();
+
         dbOnlineStatusVle = dbOnlineStatus.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
 
                     NameAndStatus nameAndStatus = dataSnapshot.getValue(NameAndStatus.class);
+                    num = nameAndStatus.getNum();
                     getSupportActionBar().setTitle(nameAndStatus.getName());
-                    if(nameAndStatus.getOnline())
-                    {
+                    if (nameAndStatus.getOnline()) {
                         getSupportActionBar().setSubtitle("Online");
-                    }
-                    else
-                    {
+                    } else {
                         getSupportActionBar().setSubtitle("Offline");
                     }
                 }
@@ -164,8 +170,8 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         typeComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(chatList.size()>0)
-                    recyclerView.scrollToPosition(chatList.size()-1);
+                if (chatList.size() > 0)
+                    recyclerView.scrollToPosition(chatList.size() - 1);
             }
         });
 
@@ -328,8 +334,8 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                     chatList.add(comment);
                     mAdapter.notifyDataSetChanged();
 
-                    if(chatList.size()>0)
-                        recyclerView.scrollToPosition(chatList.size()-1);
+                    if (chatList.size() > 0)
+                        recyclerView.scrollToPosition(chatList.size() - 1);
                 }
             }
 
@@ -459,15 +465,18 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.chat_menu,menu);
+        getMenuInflater().inflate(R.menu.chat_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.item1:
                 //TODO Phone call
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse("tel:"+ num));
+                startActivity(callIntent);
                 break;
         }
         return true;

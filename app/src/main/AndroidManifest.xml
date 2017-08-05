@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.rajk.leasingmanagers">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -8,10 +9,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.camera" />
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".LeasingManagers"
@@ -53,7 +53,9 @@
 
         <activity
             android:name=".tablayout.Tabs"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
         <activity android:name=".chat.ChatActivity" />
 
         <service android:name=".services.MyFirebaseInstanceIDService">
@@ -62,6 +64,10 @@
             </intent-filter>
         </service>
         <service android:name=".services.UploadFileService" />
+        <activity
+            android:name=".drawer"
+            android:label="@string/title_activity_drawer1"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
             android:name=".MainViews.CreateTask"

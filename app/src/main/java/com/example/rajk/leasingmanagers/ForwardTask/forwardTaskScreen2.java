@@ -63,8 +63,9 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
             custId= intent.getStringExtra("custId");
         }
 
-        else
+        else {
             task_id = intent.getStringExtra("task_id");
+        }
 
         name.setText(empName);
         designation.setText(empDesig);
@@ -95,7 +96,8 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
             public void onClick(View v) {
                 final String deadline  = enddate.getText().toString().trim();
                 final String cooordnote = note.getText().toString().trim();
-                if(forQuotation==false) {
+                if(forQuotation==false)
+                {
                     DBREF.child("Task").child(task_id).child("name").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {

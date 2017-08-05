@@ -13,14 +13,12 @@ import com.example.rajk.leasingmanagers.R;
 
 import java.util.ArrayList;
 
-public class ViewImageAdapter extends  RecyclerView.Adapter<ViewImageAdapter.MyViewHolder>
-{
+public class ViewImageAdapter extends RecyclerView.Adapter<ViewImageAdapter.MyViewHolder> {
     ArrayList<String> list = new ArrayList<>();
     private Context context;
     public int selectedPosition = 0;
 
-    public ViewImageAdapter(ArrayList<String> list, Context context)
-    {
+    public ViewImageAdapter(ArrayList<String> list, Context context) {
         this.list = list;
         this.context = context;
     }
@@ -35,9 +33,8 @@ public class ViewImageAdapter extends  RecyclerView.Adapter<ViewImageAdapter.MyV
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
-    {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_image_layout,parent,false);
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_image_layout, parent, false);
         return new MyViewHolder(view);
     }
 
@@ -46,7 +43,7 @@ public class ViewImageAdapter extends  RecyclerView.Adapter<ViewImageAdapter.MyV
         String topic = list.get(position);
         holder.img.setImageURI(Uri.parse(topic));
 
-        if(selectedPosition==position)
+        if (selectedPosition == position)
             holder.itemView.setBackgroundColor(Color.parseColor("#000000"));
         else
             holder.itemView.setBackgroundColor(Color.parseColor("#ffffff"));

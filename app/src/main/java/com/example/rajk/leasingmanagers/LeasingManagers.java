@@ -19,7 +19,7 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
     private static LeasingManagers mInstance;
     public static DatabaseReference DBREF,notif;
     public static SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
-
+    String userkey;
     private CoordinatorSession session;
     @Override
     public void onCreate() {
@@ -32,7 +32,7 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
         DBREF = FirebaseDatabase.getInstance().getReference().child("MeChat").getRef();
         notif = DBREF.child("Notification");
         session = new CoordinatorSession(this);
-        String userkey = session.getUsername();
+        userkey = session.getUsername();
         setOnlineStatus(userkey);
         Fresco.initialize(getApplicationContext());
 

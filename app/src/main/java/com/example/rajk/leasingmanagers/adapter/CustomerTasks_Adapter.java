@@ -1,29 +1,23 @@
 package com.example.rajk.leasingmanagers.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
@@ -31,7 +25,7 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
  * Created by RajK on 16-05-2017.
  */
 
-public class CustomerTasks_Adapter extends  RecyclerView.Adapter<CustomerTasks_Adapter.MyViewHolder> {
+public class CustomerTasks_Adapter extends RecyclerView.Adapter<CustomerTasks_Adapter.MyViewHolder> {
     List<String> list = new ArrayList<>();
     private Context context;
     private CustomerTaskAdapterListener listener;
@@ -78,7 +72,7 @@ public class CustomerTasks_Adapter extends  RecyclerView.Adapter<CustomerTasks_A
                     holder.icon_text.setText(iconText.charAt(0) + "");
                     holder.imgProfile.setImageResource(R.drawable.bg_circle);
                     holder.imgProfile.setColorFilter(task.getColor());
-                    holder.timestamp.setText("End Date:"+task.getExpEndDate());
+                    holder.timestamp.setText("End Date:" + task.getExpEndDate());
                     applyClickEvents(holder, position);
                 }
             }
@@ -89,7 +83,7 @@ public class CustomerTasks_Adapter extends  RecyclerView.Adapter<CustomerTasks_A
             }
         });
 
-        }
+    }
 
     @Override
     public int getItemCount() {
@@ -99,10 +93,10 @@ public class CustomerTasks_Adapter extends  RecyclerView.Adapter<CustomerTasks_A
     public interface CustomerTaskAdapterListener {
         void onCustomerTaskRowClicked(int position);
     }
+
     private void applyClickEvents(CustomerTasks_Adapter.MyViewHolder holder, final int position) {
 
-        holder.viewdetail.setOnClickListener(new View.OnClickListener()
-        {
+        holder.viewdetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 listener.onCustomerTaskRowClicked(position);

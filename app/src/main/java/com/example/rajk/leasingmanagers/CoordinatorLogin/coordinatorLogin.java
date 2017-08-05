@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import com.example.rajk.leasingmanagers.LeasingManagers;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.model.Coordinator;
@@ -26,8 +27,8 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 public class coordinatorLogin extends AppCompatActivity {
 
     EditText username, password;
-    Button button,signUp;
-    String Username,Password;
+    Button button, signUp;
+    String Username, Password;
     DatabaseReference database;
     CoordinatorSession session;
     SharedPreferences sharedPreferences;
@@ -39,32 +40,30 @@ public class coordinatorLogin extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.emp_login);
-        signUp = (Button)findViewById(R.id.signUp);
+        signUp = (Button) findViewById(R.id.signUp);
 
-        sharedPreferences = getSharedPreferences("myFCMToken",MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("myFCMToken", MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        if(FirebaseInstanceId.getInstance().getToken()!=null)
-        {
-            editor.putString("myFCMToken",FirebaseInstanceId.getInstance().getToken());
+        if (FirebaseInstanceId.getInstance().getToken() != null) {
+            editor.putString("myFCMToken", FirebaseInstanceId.getInstance().getToken());
             editor.commit();
         }
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(coordinatorLogin.this,CoordinatorSignUp.class));
+                startActivity(new Intent(coordinatorLogin.this, CoordinatorSignUp.class));
                 finish();
             }
         });
         session = new CoordinatorSession(getApplicationContext());
-        if(session.isolduser()==true)
-        {
+        if (session.isolduser() == true) {
             goToTabLayout();
         }
         username = (EditText) findViewById(R.id.editText2);
         password = (EditText) findViewById(R.id.editText3);
         button = (Button) findViewById(R.id.login);
-        input_email = (TextInputLayout)findViewById(R.id.input_emaillogin);
-        input_password = (TextInputLayout)findViewById(R.id.input_passwordlogin);
+        input_email = (TextInputLayout) findViewById(R.id.input_emaillogin);
+        input_password = (TextInputLayout) findViewById(R.id.input_passwordlogin);
         database = DBREF.child("Coordinator").getRef();
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -88,11 +87,10 @@ public class coordinatorLogin extends AppCompatActivity {
                     }
                 }
 
-                if(!TextUtils.isEmpty(Username) && !TextUtils.isEmpty(Password)){
+                if (!TextUtils.isEmpty(Username) && !TextUtils.isEmpty(Password)) {
                     login();
-                }
-                else
-                    Toast.makeText(getBaseContext(),"Enter Complete Details", Toast.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(getBaseContext(), "Enter Complete Details", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -101,50 +99,45 @@ public class coordinatorLogin extends AppCompatActivity {
 
     private void login() {
 
-            database = DBREF.child("Coordinator").child(Username).getRef();
-            database.addListenerForSingleValueEvent(new ValueEventListener() {
+        database = DBREF.child("Coordinator").child(Username).getRef();
+        database.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.exists())
-                    {
-                        Coordinator coordinator = dataSnapshot.getValue(Coordinator.class);
-                        String p = coordinator.getPassword();
-                        if (!Password.equals(coordinator.getPassword())) {
-                            Toast.makeText(getBaseContext(), "Wrong Password", Toast.LENGTH_SHORT).show();
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Coordinator coordinator = dataSnapshot.getValue(Coordinator.class);
+                    String p = coordinator.getPassword();
+                    if (!Password.equals(coordinator.getPassword())) {
+                        Toast.makeText(getBaseContext(), "Wrong Password", Toast.LENGTH_SHORT).show();
+                    } else {
+                        session.create_oldusersession(Username, coordinator.getName(), coordinator.getContact(), coordinator.getAddress());
+                        LeasingManagers.setOnlineStatus(Username);
+                        String myFCMToken;
+                        if (FirebaseInstanceId.getInstance().getToken() == null)
+                            myFCMToken = sharedPreferences.getString("myFCMToken", "");
+
+                        else
+                            myFCMToken = FirebaseInstanceId.getInstance().getToken();
+
+                        if (!myFCMToken.equals("")) {
+                            DBREF.child("Fcmtokens").child(Username).child("token").setValue(myFCMToken);
+                            goToTabLayout();
                         } else
-                        {
-                            session.create_oldusersession(Username,coordinator.getName(),coordinator.getContact(),coordinator.getAddress());
-                            LeasingManagers.setOnlineStatus(Username);
-                            String myFCMToken;
-                            if(FirebaseInstanceId.getInstance().getToken()==null)
-                                myFCMToken =sharedPreferences.getString("myFCMToken","");
-
-                            else
-                                myFCMToken = FirebaseInstanceId.getInstance().getToken();
-
-                            if(!myFCMToken.equals("")) {
-                                DBREF.child("Fcmtokens").child(Username).child("token").setValue(myFCMToken);
-                                goToTabLayout();
-                            }
-                            else
-                                Toast.makeText(coordinatorLogin.this,"You will need to clear the app data or reinstall the app to make it work properly",Toast.LENGTH_LONG).show();
-                        }
+                            Toast.makeText(coordinatorLogin.this, "You will need to clear the app data or reinstall the app to make it work properly", Toast.LENGTH_LONG).show();
                     }
-                    else
-                    {
-                        Toast.makeText(getBaseContext(), "Coordinator Not Registered", Toast.LENGTH_SHORT).show();
-                    }
+                } else {
+                    Toast.makeText(getBaseContext(), "Coordinator Not Registered", Toast.LENGTH_SHORT).show();
                 }
+            }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-                }
-            });
+            }
+        });
     }
-    private void goToTabLayout()
-    {
+
+    private void goToTabLayout() {
         Intent intent = new Intent(this, Tabs.class);
         startActivity(intent);
         finish();

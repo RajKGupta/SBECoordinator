@@ -452,7 +452,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     }
 
     @Override
-    public void onOptionsButtonClicked(final int position, final assignedto_adapter.MyViewHolder holder) {
+    public void onOptionsButtonClicked(final int position, final assignedto_adapter.MyViewHolder holder)
+    {
         open_options = new AlertDialog.Builder(TaskDetail.this)
                 .setView(R.layout.options_forassignedtask).create();
         open_options.show();
@@ -460,10 +461,12 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         LinearLayout remove = (LinearLayout)open_options.findViewById(R.id.remove);
         LinearLayout remind = (LinearLayout)open_options.findViewById(R.id.remind);
         LinearLayout repeatedreminder =(LinearLayout)open_options.findViewById(R.id.repeatedreminder);
+        LinearLayout swap = (LinearLayout)open_options.findViewById(R.id.swap);
 
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(TaskDetail.this);
                 builder.setMessage("Are you sure you want to un-assign this task")
                         .setCancelable(false)
@@ -491,6 +494,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                         });
                 AlertDialog alert = builder.create();
                 alert.show();
+                open_options.dismiss();
             }
         });
 
@@ -502,6 +506,33 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+task.getName();
                 sendNotif(mykey,adapter_assignedto.emp.getEmpId(),"remindJob",contentforother,task_id);
                 Toast.makeText(TaskDetail.this, contentforme, Toast.LENGTH_SHORT).show();
+                open_options.dismiss();
+            }
+        });
+
+        swap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(TaskDetail.this);
+                builder.setMessage("Are you sure you want to swap this task")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int id) {
+                                Intent intent1  = new Intent(TaskDetail.this,forwardTask.class);
+                                intent1.putExtra("task_id",task_id);
+                                intent1.putExtra("swaping_id",adapter_assignedto.emp.getEmpId());
+                                startActivity(intent1);
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+                open_options.dismiss();
             }
         });
 
