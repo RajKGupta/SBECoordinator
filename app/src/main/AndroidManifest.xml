@@ -5,11 +5,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.camera" />
@@ -23,16 +22,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <receiver android:name=".CheckInternetConnectivity.NetWatcher">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.PACKAGE_FIRST_LAUNCH" />
-                <action android:name="android.intent.action.REBOOT" />
-            </intent-filter>
-        </receiver>
 
         <service android:name=".services.MyFirebaseMessagingService">
             <intent-filter>
@@ -56,6 +45,11 @@
         <acivity
             android:name=".Splash"
             android:screenOrientation="portrait" />
+        <receiver android:name=".CheckInternetConnectivity.NetWatcher">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".tablayout.Tabs"
@@ -118,7 +112,11 @@
             android:name=".Quotation.QuotaionTasks"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".notification.NotificationActivity" />
-        <activity android:name=".MyProfile.MyProfile"></activity>
+        <activity android:name=".MyProfile.MyProfile" />
+
+        <service
+            android:name=".services.DeleteTask"
+            android:exported="false"></service>
     </application>
 
 </manifest>
