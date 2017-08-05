@@ -1,31 +1,30 @@
 package com.example.rajk.leasingmanagers.tablayout;
 
-import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
-import com.example.rajk.leasingmanagers.MyProfile.MyProfile;
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.drawer;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
-import com.example.rajk.leasingmanagers.model.Coordinator;
-import com.example.rajk.leasingmanagers.notification.NotificationActivity;
 
-public class Tabs extends AppCompatActivity implements TabLayout.OnTabSelectedListener{
+public class Tabs extends drawer implements TabLayout.OnTabSelectedListener{
 
     private TabLayout tab;
     private ViewPager vpager;
     int page;
     CoordinatorSession session;
     private MarshmallowPermissions marshmallowPermissions;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tabs);
+
+        FrameLayout frame = (FrameLayout)findViewById(R.id.frame);
+        getLayoutInflater().inflate(R.layout.activity_tabs, frame);
+
         marshmallowPermissions = new MarshmallowPermissions(this);
         if(!marshmallowPermissions.checkPermissionForCamera())
             marshmallowPermissions.requestPermissionForCamera();
@@ -77,24 +76,4 @@ public class Tabs extends AppCompatActivity implements TabLayout.OnTabSelectedLi
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.tabsmenu,menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.notif:
-                Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.profile:
-                Intent intent2 = new Intent(getApplicationContext(), MyProfile.class);
-                startActivity(intent2);
-                break;
-        }
-        return true;
-    }
 }

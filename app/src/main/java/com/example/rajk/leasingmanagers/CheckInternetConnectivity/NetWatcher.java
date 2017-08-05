@@ -48,13 +48,12 @@ public class NetWatcher
         if (activeNetwork != null) {
 
             if (activeNetwork.isConnected()) {
-               // Intent intent1 = new Intent(context, SetReminderAlarmService.class);
+                // Intent intent1 = new Intent(context, SetReminderAlarmService.class);
                 //Intent intent2 = new Intent(context, MarkedBookReminderService.class);
-               // context.startService(intent1);
+                // context.startService(intent1);
                 //context.startService(intent2);
 
-            }
-            else {
+            } else {
              /*   Intent intent1 = new Intent(context, SetReminderAlarmService.class);
                 context.stopService(intent1);
                 Intent intent2 = new Intent(context, MarkedBookReminderService.class);

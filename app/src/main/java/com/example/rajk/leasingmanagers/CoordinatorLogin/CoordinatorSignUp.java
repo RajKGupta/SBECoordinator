@@ -23,10 +23,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.apache.commons.lang3.text.WordUtils;
 
-import java.util.jar.Attributes;
-
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
-import static com.example.rajk.leasingmanagers.LeasingManagers.firstLetterCaps;
 
 public class CoordinatorSignUp extends AppCompatActivity {
     EditText username, password, name, contact, address;
@@ -41,18 +38,18 @@ public class CoordinatorSignUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coordinator_sign_up);
 
-        sharedPreferences = getSharedPreferences("myFCMToken",MODE_PRIVATE);
-        name = (EditText)findViewById(R.id.editTextName);
+        sharedPreferences = getSharedPreferences("myFCMToken", MODE_PRIVATE);
+        name = (EditText) findViewById(R.id.editTextName);
         username = (EditText) findViewById(R.id.editText2);
         password = (EditText) findViewById(R.id.editText3);
         contact = (EditText) findViewById(R.id.editText4);
         address = (EditText) findViewById(R.id.editText5);
-        input_email = (TextInputLayout)findViewById(R.id.input_emaillogin);
-        input_password = (TextInputLayout)findViewById(R.id.input_passwordlogin);
-        input_name = (TextInputLayout)findViewById(R.id.input_name);
-        input_contact = (TextInputLayout)findViewById(R.id.input_phonelogin);
-        input_address = (TextInputLayout)findViewById(R.id.input_addresslogin);
-        signUp = (Button)findViewById(R.id.signUpButton);
+        input_email = (TextInputLayout) findViewById(R.id.input_emaillogin);
+        input_password = (TextInputLayout) findViewById(R.id.input_passwordlogin);
+        input_name = (TextInputLayout) findViewById(R.id.input_name);
+        input_contact = (TextInputLayout) findViewById(R.id.input_phonelogin);
+        input_address = (TextInputLayout) findViewById(R.id.input_addresslogin);
+        signUp = (Button) findViewById(R.id.signUpButton);
         session = new CoordinatorSession(getApplicationContext());
 
         signUp.setOnClickListener(new View.OnClickListener() {
@@ -104,16 +101,13 @@ public class CoordinatorSignUp extends AppCompatActivity {
                     }
                 }
 
-                if(!TextUtils.isEmpty(Username) && !TextUtils.isEmpty(Password)&& !TextUtils.isEmpty(Name) && !TextUtils.isEmpty(Contact) && !TextUtils.isEmpty(Address)){
+                if (!TextUtils.isEmpty(Username) && !TextUtils.isEmpty(Password) && !TextUtils.isEmpty(Name) && !TextUtils.isEmpty(Contact) && !TextUtils.isEmpty(Address)) {
                     DBREF.child("Coordinator").child(Username).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.exists())
-                            {
+                            if (dataSnapshot.exists()) {
                                 Toast.makeText(getBaseContext(), "Coordinator Already Registered", Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
+                            } else {
                                 login();
                             }
                         }
@@ -123,21 +117,20 @@ public class CoordinatorSignUp extends AppCompatActivity {
 
                         }
                     });
-                }
-                else
-                    Toast.makeText(getBaseContext(),"Enter Complete Details", Toast.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(getBaseContext(), "Enter Complete Details", Toast.LENGTH_SHORT).show();
 
             }
         });
     }
 
     private void login() {
-        DBREF.child("Coordinator").child(Username).setValue(new Coordinator(Name,Username,Password,Contact,Address));
-        session.create_oldusersession(Username,Name, Contact, Address);
+        DBREF.child("Coordinator").child(Username).setValue(new Coordinator(Name, Username, Password, Contact, Address));
+        session.create_oldusersession(Username, Name, Contact, Address);
         LeasingManagers.setOnlineStatus(Username);
 
-            DBREF.child("Users").child("Usersessions").child(Username).child("name").setValue(Name);
-            DBREF.child("Users").child("Usersessions").child(Username).child("num").setValue(Contact);
+        DBREF.child("Users").child("Usersessions").child(Username).child("name").setValue(Name);
+        DBREF.child("Users").child("Usersessions").child(Username).child("num").setValue(Contact);
         String myFCMToken;
         if (FirebaseInstanceId.getInstance().getToken() == null)
             myFCMToken = sharedPreferences.getString("myFCMToken", "");
@@ -152,8 +145,8 @@ public class CoordinatorSignUp extends AppCompatActivity {
         } else
             Toast.makeText(CoordinatorSignUp.this, "You will need to clear the app data or reinstall the app to make it work properly", Toast.LENGTH_LONG).show();
     }
-    private void goToTabLayout()
-    {
+
+    private void goToTabLayout() {
         Intent intent = new Intent(this, Tabs.class);
         startActivity(intent);
         finish();

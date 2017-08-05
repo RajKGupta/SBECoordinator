@@ -13,24 +13,17 @@ import android.widget.TextView;
 
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.model.Notif;
-import com.example.rajk.leasingmanagers.model.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
-
 /**
  * Created by SoumyaAgarwal on 7/20/2017.
  */
 
-public class notification_adapter extends  RecyclerView.Adapter<notification_adapter.MyViewHolder> {
+public class notification_adapter extends RecyclerView.Adapter<notification_adapter.MyViewHolder> {
     List<Notif> list = new ArrayList<>();
     private Context context;
     private NotificationAdapterListener listener;
@@ -49,12 +42,12 @@ public class notification_adapter extends  RecyclerView.Adapter<notification_ada
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            notif_message = (TextView)itemView.findViewById(R.id.notification_message);
+            notif_message = (TextView) itemView.findViewById(R.id.notification_message);
             notif_timestamp = (TextView) itemView.findViewById(R.id.notification_time);
             icon_text = (TextView) itemView.findViewById(R.id.icon_text);
             imgProfile = (ImageView) itemView.findViewById(R.id.icon_profile);
             notif_sender = (TextView) itemView.findViewById(R.id.notification_sender);
-            row = (LinearLayout)itemView.findViewById(R.id.row);
+            row = (LinearLayout) itemView.findViewById(R.id.row);
         }
 
     }
@@ -66,20 +59,19 @@ public class notification_adapter extends  RecyclerView.Adapter<notification_ada
     }
 
     @Override
-    public void onBindViewHolder(final notification_adapter.MyViewHolder holder, final int position)
-    {
+    public void onBindViewHolder(final notification_adapter.MyViewHolder holder, final int position) {
         Notif notif = list.get(position);
 
         holder.notif_sender.setText(notif.getSenderId());
         holder.notif_message.setText(notif.getContent());
         String caps = notif.getSenderId().toUpperCase();
-        holder.icon_text.setText(caps.charAt(0)+"");
-        applyClickEvents(holder,position);
+        holder.icon_text.setText(caps.charAt(0) + "");
+        applyClickEvents(holder, position);
         applyProfilePicture(holder);
 
         String timestamp = formatter.format(Calendar.getInstance().getTime());
-        String senderTimestamp = notif.getTimestamp().substring(0,11);
-        if(timestamp.equals(senderTimestamp))
+        String senderTimestamp = notif.getTimestamp().substring(0, 11);
+        if (timestamp.equals(senderTimestamp))
             senderTimestamp = notif.getTimestamp().substring(12).trim();
 
         holder.notif_timestamp.setText(senderTimestamp);
@@ -117,8 +109,7 @@ public class notification_adapter extends  RecyclerView.Adapter<notification_ada
 
     private void applyClickEvents(MyViewHolder holder, final int position) {
 
-        holder.row.setOnClickListener(new View.OnClickListener()
-        {
+        holder.row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 listener.onNotificationRowClicked(position);

@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.chatListAdapter;
@@ -24,16 +25,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
-/**
- * Created by ghanendra on 14/06/2017.
- */
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 public class ChatFragment extends Fragment implements chatListAdapter.chatListAdapterListener {
     private View myFragmentView;
@@ -43,9 +42,9 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
     private DatabaseReference dbChatList;
     private String mykey;
     private chatListAdapter mAdapter;
-    private HashMap<DatabaseReference,ValueEventListener> dbLastMessageHashMap = new HashMap<>();
+    private HashMap<DatabaseReference, ValueEventListener> dbLastMessageHashMap = new HashMap<>();
     private ChildEventListener dbChatCHE;
-    private HashMap<DatabaseReference,ValueEventListener> dbProfileRefHashMap = new HashMap<>();
+    private HashMap<DatabaseReference, ValueEventListener> dbProfileRefHashMap = new HashMap<>();
 
     public static ChatFragment newInstance() {
         ChatFragment fragment = new ChatFragment();
@@ -79,13 +78,12 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
-        mAdapter = new chatListAdapter(list,getActivity(),this);
+        mAdapter = new chatListAdapter(list, getActivity(), this);
         recyclerView.setAdapter(mAdapter);
         LoadData();
     }
 
-    private void LoadData()
-    {
+    private void LoadData() {
 
         dbChatCHE = dbChatList.addChildEventListener(new ChildEventListener() {
             @Override
@@ -98,23 +96,20 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
                     ValueEventListener dbLastMsgChildEventListener = dbLastMsg.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.exists())
-                            {
+                            if (dataSnapshot.exists()) {
                                 boolean alreadyexists = false;
-                                for(ChatListModel chatListModel:list)
-                                {
-                                    if(chatListModel.getDbTableKey().equals(dbTablekey))
-                                    {
+                                for (ChatListModel chatListModel : list) {
+                                    if (chatListModel.getDbTableKey().equals(dbTablekey)) {
                                         list.remove(chatListModel);
                                         chatListModel.setLastMsg(dataSnapshot.getValue(Long.class));
                                         list.add(chatListModel);
                                         sortChatList();
-                                        alreadyexists=true;
+                                        alreadyexists = true;
                                         mAdapter.notifyDataSetChanged();
                                         break;
                                     }
                                 }
-                                if(!alreadyexists) {
+                                if (!alreadyexists) {
                                     final Long lastMsgId = dataSnapshot.getValue(Long.class);
                                     DatabaseReference dbProfileRef = DBREF.child("Users").child("Usersessions").child(otheruserkey).getRef();
 
@@ -125,20 +120,19 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
                                                 boolean alreadyexists = false;
                                                 NameAndStatus user = dataSnapshot.getValue(NameAndStatus.class);
                                                 for (ChatListModel chatListModel : list) {
-                                                    if(chatListModel.getUserkey().equals(dataSnapshot.getKey())) {
-                                                        alreadyexists=true;
+                                                    if (chatListModel.getUserkey().equals(dataSnapshot.getKey())) {
+                                                        alreadyexists = true;
                                                         break;
-                                                        }
-
                                                     }
-                                                    if(!alreadyexists)
-                                                    {
-                                                        ChatListModel chatListModel = new ChatListModel(user.getName(), otheruserkey, dbTablekey, getRandomMaterialColor("400"), lastMsgId);
-                                                        list.add(chatListModel);
-                                                        sortChatList();
-                                                        mAdapter.notifyDataSetChanged();
 
-                                                    }
+                                                }
+                                                if (!alreadyexists) {
+                                                    ChatListModel chatListModel = new ChatListModel(user.getName(), otheruserkey, dbTablekey, getRandomMaterialColor("400"), lastMsgId);
+                                                    list.add(chatListModel);
+                                                    sortChatList();
+                                                    mAdapter.notifyDataSetChanged();
+
+                                                }
                                             }
                                         }
 
@@ -158,10 +152,11 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
 
                         }
                     });
-                        dbLastMessageHashMap.put(dbLastMsg,dbLastMsgChildEventListener);
+                    dbLastMessageHashMap.put(dbLastMsg, dbLastMsgChildEventListener);
 
                 }
             }
+
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
@@ -187,18 +182,18 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Iterator<HashMap.Entry<DatabaseReference,ValueEventListener>> iterator = dbLastMessageHashMap.entrySet().iterator();
+        Iterator<HashMap.Entry<DatabaseReference, ValueEventListener>> iterator = dbLastMessageHashMap.entrySet().iterator();
         while (iterator.hasNext()) {
-            HashMap.Entry<DatabaseReference,ValueEventListener> entry = (HashMap.Entry<DatabaseReference,ValueEventListener>) iterator.next();
-            if(entry.getValue()!=null)
-            entry.getKey().removeEventListener(entry.getValue());
+            HashMap.Entry<DatabaseReference, ValueEventListener> entry = (HashMap.Entry<DatabaseReference, ValueEventListener>) iterator.next();
+            if (entry.getValue() != null)
+                entry.getKey().removeEventListener(entry.getValue());
         }
-        Iterator<HashMap.Entry<DatabaseReference,ValueEventListener>> iterator2 = dbProfileRefHashMap.entrySet().iterator();
+        Iterator<HashMap.Entry<DatabaseReference, ValueEventListener>> iterator2 = dbProfileRefHashMap.entrySet().iterator();
         while (iterator.hasNext()) {
-            HashMap.Entry<DatabaseReference,ValueEventListener> entry = (HashMap.Entry<DatabaseReference,ValueEventListener>) iterator2.next();
-            if(entry.getValue()!=null) entry.getKey().removeEventListener(entry.getValue());
+            HashMap.Entry<DatabaseReference, ValueEventListener> entry = (HashMap.Entry<DatabaseReference, ValueEventListener>) iterator2.next();
+            if (entry.getValue() != null) entry.getKey().removeEventListener(entry.getValue());
         }
-        if(dbChatCHE!=null)
+        if (dbChatCHE != null)
             dbChatList.removeEventListener(dbChatCHE);
         mAdapter.removeListeners();
 
@@ -219,20 +214,20 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
 
     @Override
     public void onChatRowClicked(int position) {
-        final Intent intent = new Intent(getActivity(),ChatActivity.class);
+        final Intent intent = new Intent(getActivity(), ChatActivity.class);
         ChatListModel topic = list.get(position);
-        intent.putExtra("dbTableKey",topic.getDbTableKey());
-        intent.putExtra("otheruserkey",topic.getUserkey());
+        intent.putExtra("dbTableKey", topic.getDbTableKey());
+        intent.putExtra("otheruserkey", topic.getUserkey());
 
         startActivity(intent);
 
     }
-    private void sortChatList()
-    {
+
+    private void sortChatList() {
         Collections.sort(list, new Comparator<ChatListModel>() {
             @Override
             public int compare(ChatListModel o1, ChatListModel o2) {
-                return o1.getLastMsg()>o2.getLastMsg()?-1:0;
+                return o1.getLastMsg() > o2.getLastMsg() ? -1 : 0;
             }
         });
     }

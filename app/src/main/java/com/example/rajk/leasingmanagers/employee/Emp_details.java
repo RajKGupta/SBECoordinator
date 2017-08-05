@@ -186,7 +186,8 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         } else {
             db.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(DataSnapshot dataSnapshot)
+                {
                     for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                         listoftasks.add(childSnapshot.getKey());
                         mAdapter.notifyDataSetChanged();
