@@ -1,16 +1,19 @@
 package com.example.rajk.leasingmanagers.chat;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -91,6 +94,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     CompressMe compressMe;
     private AlertDialog viewSelectedImages;
     ViewImageAdapter adapter;
+    String num="8889432471";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,12 +116,14 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         otheruserkey = intent.getStringExtra("otheruserkey");
 
         dbOnlineStatus = DBREF.child("Users").child("Usersessions").child(otheruserkey).getRef();
+
         dbOnlineStatusVle = dbOnlineStatus.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
 
                     NameAndStatus nameAndStatus = dataSnapshot.getValue(NameAndStatus.class);
+                    num = nameAndStatus.getNum();
                     getSupportActionBar().setTitle(nameAndStatus.getName());
                     if (nameAndStatus.getOnline()) {
                         getSupportActionBar().setSubtitle("Online");
@@ -468,6 +474,9 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         switch (item.getItemId()) {
             case R.id.item1:
                 //TODO Phone call
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse("tel:"+ num));
+                startActivity(callIntent);
                 break;
         }
         return true;

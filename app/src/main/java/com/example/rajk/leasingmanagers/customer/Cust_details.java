@@ -2,6 +2,7 @@ package com.example.rajk.leasingmanagers.customer;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -134,6 +135,10 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
             @Override
             public void onClick(View v) {
                 //TODO phone call
+
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse("tel:"+ num));
+                startActivity(callIntent);
             }
         });
 
