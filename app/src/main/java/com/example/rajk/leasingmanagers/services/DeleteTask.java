@@ -13,9 +13,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import javax.net.ssl.SSLSession;
-
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 
@@ -89,20 +86,17 @@ public class DeleteTask extends IntentService {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         for(DataSnapshot ds:dataSnapshot.getChildren()) {
-                            String item = ds.getValue(String.class);
-                            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-                            String ref = storageRef.getPath();
-                            final String url = item.substring(ref.length() - 1);
-                            StorageReference imageref = storageRef.child(url);
-                            imageref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            final String item = ds.getValue(String.class);
+                            StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(item);
+                            storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Toast.makeText(DeleteTask.this, url + " deleted successfully", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(DeleteTask.this, item + " deleted successfully", Toast.LENGTH_SHORT).show();
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception exception) {
-                                    Toast.makeText(DeleteTask.this, url + " does not exist", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(DeleteTask.this, item + " does not exist", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -121,9 +115,8 @@ public class DeleteTask extends IntentService {
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
                             measurement item = ds.getValue(measurement.class);
-                            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-                            String ref = storageRef.getPath();
-                            final String url = item.getFleximage().substring(ref.length() - 1);
+                            final String url = item.getFleximage();
+                            StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(url);
                             StorageReference imageref = storageRef.child(url);
                             imageref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override

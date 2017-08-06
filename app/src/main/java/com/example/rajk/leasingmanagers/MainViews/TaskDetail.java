@@ -50,6 +50,7 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener{
     
     private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned,dbMeasurement,dbDescImages;
+    ValueEventListener dbTaskVle;
     ImageButton download;
     ProgressBar progressBar;
     private String task_id,mykey;
@@ -138,7 +139,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
         prepareListData();
 
-        dbTask.addValueEventListener(new ValueEventListener() {
+        dbTaskVle = dbTask.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 task = dataSnapshot.getValue(Task.class);
@@ -394,10 +395,15 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
     void setValue(Task task)
     {
+        if(task.getStartDate()!=null)
         startDate.setText(task.getStartDate());
+
+        if(task.getExpEndDate()!=null)
         endDate.setText(task.getExpEndDate());
+
+        if(task.getQty()!=null)
         quantity.setText(task.getQty());
-        if (!task.getDesc().equals("")) {
+        if (!task.getDesc().equals("")&&task.getDesc()!=null) {
             description.setVisibility(View.VISIBLE);
             description.setText(task.getDesc());
         }
@@ -408,6 +414,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 {
                     appByCustomer.setVisibility(View.VISIBLE);
                     Quotation quotation = dataSnapshot.getValue(Quotation.class);
+                    if(quotation.getApprovedByCust()!=null)
                     appByCustomer.setText(" "+quotation.getApprovedByCust());
                     uploadStatus.setText(" Yes");
                 }
@@ -595,6 +602,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                         .setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, final int id) {
+                                if(dbTaskVle!=null)
+                                    dbTask.removeEventListener(dbTaskVle);
                                 final ProgressDialog progressDialog = new ProgressDialog(TaskDetail.this);
                                 progressDialog.setMessage("Deleting Task");
                                 progressDialog.setCancelable(false);
@@ -647,4 +656,10 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         return true;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(dbTaskVle!=null)
+            dbTask.removeEventListener(dbTaskVle);
+    }
 }
