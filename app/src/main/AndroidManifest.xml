@@ -117,6 +117,10 @@
         <service
             android:name=".services.DeleteTask"
             android:exported="false"></service>
+
+        <activity android:name=".MyProfile.ContactCoordinator"/>
+        <activity android:name=".MyProfile.phonebook"></activity>
+
     </application>
 
 </manifest>

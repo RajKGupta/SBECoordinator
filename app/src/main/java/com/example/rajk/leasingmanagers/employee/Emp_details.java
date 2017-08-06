@@ -59,7 +59,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     private RecyclerView.Adapter mAdapter;
     List<String> listoftasks;
     List<QuotationBatch> listofquotations;
-    private AlertDialog open_options ;
+    private AlertDialog open_options;
     CoordinatorSession coordinatorSession;
     String mykey, dbTablekey;
     public static String emp_id;
@@ -128,10 +128,8 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         callme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO phone call
-
                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                callIntent.setData(Uri.parse("tel:"+ num));
+                callIntent.setData(Uri.parse("tel:" + num));
                 startActivity(callIntent);
             }
         });
@@ -191,8 +189,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         } else {
             db.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot)
-                {
+                public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                         listoftasks.add(childSnapshot.getKey());
                         mAdapter.notifyDataSetChanged();
@@ -279,9 +276,9 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                 .setView(R.layout.optionsfor_employeestask).create();
         open_options.show();
 
-        LinearLayout remove = (LinearLayout)open_options.findViewById(R.id.remove);
-        LinearLayout remind = (LinearLayout)open_options.findViewById(R.id.remind);
-        LinearLayout info = (LinearLayout)open_options.findViewById(R.id.info);
+        LinearLayout remove = (LinearLayout) open_options.findViewById(R.id.remove);
+        LinearLayout remind = (LinearLayout) open_options.findViewById(R.id.remind);
+        LinearLayout info = (LinearLayout) open_options.findViewById(R.id.info);
 
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -298,10 +295,10 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                                 dbEmployee.removeValue(); //for employee
                                 final String task_id = listoftasks.get(position);
                                 String taskName = holder.employeename.getText().toString().trim();
-                                String contentforme = "You relieved "+name+" of "+taskName;
-                                sendNotif(mykey,mykey,"cancelJob",contentforme,task_id);
-                                String contentforother= "Coordinator "+coordinatorSession.getName()+" relieved you of "+taskName;
-                                sendNotif(mykey,id,"cancelJob",contentforother,task_id);
+                                String contentforme = "You relieved " + name + " of " + taskName;
+                                sendNotif(mykey, mykey, "cancelJob", contentforme, task_id);
+                                String contentforother = "Coordinator " + coordinatorSession.getName() + " relieved you of " + taskName;
+                                sendNotif(mykey, id, "cancelJob", contentforother, task_id);
                                 listoftasks.remove(position);
                                 mAdapter.notifyDataSetChanged();
                                 dialog.dismiss();
@@ -309,7 +306,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
 
                             }
                         })
-                        .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.dismiss();
                             }
@@ -324,18 +321,18 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
             public void onClick(View v) {
                 final String task_id = listoftasks.get(position);
                 String taskName = holder.employeename.getText().toString().trim();
-                String contentforme = "You reminder "+name+" for "+taskName;
-                sendNotif(mykey,mykey,"remindJob",contentforme,task_id);
-                String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+taskName;
-                sendNotif(mykey,id,"remindJob",contentforother,task_id);
+                String contentforme = "You reminder " + name + " for " + taskName;
+                sendNotif(mykey, mykey, "remindJob", contentforme, task_id);
+                String contentforother = "Coordinator " + coordinatorSession.getName() + " reminded you of " + taskName;
+                sendNotif(mykey, id, "remindJob", contentforother, task_id);
             }
         });
 
         info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),TaskDetail.class);
-                intent.putExtra("task_id",listoftasks.get(position));
+                Intent intent = new Intent(getApplicationContext(), TaskDetail.class);
+                intent.putExtra("task_id", listoftasks.get(position));
                 startActivity(intent);
             }
         });

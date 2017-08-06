@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.ForwardTask.forwardTask;
 import com.example.rajk.leasingmanagers.R;
@@ -42,22 +43,24 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 
-public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener{
-    
-    private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned,dbMeasurement,dbDescImages;
+public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener {
+
+    private DatabaseReference dbRef, dbTask, dbCompleted, dbAssigned, dbMeasurement, dbDescImages;
     ImageButton download;
     ProgressBar progressBar;
-    private String task_id,mykey;
+    private String task_id, mykey;
     private Task task;
     private String customername;
-    EditText startDate,endDate,quantity,description;
-    RecyclerView rec_assignedto,rec_completedby,rec_measurement, rec_DescImages ;
-    assignedto_adapter adapter_assignedto,adapter_completedby;
+    EditText startDate, endDate, quantity, description;
+    RecyclerView rec_assignedto, rec_completedby, rec_measurement, rec_DescImages;
+    assignedto_adapter adapter_assignedto, adapter_completedby;
     taskdetailDescImageAdapter adapter_taskimages;
     ArrayList<String> DescImages = new ArrayList<>();
     List<CompletedBy> assignedtoList = new ArrayList<>();
@@ -65,11 +68,11 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     List<CompletedBy> completedbyList = new ArrayList<>();
     ArrayList<measurement> measurementList = new ArrayList<>();
     measurement_adapter adapter_measurement;
-    TextView measure_and_hideme, assign_and_hideme, complete_and_hideme, appByCustomer,uploadStatus;
+    TextView measure_and_hideme, assign_and_hideme, complete_and_hideme, appByCustomer, uploadStatus;
     DatabaseReference dbQuotation;
-    ProgressDialog progressDialog ;
+    ProgressDialog progressDialog;
     private MarshmallowPermissions marshmallowPermissions;
-    private AlertDialog viewSelectedImages, open_options ;
+    private AlertDialog viewSelectedImages, open_options;
     LinearLayoutManager linearLayoutManager;
     bigimage_adapter adapter;
     private CoordinatorSession coordinatorSession;
@@ -81,26 +84,26 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
         coordinatorSession = new CoordinatorSession(this);
         mykey = coordinatorSession.getUsername();
-        marshmallowPermissions =new MarshmallowPermissions(this);
+        marshmallowPermissions = new MarshmallowPermissions(this);
         dbRef = DBREF;
         progressDialog = new ProgressDialog(this);
-        download = (ImageButton)findViewById(R.id.download);
-        progressBar = (ProgressBar)findViewById(R.id.progress);
-        uploadStatus = (TextView)findViewById(R.id.uploadStatus);
-        appByCustomer = (TextView)findViewById(R.id.appByCustomer);
-        measure_and_hideme = (TextView)findViewById(R.id.measure_and_hideme);
-        assign_and_hideme = (TextView)findViewById(R.id.assign_and_hideme);
-        complete_and_hideme = (TextView)findViewById(R.id.complete_and_hideme);
+        download = (ImageButton) findViewById(R.id.download);
+        progressBar = (ProgressBar) findViewById(R.id.progress);
+        uploadStatus = (TextView) findViewById(R.id.uploadStatus);
+        appByCustomer = (TextView) findViewById(R.id.appByCustomer);
+        measure_and_hideme = (TextView) findViewById(R.id.measure_and_hideme);
+        assign_and_hideme = (TextView) findViewById(R.id.assign_and_hideme);
+        complete_and_hideme = (TextView) findViewById(R.id.complete_and_hideme);
 
-        forward = (FloatingActionButton)findViewById(R.id.forward);
+        forward = (FloatingActionButton) findViewById(R.id.forward);
         startDate = (EditText) findViewById(R.id.startDate);
         endDate = (EditText) findViewById(R.id.endDate);
-        quantity=(EditText) findViewById(R.id.quantity);
+        quantity = (EditText) findViewById(R.id.quantity);
         description = (EditText) findViewById(R.id.description);
-        rec_assignedto = (RecyclerView)findViewById(R.id.rec_assignedto);
-        rec_completedby = (RecyclerView)findViewById(R.id.rec_completedby);
-        rec_measurement = (RecyclerView)findViewById(R.id.rec_measurement);
-        rec_DescImages = (RecyclerView)findViewById(R.id.rec_DescImages);
+        rec_assignedto = (RecyclerView) findViewById(R.id.rec_assignedto);
+        rec_completedby = (RecyclerView) findViewById(R.id.rec_completedby);
+        rec_measurement = (RecyclerView) findViewById(R.id.rec_measurement);
+        rec_DescImages = (RecyclerView) findViewById(R.id.rec_DescImages);
 
         Intent intent = getIntent();
         task_id = intent.getStringExtra("task_id");
@@ -108,13 +111,13 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         rec_assignedto.setLayoutManager(new LinearLayoutManager(this));
         rec_assignedto.setItemAnimator(new DefaultItemAnimator());
         rec_assignedto.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        adapter_assignedto = new assignedto_adapter(assignedtoList, getApplicationContext(),"AssignedTo",task_id,this);
+        adapter_assignedto = new assignedto_adapter(assignedtoList, getApplicationContext(), "AssignedTo", task_id, this);
         rec_assignedto.setAdapter(adapter_assignedto);
 
         rec_completedby.setLayoutManager(new LinearLayoutManager(this));
         rec_completedby.setItemAnimator(new DefaultItemAnimator());
         rec_completedby.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        adapter_completedby = new assignedto_adapter(completedbyList, getApplicationContext(),"CompletedBy",task_id,this);
+        adapter_completedby = new assignedto_adapter(completedbyList, getApplicationContext(), "CompletedBy", task_id, this);
         rec_completedby.setAdapter(adapter_completedby);
 
         rec_measurement.setLayoutManager(new LinearLayoutManager(this));
@@ -123,10 +126,10 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         adapter_measurement = new measurement_adapter(measurementList, this);
         rec_measurement.setAdapter(adapter_measurement);
 
-        rec_DescImages.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+        rec_DescImages.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rec_DescImages.setItemAnimator(new DefaultItemAnimator());
         rec_DescImages.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.HORIZONTAL));
-        adapter_taskimages = new taskdetailDescImageAdapter(DescImages, getApplicationContext(),this);
+        adapter_taskimages = new taskdetailDescImageAdapter(DescImages, getApplicationContext(), this);
         rec_DescImages.setAdapter(adapter_taskimages);
 
         dbTask = dbRef.child("Task").child(task_id);
@@ -144,7 +147,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 task = dataSnapshot.getValue(Task.class);
                 setValue(task);
                 getSupportActionBar().setTitle(task.getName());
-                DatabaseReference dbCustomerName =DBREF.child("Customer").child(task.getCustomerId()).getRef();
+                DatabaseReference dbCustomerName = DBREF.child("Customer").child(task.getCustomerId()).getRef();
                 dbCustomerName.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -167,8 +170,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         forward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent1  = new Intent(TaskDetail.this,forwardTask.class);
-                intent1.putExtra("task_id",task_id);
+                Intent intent1 = new Intent(TaskDetail.this, forwardTask.class);
+                intent1.putExtra("task_id", task_id);
                 startActivity(intent1);
                 finish();
             }
@@ -177,24 +180,23 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            if(!marshmallowPermissions.checkPermissionForCamera())
-            {
-                marshmallowPermissions.requestPermissionForExternalStorage();
-                if(!marshmallowPermissions.checkPermissionForExternalStorage())
-                showToast("Cannot Download because external storage permission not granted");
-                else
-                launchLibrary();
-            } else {
+                if (!marshmallowPermissions.checkPermissionForCamera()) {
+                    marshmallowPermissions.requestPermissionForExternalStorage();
+                    if (!marshmallowPermissions.checkPermissionForExternalStorage())
+                        showToast("Cannot Download because external storage permission not granted");
+                    else
+                        launchLibrary();
+                } else {
 
                     launchLibrary();
-                    }
+                }
             }
         });
 
     }
 
     private void showToast(String message) {
-        Toast.makeText(this,message,Toast.LENGTH_LONG).show();
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -208,8 +210,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
     }
 
-    private void launchLibrary()
-    {
+    private void launchLibrary() {
         //TODO : loader aur completion of download show karna hai
         //download.setVisibility(View.GONE);
         //progressBar.setVisibility(View.VISIBLE);
@@ -224,9 +225,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                     serviceIntent.putExtra("TaskId", task_id);
                     serviceIntent.putExtra("url", url[0]);
                     startService(serviceIntent);
-                }
-                else
-                {
+                } else {
                     Toast.makeText(TaskDetail.this, "No Quotation Uploaded Yet", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -239,8 +238,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
     }
 
-    private void prepareListData()
-    {
+    private void prepareListData() {
         dbCompleted.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -249,9 +247,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                     CompletedBy item = dataSnapshot.getValue(CompletedBy.class);
                     completedbyList.add(item);
                     adapter_completedby.notifyDataSetChanged();
-                }
-                else
-                {
+                } else {
                     complete_and_hideme.setVisibility(View.VISIBLE);
                 }
             }
@@ -287,9 +283,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                     CompletedBy item = dataSnapshot.getValue(CompletedBy.class);
                     assignedtoList.add(item);
                     adapter_assignedto.notifyDataSetChanged();
-                }
-                else
-                {
+                } else {
                     assign_and_hideme.setVisibility(View.VISIBLE);
                 }
             }
@@ -319,16 +313,13 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
         dbMeasurement.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s)
-            {
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
                     measure_and_hideme.setVisibility(View.GONE);
                     measurement item = dataSnapshot.getValue(measurement.class);
                     measurementList.add(item);
                     adapter_measurement.notifyDataSetChanged();
-                }
-                else
-                {
+                } else {
                     measure_and_hideme.setVisibility(View.VISIBLE);
                 }
             }
@@ -356,11 +347,9 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             }
         });
 
-        //TODO : image ko download karwana hai kya ?
         dbDescImages.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s)
-            {
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
                     rec_DescImages.setVisibility(View.VISIBLE);
                     String item = dataSnapshot.getValue(String.class);
@@ -380,6 +369,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 DescImages.remove(item);
                 adapter_taskimages.notifyDataSetChanged();
             }
+
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
@@ -392,8 +382,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         });
     }
 
-    void setValue(Task task)
-    {
+    void setValue(Task task) {
         startDate.setText(task.getStartDate());
         endDate.setText(task.getExpEndDate());
         quantity.setText(task.getQty());
@@ -404,15 +393,12 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         dbQuotation.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists())
-                {
+                if (dataSnapshot.exists()) {
                     appByCustomer.setVisibility(View.VISIBLE);
                     Quotation quotation = dataSnapshot.getValue(Quotation.class);
-                    appByCustomer.setText(" "+quotation.getApprovedByCust());
+                    appByCustomer.setText(" " + quotation.getApprovedByCust());
                     uploadStatus.setText(" Yes");
-                }
-                else
-                {
+                } else {
                     appByCustomer.setVisibility(View.GONE);
                     uploadStatus.setText(" No");
                 }
@@ -432,14 +418,14 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 .setView(R.layout.view_image_on_click).create();
         viewSelectedImages.show();
 
-        RecyclerView bigimage = (RecyclerView)viewSelectedImages.findViewById(R.id.bigimage);
+        RecyclerView bigimage = (RecyclerView) viewSelectedImages.findViewById(R.id.bigimage);
 
-        linearLayoutManager = new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false);
+        linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
         bigimage.setLayoutManager(linearLayoutManager);
         bigimage.setItemAnimator(new DefaultItemAnimator());
         bigimage.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.HORIZONTAL));
 
-        adapter = new bigimage_adapter(DescImages, this,this);
+        adapter = new bigimage_adapter(DescImages, this, this);
         bigimage.setAdapter(adapter);
 
         bigimage.scrollToPosition(position);
@@ -452,21 +438,19 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     }
 
     @Override
-    public void onOptionsButtonClicked(final int position, final assignedto_adapter.MyViewHolder holder)
-    {
+    public void onOptionsButtonClicked(final int position, final assignedto_adapter.MyViewHolder holder) {
         open_options = new AlertDialog.Builder(TaskDetail.this)
                 .setView(R.layout.options_forassignedtask).create();
         open_options.show();
 
-        LinearLayout remove = (LinearLayout)open_options.findViewById(R.id.remove);
-        LinearLayout remind = (LinearLayout)open_options.findViewById(R.id.remind);
-        LinearLayout repeatedreminder =(LinearLayout)open_options.findViewById(R.id.repeatedreminder);
-        LinearLayout swap = (LinearLayout)open_options.findViewById(R.id.swap);
+        LinearLayout remove = (LinearLayout) open_options.findViewById(R.id.remove);
+        LinearLayout remind = (LinearLayout) open_options.findViewById(R.id.remind);
+        LinearLayout repeatedreminder = (LinearLayout) open_options.findViewById(R.id.repeatedreminder);
+        LinearLayout swap = (LinearLayout) open_options.findViewById(R.id.swap);
 
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(TaskDetail.this);
                 builder.setMessage("Are you sure you want to un-assign this task")
                         .setCancelable(false)
@@ -477,17 +461,17 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
                                 DatabaseReference dbEmployee = DBREF.child("Employee").child(adapter_assignedto.emp.getEmpId()).child("AssignedTask").child(task_id);
                                 dbEmployee.removeValue(); //for employee
-                                String contentforme = "You relieved "+holder.employeename.getText().toString().trim()+" of "+task.getName();
-                                sendNotif(mykey,mykey,"cancelJob",contentforme,task_id);
-                                String contentforother= "Coordinator "+coordinatorSession.getName()+" relieved you of "+task.getName();
-                                sendNotif(mykey,adapter_assignedto.emp.getEmpId(),"cancelJob",contentforother,task_id);
+                                String contentforme = "You relieved " + holder.employeename.getText().toString().trim() + " of " + task.getName();
+                                sendNotif(mykey, mykey, "cancelJob", contentforme, task_id);
+                                String contentforother = "Coordinator " + coordinatorSession.getName() + " relieved you of " + task.getName();
+                                sendNotif(mykey, adapter_assignedto.emp.getEmpId(), "cancelJob", contentforother, task_id);
                                 Toast.makeText(TaskDetail.this, contentforme, Toast.LENGTH_SHORT).show();
                                 assignedtoList.remove(position);
                                 adapter_assignedto.notifyDataSetChanged();
                                 dialog.dismiss();
                             }
                         })
-                        .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.dismiss();
                             }
@@ -501,10 +485,10 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         remind.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String contentforme = "You reminded "+holder.employeename.getText().toString().trim() +" for "+task.getName();
-                sendNotif(mykey,mykey,"remindJob",contentforme,task_id);
-                String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+task.getName();
-                sendNotif(mykey,adapter_assignedto.emp.getEmpId(),"remindJob",contentforother,task_id);
+                String contentforme = "You reminded " + holder.employeename.getText().toString().trim() + " for " + task.getName();
+                sendNotif(mykey, mykey, "remindJob", contentforme, task_id);
+                String contentforother = "Coordinator " + coordinatorSession.getName() + " reminded you of " + task.getName();
+                sendNotif(mykey, adapter_assignedto.emp.getEmpId(), "remindJob", contentforother, task_id);
                 Toast.makeText(TaskDetail.this, contentforme, Toast.LENGTH_SHORT).show();
                 open_options.dismiss();
             }
@@ -518,14 +502,14 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                         .setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, int id) {
-                                Intent intent1  = new Intent(TaskDetail.this,forwardTask.class);
-                                intent1.putExtra("task_id",task_id);
-                                intent1.putExtra("swaping_id",adapter_assignedto.emp.getEmpId());
+                                Intent intent1 = new Intent(TaskDetail.this, forwardTask.class);
+                                intent1.putExtra("task_id", task_id);
+                                intent1.putExtra("swaping_id", adapter_assignedto.emp.getEmpId());
                                 startActivity(intent1);
                                 finish();
                             }
                         })
-                        .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.dismiss();
                             }
@@ -550,17 +534,17 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                         .setPositiveButton("SET", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogBox, int id) {
                                 String minutes = userInputDialogEditText.getText().toString().trim();
-                                if(minutes!=null){
-                                Integer Minutes = Integer.parseInt(minutes);
-                                if(Minutes>0)
-                                {
-                                    String contentforme = "You reminded "+holder.employeename.getText().toString().trim() +" for "+task.getName();
-                                    sendNotif(mykey,mykey,"repeatedReminder",contentforme,task_id);
-                                    String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+task.getName();
-                                    sendNotif(mykey,adapter_assignedto.emp.getEmpId(),"repeatedReminder"+" "+minutes,contentforother,task_id);
-                                    Toast.makeText(TaskDetail.this, contentforme, Toast.LENGTH_SHORT).show();
+                                if (minutes != null) {
+                                    Integer Minutes = Integer.parseInt(minutes);
+                                    if (Minutes > 0) {
+                                        String contentforme = "You reminded " + holder.employeename.getText().toString().trim() + " for " + task.getName();
+                                        sendNotif(mykey, mykey, "repeatedReminder", contentforme, task_id);
+                                        String contentforother = "Coordinator " + coordinatorSession.getName() + " reminded you of " + task.getName();
+                                        sendNotif(mykey, adapter_assignedto.emp.getEmpId(), "repeatedReminder" + " " + minutes, contentforother, task_id);
+                                        Toast.makeText(TaskDetail.this, contentforme, Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }}
+                            }
                         })
 
                         .setNegativeButton("CANCEL",
@@ -576,9 +560,10 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         });
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.task_details_menu,menu);
+        getMenuInflater().inflate(R.menu.task_details_menu, menu);
         return true;
     }
 
@@ -600,9 +585,9 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                 progressDialog.setCancelable(false);
                                 progressDialog.show();
                                 Intent serviceIntent = new Intent(TaskDetail.this, DeleteTask.class);
-                                serviceIntent.putExtra("task_id",task_id);
-                                serviceIntent.putExtra("taskName",task.getName());
-                                serviceIntent.putExtra("custId",task.getCustomerId());
+                                serviceIntent.putExtra("task_id", task_id);
+                                serviceIntent.putExtra("taskName", task.getName());
+                                serviceIntent.putExtra("custId", task.getCustomerId());
 
                                 startService(serviceIntent);
                                 final DatabaseReference dbDelete = DBREF.child("DeleteTask").child(task_id).getRef();
@@ -610,17 +595,15 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                 dbDelete.addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
-                                        if(dataSnapshot.exists())
-                                        {
+                                        if (dataSnapshot.exists()) {
                                             Boolean status = dataSnapshot.getValue(Boolean.class);
-                                            if(status==true)
-                                            {
+                                            if (status == true) {
                                                 dbDelete.removeEventListener(this);
                                                 dbDelete.removeValue();
                                                 progressDialog.dismiss();
-                                                sendNotif(mykey,mykey,"deleteTask","You deleted the "+task.getName()+" task of "+customername,task_id);
-                                                Intent intent = new Intent(TaskDetail.this,Cust_details.class);
-                                                intent.putExtra("id",task.getCustomerId());
+                                                sendNotif(mykey, mykey, "deleteTask", "You deleted the " + task.getName() + " task of " + customername, task_id);
+                                                Intent intent = new Intent(TaskDetail.this, Cust_details.class);
+                                                intent.putExtra("id", task.getCustomerId());
                                                 startActivity(intent);
                                                 finish();
                                             }
@@ -634,7 +617,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                 });
                             }
                         })
-                        .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.dismiss();
                             }
