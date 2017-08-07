@@ -58,16 +58,10 @@ import java.util.List;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 
-<<<<<<< HEAD
-public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener {
-
-    private DatabaseReference dbRef, dbTask, dbCompleted, dbAssigned, dbMeasurement, dbDescImages;
-=======
 public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener{
     
     private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned,dbMeasurement,dbDescImages;
     ValueEventListener dbTaskVle;
->>>>>>> 7f9dc7af8d50bb78f8b70c21b20aaa927b6e261c
     ImageButton download;
     ProgressBar progressBar;
     private String task_id, mykey;
@@ -393,13 +387,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         });
     }
 
-<<<<<<< HEAD
     void setValue(Task task) {
-=======
-    void setValue(Task task)
-    {
         if(task.getStartDate()!=null)
->>>>>>> 7f9dc7af8d50bb78f8b70c21b20aaa927b6e261c
         startDate.setText(task.getStartDate());
 
         if(task.getExpEndDate()!=null)
@@ -417,12 +406,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 if (dataSnapshot.exists()) {
                     appByCustomer.setVisibility(View.VISIBLE);
                     Quotation quotation = dataSnapshot.getValue(Quotation.class);
-<<<<<<< HEAD
-                    appByCustomer.setText(" " + quotation.getApprovedByCust());
-=======
                     if(quotation.getApprovedByCust()!=null)
                     appByCustomer.setText(" "+quotation.getApprovedByCust());
->>>>>>> 7f9dc7af8d50bb78f8b70c21b20aaa927b6e261c
                     uploadStatus.setText(" Yes");
                 } else {
                     appByCustomer.setVisibility(View.GONE);
@@ -688,9 +673,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         }
         return true;
     }
-<<<<<<< HEAD
-}
-=======
 
     @Override
     protected void onDestroy() {
@@ -699,4 +681,3 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             dbTask.removeEventListener(dbTaskVle);
     }
 }
->>>>>>> 7f9dc7af8d50bb78f8b70c21b20aaa927b6e261c
