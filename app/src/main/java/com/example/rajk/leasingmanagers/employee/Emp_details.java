@@ -12,6 +12,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -282,6 +283,8 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         LinearLayout remove = (LinearLayout)open_options.findViewById(R.id.remove);
         LinearLayout remind = (LinearLayout)open_options.findViewById(R.id.remind);
         LinearLayout info = (LinearLayout)open_options.findViewById(R.id.info);
+        LinearLayout editNote = (LinearLayout)open_options.findViewById(R.id.editNote);
+
 
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -307,6 +310,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                                 dialog.dismiss();
 
 
+
                             }
                         })
                         .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
@@ -316,6 +320,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                         });
                 AlertDialog alert = builder.create();
                 alert.show();
+                open_options.dismiss();
             }
         });
 
@@ -328,17 +333,61 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                 sendNotif(mykey,mykey,"remindJob",contentforme,task_id);
                 String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+taskName;
                 sendNotif(mykey,id,"remindJob",contentforother,task_id);
+                open_options.dismiss();
             }
         });
 
         info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                open_options.dismiss();
                 Intent intent = new Intent(getApplicationContext(),TaskDetail.class);
                 intent.putExtra("task_id",listoftasks.get(position));
                 startActivity(intent);
             }
         });
+        editNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater layoutInflaterAndroid = LayoutInflater.from(Emp_details.this);
+                View mView = layoutInflaterAndroid.inflate(R.layout.editCoordinatorNote, null);
+                AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(Emp_details.this);
+                alertDialogBuilderUserInput.setView(mView);
+                final String empId = id;
+                final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
+                alertDialogBuilderUserInput
+                        .setCancelable(false)
+                        .setPositiveButton("SET", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogBox, int id) {
+                                final String task_id = listoftasks.get(position);
+                                final String taskName = holder.employeename.getText().toString().trim();
+
+                                String note = userInputDialogEditText.getText().toString().trim();
+                                if(note!=null&&note.equals("")){
+                                    DBREF.child("Task").child(task_id).child("AssignedTo").child(empId).child("note").setValue(note);
+                                    Toast.makeText(Emp_details.this, "Coordinator note changed successfully", Toast.LENGTH_SHORT).show();
+                                    String contentforme = "You changed the coordinator note for "+taskName;
+                                    sendNotif(mykey,mykey,"changedNote",contentforme,task_id);
+                                    String contentforother= "Coordinator "+coordinatorSession.getName()+" changed the note of "+taskName;
+                                    sendNotif(mykey,empId,"changedNote",contentforother,task_id);
+                                    dialogBox.dismiss();
+                                }}
+                        })
+
+                        .setNegativeButton("CANCEL",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialogBox, int id) {
+                                        dialogBox.cancel();
+                                    }
+                                });
+
+                AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+                alertDialogAndroid.show();
+                open_options.dismiss();
+
+            }
+        });
+
     }
 
     private void checkChatref(final String mykey, final String otheruserkey) {

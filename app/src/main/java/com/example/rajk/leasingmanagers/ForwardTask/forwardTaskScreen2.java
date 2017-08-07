@@ -33,7 +33,7 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
     EditText name,designation,enddate,note,startDate;
     String empId,empName,empDesig;
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    String curdate,task_id,custId,mykey;
+    String curdate,task_id,custId,mykey,myname;
     ArrayList<String> taskIds;
     Boolean forQuotation;
     CoordinatorSession coordinatorSession;
@@ -50,7 +50,7 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
         startDate = (EditText)findViewById(R.id.startDate);
         coordinatorSession = new CoordinatorSession(this);
         mykey = coordinatorSession.getUsername();
-
+        myname = coordinatorSession.getName();
         Intent intent =getIntent();
         empId = intent.getStringExtra("id");
         empName = intent.getStringExtra("name");
@@ -102,7 +102,7 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             String taskName = dataSnapshot.getValue(String.class);
-                            CompletedBy completedBy = new CompletedBy(empId, curdate, deadline, cooordnote);
+                            CompletedBy completedBy = new CompletedBy(empId, curdate, deadline, cooordnote,mykey,myname);
                             DatabaseReference dbAssigned = DBREF.child("Task").child(task_id).child("AssignedTo").child(empId);
                             dbAssigned.setValue(completedBy);
 
@@ -137,7 +137,7 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
                             final long timestamp = Calendar.getInstance().getTimeInMillis();
                             for(String taskid:taskIds)
                             {
-                                CompletedBy completedBy = new CompletedBy(empId, curdate, deadline, cooordnote);
+                                CompletedBy completedBy = new CompletedBy(empId, curdate, deadline, cooordnote,mykey,myname);
                                 DatabaseReference dbAssigned = DBREF.child("Task").child(taskid).child("AssignedTo").child(empId);
                                 dbAssigned.setValue(completedBy);
                                 DatabaseReference dbEmployee = DBREF.child("Employee").child(empId).child("AssignedTask").child(timestamp+"").child("listoftasks");

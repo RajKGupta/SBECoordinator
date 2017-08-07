@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
@@ -59,6 +60,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
     private Button quotationButton;
     private List<String> listoftasks = new ArrayList<>();
     ImageButton callme, msgme;
+    private TextView pendingJobCount,completeJobCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +77,9 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         Add = (EditText) findViewById(R.id.add);
         callme = (ImageButton) findViewById(R.id.callme);
         msgme = (ImageButton) findViewById(R.id.msgme);
+        pendingJobCount = (TextView) findViewById(R.id.pendingTasks);
+        completeJobCount = (TextView) findViewById(R.id.completedTasks);
+
 
         rec_customertasks = (RecyclerView)findViewById(R.id.rec_customertasks);
         linearLayoutManager=new LinearLayoutManager(getApplicationContext());
@@ -106,16 +111,47 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
             }
         });
 
-
         dbTask = db.child("Task").getRef();
+        dbTask.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Integer pendingJobs = 0, completeJobs = 0;
+                if(dataSnapshot.exists()) {
+
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        String status = ds.getValue(String.class);
+                        if (status.equals("pending")) {
+                            pendingJobs++;
+                            pendingJobCount.setText(String.valueOf(pendingJobs));
+                        } else {
+                            completeJobs++;
+                            completeJobCount.setText(String.valueOf(completeJobs));
+                        }
+                    }
+                }
+                    if(pendingJobs==0)
+                        quotationButton.setVisibility(View.GONE);
+                    else
+                        quotationButton.setVisibility(View.VISIBLE);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         dbtasklistener = dbTask.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
-                    listoftasks.add(childSnapshot.getKey());
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                        listoftasks.add(childSnapshot.getKey());
+                    }
+                    mAdapter = new CustomerTasks_Adapter(listoftasks, getApplication(), Cust_details.this,id);
+                    rec_customertasks.setAdapter(mAdapter);
                 }
-                mAdapter = new CustomerTasks_Adapter(listoftasks,getApplication(),Cust_details.this);
-                rec_customertasks.setAdapter(mAdapter);
             }
 
             @Override
@@ -318,10 +354,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         dbChat.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println("query1" + mykey+otheruserkey);
-                System.out.println("datasnap 1" + dataSnapshot.toString());
                 if (dataSnapshot.exists()) {
-                    System.out.println("datasnap exists1" + dataSnapshot.toString());
                     dbTablekey = mykey+otheruserkey;
                     goToChatActivity();
 
@@ -347,10 +380,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists())
                 {
-                    System.out.println("query1" + otheruserkey+mykey);
                     goToChatActivity();
-
-
                 }
                 else
                 {
@@ -388,4 +418,5 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
             break;
         }
     }
+
 }

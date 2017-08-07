@@ -7,10 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.example.rajk.leasingmanagers.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
+
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 public class RecAdapter_emp extends RecyclerView.Adapter<RecAdapter_emp.RecHolder>{
 
@@ -30,7 +35,7 @@ public class RecAdapter_emp extends RecyclerView.Adapter<RecAdapter_emp.RecHolde
     }
 
     @Override
-    public void onBindViewHolder(RecHolder holder, int position) {
+    public void onBindViewHolder(final RecHolder holder, int position) {
 
         Employee item = list.get(position);
         holder.name.setText(item.getName());
@@ -39,6 +44,19 @@ public class RecAdapter_emp extends RecyclerView.Adapter<RecAdapter_emp.RecHolde
         holder.icon_text.setText(iconText.charAt(0)+"");
         holder.imgProfile.setImageResource(R.drawable.bg_circle);
         holder.imgProfile.setColorFilter(item.getColor());
+        DatabaseReference dbAssignedTask = DBREF.child("Employee").child(item.getUsername()).child("AssignedTask").getRef();
+        dbAssignedTask.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    holder.pendingTasks.setText(dataSnapshot.getChildrenCount()+"");
+                    }
+                }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
 
     }
 
@@ -55,7 +73,7 @@ public class RecAdapter_emp extends RecyclerView.Adapter<RecAdapter_emp.RecHolde
     // holder class
     public class RecHolder extends RecyclerView.ViewHolder{
 
-        TextView name,desig,tasks,icon_text;
+        TextView name,desig,icon_text,completedTasks,pendingTasks;
         ImageView imgProfile;
 
         public RecHolder(View itemView) {
@@ -65,7 +83,7 @@ public class RecAdapter_emp extends RecyclerView.Adapter<RecAdapter_emp.RecHolde
             desig = (TextView) itemView.findViewById(R.id.desig);
             icon_text =(TextView)itemView.findViewById(R.id.icon_text);
             imgProfile = (ImageView)itemView.findViewById(R.id.icon_profile);
-
+            pendingTasks = (TextView)itemView.findViewById(R.id.tv_pendingTasks);
         }
     }
 

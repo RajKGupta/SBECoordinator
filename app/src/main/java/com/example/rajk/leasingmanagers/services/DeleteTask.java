@@ -2,7 +2,6 @@ package com.example.rajk.leasingmanagers.services;
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.widget.Toast;
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.model.measurement;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -91,12 +90,12 @@ public class DeleteTask extends IntentService {
                             storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Toast.makeText(DeleteTask.this, item + " deleted successfully", Toast.LENGTH_SHORT).show();
+          //                          Toast.makeText(DeleteTask.this, item + " deleted successfully", Toast.LENGTH_SHORT).show();
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception exception) {
-                                    Toast.makeText(DeleteTask.this, item + " does not exist", Toast.LENGTH_SHORT).show();
+          //                          Toast.makeText(DeleteTask.this, item + " does not exist", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -121,12 +120,12 @@ public class DeleteTask extends IntentService {
                             imageref.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Toast.makeText(DeleteTask.this, url + " deleted successfully", Toast.LENGTH_SHORT).show();
+            //                        Toast.makeText(DeleteTask.this, url + " deleted successfully", Toast.LENGTH_SHORT).show();
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception exception) {
-                                    Toast.makeText(DeleteTask.this, url + " does not exist", Toast.LENGTH_SHORT).show();
+            //                        Toast.makeText(DeleteTask.this, url + " does not exist", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }

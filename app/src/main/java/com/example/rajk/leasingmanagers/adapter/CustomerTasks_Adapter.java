@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.model.Task;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,21 +30,24 @@ public class CustomerTasks_Adapter extends RecyclerView.Adapter<CustomerTasks_Ad
     List<String> list = new ArrayList<>();
     private Context context;
     private CustomerTaskAdapterListener listener;
+    private String customerId;
 
-    public CustomerTasks_Adapter(List<String> list, Context c, CustomerTaskAdapterListener listener) {
+    public CustomerTasks_Adapter(List<String> list, Context c, CustomerTaskAdapterListener listener,String customerId) {
         this.list = list;
         this.context = c;
         this.listener = listener;
+        this.customerId = customerId;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView taskname, timestamp, icon_text;
+        TextView taskname, timestamp, icon_text,tv_taskStatus;
         ImageView imgProfile;
         RelativeLayout viewdetail;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             taskname = (TextView) itemView.findViewById(R.id.tv_taskname);
+            tv_taskStatus = (TextView)itemView.findViewById(R.id.tv_taskStatus);
             timestamp = (TextView) itemView.findViewById(R.id.timestamp);
             icon_text = (TextView) itemView.findViewById(R.id.icon_text);
             imgProfile = (ImageView) itemView.findViewById(R.id.icon_profile);
@@ -60,8 +64,50 @@ public class CustomerTasks_Adapter extends RecyclerView.Adapter<CustomerTasks_Ad
 
     @Override
     public void onBindViewHolder(final CustomerTasks_Adapter.MyViewHolder holder, final int position) {
-        DatabaseReference refh = DBREF.child("Task").child(list.get(position)).getRef();
+        final DatabaseReference taskStatus = DBREF.child("Customer").child(customerId).child("Task").child(list.get(position)).getRef();
+        taskStatus.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String status = dataSnapshot.getValue(String.class);
+                if(status.equals("pending"))
+                {
+                    holder.tv_taskStatus.setText("(Pending)");
+                }
+                else
+                {
+                    holder.tv_taskStatus.setText("(Completed)");
+                }
+            }
 
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                String status = dataSnapshot.getValue(String.class);
+                if(status.equals("pending"))
+                {
+                    holder.tv_taskStatus.setText("(Pending)");
+                }
+                else
+                {
+                    holder.tv_taskStatus.setText("(Completed)");
+                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                taskStatus.removeEventListener(this);
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        DatabaseReference refh = DBREF.child("Task").child(list.get(position)).getRef();
         refh.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

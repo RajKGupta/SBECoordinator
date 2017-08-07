@@ -6,11 +6,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.rajk.leasingmanagers.R;
-import com.example.rajk.leasingmanagers.model.CompletedBy;
+import com.example.rajk.leasingmanagers.model.CompletedJob;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,38 +20,32 @@ import java.util.List;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
-public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter.MyViewHolder>
+public class completedBy_adapter extends  RecyclerView.Adapter<completedBy_adapter.MyViewHolder>
 {
-    List<CompletedBy> list = new ArrayList<>();
+    List<CompletedJob> list = new ArrayList<>();
     private Context context;
     SharedPreferences sharedPreferences ;
     String taskId;
-    assignedto_adapterListener listener;
-    public CompletedBy emp = new CompletedBy();
+    public CompletedJob emp = new CompletedJob();
 
-    public assignedto_adapter(List<CompletedBy> list, Context context,String taskId,assignedto_adapterListener listener) {
+    public completedBy_adapter(List<CompletedJob> list, Context context, String taskId) {
         this.list = list;
         this.context = context;
         sharedPreferences = context.getSharedPreferences("SESSION",Context.MODE_PRIVATE);
         this.taskId=taskId;
-        this.listener = listener;
-
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.assignedto_list_row,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.completedby_listrow,parent,false);
         return new MyViewHolder(view);
 
     }
 
     @Override
-    public void onBindViewHolder(final assignedto_adapter.MyViewHolder holder, final int position)
+    public void onBindViewHolder(final completedBy_adapter.MyViewHolder holder, final int position)
     {
         emp = list.get(position);
-        holder.open_options.setVisibility(View.VISIBLE);
-            holder.noteAuthor.setText("Coordinator's Note:");
-            holder.tv_dateCompleted.setText("Expected Deadline :");
 
         DatabaseReference dbEmp = DBREF.child("Employee").child(emp.getEmpId()).getRef();
         dbEmp.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -60,8 +53,9 @@ public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter
             public void onDataChange(DataSnapshot dataSnapshot) {
                 holder.dateassigned.setText(emp.getDateassigned());
                 holder.dateCompleted.setText(emp.getDatecompleted());
-                holder.noteString.setText(emp.getNote());
+                holder.noteString.setText(emp.getCoordinatorNote());
                 holder.assignedby.setText(emp.getAssignedByName());
+                holder.employeeNote.setText(emp.getEmpployeeNote());
                 String empname = dataSnapshot.child("name").getValue(String.class);
                 holder.employeename.setText(empname);
                 String empdesig = dataSnapshot.child("designation").getValue(String.class);
@@ -76,7 +70,6 @@ public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter
             }
         });
 
-        applyClickEvents(holder,position);
     }
 
     @Override
@@ -85,12 +78,11 @@ public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView dateCompleted,employeename,employeeDesig,dateassigned,tv_dateCompleted,noteAuthor,noteString,assignedby;
-        ImageButton open_options;
+        public TextView dateCompleted,employeename,employeeDesig,dateassigned,tv_dateCompleted,noteAuthor,noteString,assignedby,employeeNote;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-
+            employeeNote = (TextView)itemView.findViewById(R.id.employeeNote);
             dateCompleted = (TextView) itemView.findViewById(R.id.dateCompleted);
 
             employeename = (TextView)
@@ -110,19 +102,7 @@ public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter
             noteAuthor = (TextView)itemView.findViewById(R.id.noteAuthor);
             noteString = (TextView) itemView.findViewById(R.id.noteString);
             assignedby = (TextView)itemView.findViewById(R.id.assignedBy);
-            open_options = (ImageButton)itemView.findViewById(R.id.open_options);
         }
     }
-    public interface assignedto_adapterListener {
-        void onOptionsButtonClicked(int position,MyViewHolder holder);
-    }
-    private void applyClickEvents(final MyViewHolder holder, final int position) {
 
-        holder.open_options.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onOptionsButtonClicked(position,holder);
-            }
-        });
-    }
 }
