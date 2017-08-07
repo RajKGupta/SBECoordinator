@@ -58,20 +58,20 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 public class CreateTask extends AppCompatActivity implements CalendarDatePickerDialogFragment.OnDateSetListener {
     DatabaseReference dbRef;
-    EditText taskName,startDate,endDate,quantity,description,custId;
+    EditText taskName, startDate, endDate, quantity, description, custId;
     RecyclerView desc_photo_grid;
     ImageButton written_desc, photo_desc;
-    String customerId,customerName,curdate;
+    String customerId, customerName, curdate;
     Button submit_task;
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     MarshmallowPermissions marshMallowPermission;
     private ArrayList<String> mResults;
-    private AlertDialog descriptionDialog, viewSelectedImages ;
+    private AlertDialog descriptionDialog, viewSelectedImages;
     static private ArrayList<String> picUriList = new ArrayList<>();
-    private int REQUEST_CODE =1;
+    private int REQUEST_CODE = 1;
     private String desc;
     LinearLayoutManager linearLayoutManager;
-    GridLayoutManager imagegrid;
+    LinearLayoutManager imagegrid;
     ViewImageAdapter adapter;
     taskimagesadapter tadapter;
     CompressMe compressMe;
@@ -80,12 +80,11 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_task);
-        TooLargeTool.startLogging(getApplication());
-        //Fresco.initialize(getApplicationContext());
+
         marshMallowPermission = new MarshmallowPermissions(this);
         compressMe = new CompressMe(this);
         getSupportActionBar().setTitle("Create New Task");
-        dbRef= DBREF;
+        dbRef = DBREF;
         Intent intent = getIntent();
         customerName = intent.getStringExtra("customerName");
         customerId = intent.getStringExtra("customerId");
@@ -103,18 +102,18 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                 CalendarDatePickerDialogFragment cdp = new CalendarDatePickerDialogFragment()
                         .setOnDateSetListener(CreateTask.this)
                         .setFirstDayOfWeek(Calendar.SUNDAY)
-                        .setDateRange( minDate,null)
+                        .setDateRange(minDate, null)
                         .setDoneText("Ok")
                         .setCancelText("Cancel").setThemeLight();
                 cdp.show(getSupportFragmentManager(), "Select Day, Month and Year.");
 
             }
         });
-        quantity=(EditText) findViewById(R.id.quantity);
+        quantity = (EditText) findViewById(R.id.quantity);
 
-        desc_photo_grid = (RecyclerView)findViewById(R.id.desc_photo_grid);
-        photo_desc = (ImageButton)findViewById(R.id.photo_desc);
-        written_desc = (ImageButton)findViewById(R.id.written_desc);
+        desc_photo_grid = (RecyclerView) findViewById(R.id.desc_photo_grid);
+        photo_desc = (ImageButton) findViewById(R.id.photo_desc);
+        written_desc = (ImageButton) findViewById(R.id.written_desc);
 
         description = (EditText) findViewById(R.id.description);
 
@@ -128,8 +127,8 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                 Button save_writ_desc;
                 final EditText et_desc;
 
-                save_writ_desc = (Button)descriptionDialog.findViewById(R.id.save_writ_desc);
-                et_desc = (EditText)descriptionDialog.findViewById(R.id.et_desc);
+                save_writ_desc = (Button) descriptionDialog.findViewById(R.id.save_writ_desc);
+                et_desc = (EditText) descriptionDialog.findViewById(R.id.et_desc);
 
                 save_writ_desc.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -148,24 +147,23 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
         photo_desc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!marshMallowPermission.checkPermissionForCamera()&&!marshMallowPermission.checkPermissionForExternalStorage()) {
+                if (!marshMallowPermission.checkPermissionForCamera() && !marshMallowPermission.checkPermissionForExternalStorage()) {
                     ActivityCompat.requestPermissions(CreateTask.this,
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
                             2);
+                } else {
+                    Intent intent = new Intent(CreateTask.this, ImagesSelectorActivity.class);
+                    intent.putExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, 5);
+                    intent.putExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, true);
+                    startActivityForResult(intent, REQUEST_CODE);
                 }
-                else {
-                        Intent intent = new Intent(CreateTask.this, ImagesSelectorActivity.class);
-                        intent.putExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, 5);
-                        intent.putExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, true);
-                        startActivityForResult(intent, REQUEST_CODE);
-                    }
-                }
+            }
         });
 
 
         custId = (EditText) findViewById(R.id.custId);
-        custId.setText(customerId+": "+customerName);
-        submit_task = (Button)findViewById(R.id.submit_task);
+        custId.setText(customerId + ": " + customerName);
+        submit_task = (Button) findViewById(R.id.submit_task);
         Calendar c = Calendar.getInstance();
         curdate = dateFormat.format(c.getTime());
         startDate.setText(curdate);
@@ -178,8 +176,7 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
         });
     }
 
-    void createTask()
-    {
+    void createTask() {
         String taskname = taskName.getText().toString().trim();
         taskname = WordUtils.capitalizeFully(taskname);
 
@@ -190,24 +187,21 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
 
         String enddate = endDate.getText().toString().trim();
 
-        String startdate= startDate.getText().toString().trim();
+        String startdate = startDate.getText().toString().trim();
 
         long curTime = Calendar.getInstance().getTimeInMillis();
-        curTime = 9999999999999L-curTime;
+        curTime = 9999999999999L - curTime;
 
-        if(TextUtils.isEmpty(taskname)||TextUtils.isEmpty(qty)||(TextUtils.isEmpty(desc)&& picUriList.size()==0)||TextUtils.isEmpty(enddate)||TextUtils.isEmpty(startdate))
-        {
-            Toast.makeText(CreateTask.this,"Fill all the details",Toast.LENGTH_SHORT).show();
-        }
-        else
-        {
+        if (TextUtils.isEmpty(taskname) || TextUtils.isEmpty(qty) || (TextUtils.isEmpty(desc) && picUriList.size() == 0) || TextUtils.isEmpty(enddate) || TextUtils.isEmpty(startdate)) {
+            Toast.makeText(CreateTask.this, "Fill all the details", Toast.LENGTH_SHORT).show();
+        } else {
             Task newTask = new Task("task" + curTime, taskname, startdate, enddate, qty, desc, customerId, getRandomMaterialColor("400"));
             dbRef.child("Task").child("task" + curTime).setValue(newTask);
             dbRef.child("Customer").child(customerId).child("Task").child("task" + curTime).setValue("pending");
 
-            Toast.makeText(CreateTask.this,"Task Created",Toast.LENGTH_SHORT).show();
+            Toast.makeText(CreateTask.this, "Task Created", Toast.LENGTH_SHORT).show();
 
-            if (picUriList.size()>0) {
+            if (picUriList.size() > 0) {
                 Intent serviceIntent = new Intent(getApplicationContext(), UploadTaskPhotosServices.class);
                 serviceIntent.putStringArrayListExtra("picUriList", picUriList);
                 serviceIntent.putExtra("taskid", "task" + curTime);
@@ -217,13 +211,10 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
             }
 
             Intent intent = new Intent(CreateTask.this, Cust_details.class);
-            intent.putExtra("id",customerId);
+            intent.putExtra("id", customerId);
             startActivity(intent);
             finish();
         }
-
-
-
     }
 
     private int getRandomMaterialColor(String typeColor) {
@@ -242,7 +233,7 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(CreateTask.this, Cust_details.class);
-        intent.putExtra("id",customerId);
+        intent.putExtra("id", customerId);
         startActivity(intent);
         finish();
     }
@@ -254,8 +245,9 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
 
     @Override
     public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
-        endDate.setText(dayOfMonth+"/"+(monthOfYear+1)+"/"+year);
+        endDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -267,22 +259,21 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                 // show results in textview
                 System.out.println(String.format("Totally %d images selected:", mResults.size()));
                 for (String result : mResults) {
-                    String l = compressMe.compressImage(result,getApplicationContext());
+                    String l = compressMe.compressImage(result, getApplicationContext());
                     picUriList.add(l);
                 }
-                if (picUriList.size() > 0)
-                {
+                if (picUriList.size() > 0) {
                     viewSelectedImages = new AlertDialog.Builder(CreateTask.this)
                             .setTitle("Selected Images").setView(R.layout.activity_view_selected_image).create();
                     viewSelectedImages.show();
 
                     final ImageView ImageViewlarge = (ImageView) viewSelectedImages.findViewById(R.id.ImageViewlarge);
                     ImageButton cancel = (ImageButton) viewSelectedImages.findViewById(R.id.cancel);
-                    Button canceldone = (Button)viewSelectedImages.findViewById(R.id.canceldone);
-                    Button okdone = (Button)viewSelectedImages.findViewById(R.id.okdone);
+                    Button canceldone = (Button) viewSelectedImages.findViewById(R.id.canceldone);
+                    Button okdone = (Button) viewSelectedImages.findViewById(R.id.okdone);
                     RecyclerView rv = (RecyclerView) viewSelectedImages.findViewById(R.id.viewImages);
 
-                    linearLayoutManager = new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false);
+                    linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
                     rv.setLayoutManager(linearLayoutManager);
                     rv.setItemAnimator(new DefaultItemAnimator());
                     rv.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.HORIZONTAL));
@@ -334,13 +325,13 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                         @Override
                         public void onClick(View v) {
                             int i = picUriList.size();
-                            if (i>0) {
+                            if (i > 0) {
                                 desc_photo_grid.setVisibility(View.VISIBLE);
 
-                                imagegrid = new GridLayoutManager(getApplicationContext(),2);
+                                imagegrid = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
                                 desc_photo_grid.setLayoutManager(imagegrid);
                                 desc_photo_grid.setItemAnimator(new DefaultItemAnimator());
-                                desc_photo_grid.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
+                                desc_photo_grid.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.HORIZONTAL));
 
                                 tadapter = new taskimagesadapter(picUriList, getApplicationContext());
                                 desc_photo_grid.setAdapter(tadapter);
@@ -349,9 +340,6 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                             } else {
                                 viewSelectedImages.dismiss();
                             }
-                            //onpressing save button dont forget to add this
-                                //upload images to storage
-                                //on success add informatio to database
                         }
                     });
                 }
@@ -370,9 +358,7 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                     intent.putExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, 5);
                     intent.putExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, true);
                     startActivityForResult(intent, REQUEST_CODE);
-                }
-                else
-                {
+                } else {
 
                     final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("These permissions are necessary else you cant upload images")

@@ -14,7 +14,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
+import com.example.rajk.leasingmanagers.MyProfile.ContactCoordinator;
 import com.example.rajk.leasingmanagers.MyProfile.MyProfile;
+import com.example.rajk.leasingmanagers.MyProfile.phonebook;
 import com.example.rajk.leasingmanagers.model.Coordinator;
 import com.example.rajk.leasingmanagers.notification.NotificationActivity;
 
@@ -42,7 +44,7 @@ public class drawer extends AppCompatActivity implements NavigationView.OnNaviga
 
         View header = navigationView.getHeaderView(0);
 
-        TextView nav_name = (TextView)header.findViewById(R.id.nav_name);
+        TextView nav_name = (TextView) header.findViewById(R.id.nav_name);
         nav_name.setText(session.getName());
     }
 
@@ -70,10 +72,12 @@ public class drawer extends AppCompatActivity implements NavigationView.OnNaviga
                 startActivity(intent2);
                 break;
             case R.id.second:
-                //TODO Contact with coordinators
+                Intent intent = new Intent(getApplicationContext(), ContactCoordinator.class);
+                startActivity(intent);
                 break;
             case R.id.third:
-                //TODO Contact Numbers of the firm
+                Intent intent1 = new Intent(getApplicationContext(), phonebook.class);
+                startActivity(intent1);
                 break;
             case R.id.fourth:
                 //TODO About the firm

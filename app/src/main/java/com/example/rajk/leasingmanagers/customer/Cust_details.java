@@ -42,17 +42,17 @@ import java.util.Map;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
-public class Cust_details extends AppCompatActivity implements CustomerTasks_Adapter.CustomerTaskAdapterListener,View.OnClickListener{
+public class Cust_details extends AppCompatActivity implements CustomerTasks_Adapter.CustomerTaskAdapterListener, View.OnClickListener {
 
     AlertDialog customerEditDetails;
-    String id,name,num,add,temp_name,temp_add,temp_num;
-    EditText Name,Num,Add;
-    DatabaseReference db,dbTask,dbaccountinfo;
+    String id, name, num, add, temp_name, temp_add, temp_num;
+    EditText Name, Num, Add;
+    DatabaseReference db, dbTask, dbaccountinfo;
     RecyclerView rec_customertasks;
     LinearLayoutManager linearLayoutManager;
-    private String dbTablekey,mykey;
-    ValueEventListener dblistener,dbtasklistener,dbaccountlistener;
-    private ArrayList<Task> TaskList= new ArrayList<>();
+    private String dbTablekey, mykey;
+    ValueEventListener dblistener, dbtasklistener, dbaccountlistener;
+    private ArrayList<Task> TaskList = new ArrayList<>();
     private CustomerTasks_Adapter mAdapter;
     private ProgressDialog progressDialog;
     public AlertDialog customerAccountDialog;
@@ -67,7 +67,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cust_details);
         coordinatorSession = new CoordinatorSession(this);
-        quotationButton = (Button)findViewById(R.id.quotation);
+        quotationButton = (Button) findViewById(R.id.quotation);
         quotationButton.setOnClickListener(this);
         progressDialog = new ProgressDialog(this);
         id = getIntent().getStringExtra("id");
@@ -81,8 +81,8 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         completeJobCount = (TextView) findViewById(R.id.completedTasks);
 
 
-        rec_customertasks = (RecyclerView)findViewById(R.id.rec_customertasks);
-        linearLayoutManager=new LinearLayoutManager(getApplicationContext());
+        rec_customertasks = (RecyclerView) findViewById(R.id.rec_customertasks);
+        linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         rec_customertasks.setLayoutManager(linearLayoutManager);
         rec_customertasks.setItemAnimator(new DefaultItemAnimator());
         rec_customertasks.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
@@ -90,10 +90,9 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         // get name, num and address from database using id and show them in activity
 
         db = DBREF.child("Customer").child(id);
-        dblistener =db.addValueEventListener(new ValueEventListener() {
+        dblistener = db.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
+            public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String, String> map_new = (Map<String, String>) dataSnapshot.getValue();
 
                 name = (map_new.get("name"));
@@ -170,10 +169,8 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         callme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO phone call
-
                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                callIntent.setData(Uri.parse("tel:"+ num));
+                callIntent.setData(Uri.parse("tel:" + num));
                 startActivity(callIntent);
             }
         });
@@ -182,15 +179,15 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.cust_menu,menu);
+        getMenuInflater().inflate(R.menu.cust_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.item1:
-                final EditText name_new,num_new,add_new;
+                final EditText name_new, num_new, add_new;
                 Button sub;
                 customerEditDetails = new AlertDialog.Builder(this)
                         .setTitle("Edit Customer Details")
@@ -217,11 +214,10 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                         temp_name = WordUtils.capitalizeFully(temp_name);
                         temp_num = num_new.getText().toString();
 
-                        if(TextUtils.isEmpty(temp_add) || TextUtils.isEmpty(temp_name) || TextUtils.isEmpty(temp_num))
-                            Toast.makeText(Cust_details.this,"Enter details...",Toast.LENGTH_SHORT).show();
+                        if (TextUtils.isEmpty(temp_add) || TextUtils.isEmpty(temp_name) || TextUtils.isEmpty(temp_num))
+                            Toast.makeText(Cust_details.this, "Enter details...", Toast.LENGTH_SHORT).show();
 
-                        else
-                        {
+                        else {
                             db.child("name").setValue(temp_name);
                             db.child("address").setValue(temp_add);
                             db.child("phone_num").setValue(temp_num);
@@ -236,8 +232,8 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
 
             case R.id.item2:
                 Intent intent = new Intent(Cust_details.this, CreateTask.class);
-                intent.putExtra("customerId",id);
-                intent.putExtra("customerName",Name.getText().toString().trim());
+                intent.putExtra("customerId", id);
+                intent.putExtra("customerName", Name.getText().toString().trim());
                 startActivity(intent);
                 finish();
                 break;
@@ -248,26 +244,27 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                         .setView(R.layout.account_info_layout).setIcon(R.mipmap.ic_account_info_pink)
                         .create();
                 customerAccountDialog.show();
-                final Button edit,submit;
-                final EditText total,advance,balance;
+                final Button edit, submit;
+                final EditText total, advance, balance;
                 final LinearLayout balanceLayout;
-                total = (EditText)customerAccountDialog.findViewById(R.id.total);
-                advance = (EditText)customerAccountDialog.findViewById(R.id.advance);
-                balance = (EditText)customerAccountDialog.findViewById(R.id.balance);
-                edit = (Button)customerAccountDialog.findViewById(R.id.edit);
-                submit = (Button)customerAccountDialog.findViewById(R.id.submit);
-                balanceLayout = (LinearLayout)customerAccountDialog.findViewById(R.id.balanceLayout);
+                total = (EditText) customerAccountDialog.findViewById(R.id.total);
+                advance = (EditText) customerAccountDialog.findViewById(R.id.advance);
+                balance = (EditText) customerAccountDialog.findViewById(R.id.balance);
+                edit = (Button) customerAccountDialog.findViewById(R.id.edit);
+                submit = (Button) customerAccountDialog.findViewById(R.id.submit);
+                balanceLayout = (LinearLayout) customerAccountDialog.findViewById(R.id.balanceLayout);
                 dbaccountinfo = db.child("Account").getRef();
-                dbaccountlistener =dbaccountinfo.addValueEventListener(new ValueEventListener() {
+                dbaccountlistener = dbaccountinfo.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.exists()) {
+                        if (dataSnapshot.exists()) {
 
                             CustomerAccount customerAccount = dataSnapshot.getValue(CustomerAccount.class);
                             total.setText(customerAccount.getTotal() + "");
                             advance.setText(customerAccount.getAdvance() + "");
                             balance.setText((customerAccount.getTotal() - customerAccount.getAdvance()) + "");
-                        }}
+                        }
+                    }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
@@ -288,7 +285,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                 submit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        CustomerAccount  customerAccount = new CustomerAccount();
+                        CustomerAccount customerAccount = new CustomerAccount();
                         customerAccount.setTotal(Integer.parseInt(total.getText().toString()));
                         customerAccount.setAdvance(Integer.parseInt(advance.getText().toString()));
                         dbaccountinfo.setValue(customerAccount);
@@ -301,13 +298,13 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                     }
                 });
                 break;
-            case  R.id.item6:
+            case R.id.item6:
                 // TODO : Null pointer exception (Null Object Refrence)
                 //if nothing is added to account this error would occur
                 dbaccountinfo.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.hasChildren())
+                        if (dataSnapshot.hasChildren())
                             dbaccountinfo.removeValue();
 
                     }
@@ -325,32 +322,32 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        }
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        if(db!=null && dblistener!=null)
-        db.removeEventListener(dblistener);
+        if (db != null && dblistener != null)
+            db.removeEventListener(dblistener);
 
-        if(dbTask!=null && dbtasklistener!=null)
+        if (dbTask != null && dbtasklistener != null)
             dbTask.removeEventListener(dbtasklistener);
 
-        if(dbaccountinfo!=null && dbaccountlistener!=null)
+        if (dbaccountinfo != null && dbaccountlistener != null)
             dbaccountinfo.removeEventListener(dbaccountlistener);
     }
 
     @Override
     public void onCustomerTaskRowClicked(int position) {
-        Intent intent = new Intent(this,TaskDetail.class);
-        intent.putExtra("task_id",listoftasks.get(position));
+        Intent intent = new Intent(this, TaskDetail.class);
+        intent.putExtra("task_id", listoftasks.get(position));
         startActivity(intent);
     }
 
 
     private void checkChatref(final String mykey, final String otheruserkey) {
-        DatabaseReference dbChat = DBREF.child("Chats").child(mykey+otheruserkey).getRef();
+        DatabaseReference dbChat = DBREF.child("Chats").child(mykey + otheruserkey).getRef();
         dbChat.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -358,10 +355,8 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                     dbTablekey = mykey+otheruserkey;
                     goToChatActivity();
 
-                }
-                else
-                {
-                    checkChatref2(mykey,otheruserkey);
+                } else {
+                    checkChatref2(mykey, otheruserkey);
                 }
             }
 
@@ -372,8 +367,8 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
     }
 
     private void checkChatref2(final String mykey, final String otheruserkey) {
-        final DatabaseReference dbChat = DBREF.child("Chats").child(otheruserkey+mykey).getRef();
-        dbTablekey = otheruserkey+mykey;
+        final DatabaseReference dbChat = DBREF.child("Chats").child(otheruserkey + mykey).getRef();
+        dbTablekey = otheruserkey + mykey;
         dbChat.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
@@ -400,22 +395,21 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         });
     }
 
-    private void goToChatActivity()
-    {
+    private void goToChatActivity() {
         Intent in = new Intent(this, ChatActivity.class);
-        in.putExtra("dbTableKey",dbTablekey);
-        in.putExtra("otheruserkey",id);
+        in.putExtra("dbTableKey", dbTablekey);
+        in.putExtra("otheruserkey", id);
         startActivity(in);
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.quotation:
-                Intent intent = new Intent(this,UploadQuotationActivity.class);
-                intent.putExtra("custId",id);
+                Intent intent = new Intent(this, UploadQuotationActivity.class);
+                intent.putExtra("custId", id);
                 startActivity(intent);
-            break;
+                break;
         }
     }
 

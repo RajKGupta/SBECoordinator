@@ -94,7 +94,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     CompressMe compressMe;
     private AlertDialog viewSelectedImages;
     ViewImageAdapter adapter;
-    String num="8889432471";
+    String num = "8889432471";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -397,7 +397,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         mAdapter.removeListeners();
     }
 
-    ////maintain all the clicks on buttons on this page
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -418,10 +417,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                     dbChat.child(String.valueOf(id)).setValue(cm);
                     DBREF.child("Chats").child(dbTableKey).child("lastMsg").setValue(id);
                     typeComment.setText("");
-
                 }
-
-
                 break;
 
             case R.id.photoattach:
@@ -439,7 +435,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                 break;
 
             case R.id.docattach:
-
                 if (!marshmallowPermissions.checkPermissionForExternalStorage())
                     marshmallowPermissions.requestPermissionForExternalStorage();
 
@@ -450,7 +445,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                             .pickFile(this);
                 }
                 break;
-
         }
     }
 
@@ -473,9 +467,8 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item1:
-                //TODO Phone call
                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                callIntent.setData(Uri.parse("tel:"+ num));
+                callIntent.setData(Uri.parse("tel:" + num));
                 startActivity(callIntent);
                 break;
         }
@@ -616,7 +609,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                         } catch (ActivityNotFoundException e) {
                             //if user doesn't have pdf reader instructing to download a pdf reader
                         }
-
                     }
                     break;
             }
