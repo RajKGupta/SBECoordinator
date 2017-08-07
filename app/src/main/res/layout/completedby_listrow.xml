@@ -52,7 +52,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Expected Deadline :"
+                android:text="Date Completed :"
                 android:id="@+id/tv_datecompleted"
                 android:textStyle="italic"/>
 
@@ -85,20 +85,10 @@
         </LinearLayout>
 
     </LinearLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:id="@+id/open_options"
-                android:background="@drawable/ic_options"/>
-        </RelativeLayout>
     </LinearLayout>
     <LinearLayout
+        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -118,5 +108,20 @@
             android:id="@+id/noteString"
             android:textStyle="italic"/>
 
+        <TextView
+            android:layout_marginTop="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Employee Note :"
+            android:textStyle="italic|bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hey you listen!!"
+            android:id="@+id/employeeNote"
+            android:textStyle="italic"/>
+
     </LinearLayout>
+
 </LinearLayout>

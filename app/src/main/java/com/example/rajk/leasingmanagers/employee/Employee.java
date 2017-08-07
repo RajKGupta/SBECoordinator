@@ -79,4 +79,13 @@ public class Employee {
         this.username = username;
         this.password = password;
         }
+
+    public Employee(int color, String name, String phone_num, String address, String designation,String username) {
+        this.color = color;
+        this.name = name;
+        this.phone_num = phone_num;
+        this.address = address;
+        this.designation = designation;
+        this.username = username;
+    }
 }

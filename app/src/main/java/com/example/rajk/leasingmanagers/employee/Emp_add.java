@@ -22,6 +22,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.apache.commons.lang3.text.WordUtils;
 
+import java.util.Calendar;
+
+import static com.example.rajk.leasingmanagers.LeasingManagers.AppName;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 public class Emp_add extends AppCompatActivity {
@@ -80,6 +83,9 @@ public class Emp_add extends AppCompatActivity {
                                 DBREF.child("Users").child("Usersessions").child(username).child("online").setValue(Boolean.FALSE);
                                 DBREF.child("Fcmtokens").child(username).child("token").setValue("nil");
                                 DBREF.child("Users").child("Usersessions").child(username).child("num").setValue(num);
+                                String id = Calendar.getInstance().getTimeInMillis()+"";
+                                Employee employee1 = new Employee(getRandomMaterialColor("400"),name,num,add,desig, AppName+"_"+username);
+                                FirebaseDatabase.getInstance().getReference().child("GlobalEmployee").child("EmployeeDetail").child(id).setValue(employee1);
 
                             }
                         }

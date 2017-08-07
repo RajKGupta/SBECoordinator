@@ -30,6 +30,7 @@ import com.example.rajk.leasingmanagers.ForwardTask.forwardTask;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.assignedto_adapter;
 import com.example.rajk.leasingmanagers.adapter.bigimage_adapter;
+import com.example.rajk.leasingmanagers.adapter.completedBy_adapter;
 import com.example.rajk.leasingmanagers.adapter.measurement_adapter;
 import com.example.rajk.leasingmanagers.adapter.taskdetailDescImageAdapter;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
@@ -56,11 +57,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.AppName;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
+import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotifToAllCoordinators;
+import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormat;
 
 public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener{
-
+    
     private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned,dbMeasurement,dbDescImages;
     ValueEventListener dbTaskVle;
     ImageButton download;
@@ -391,13 +395,13 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
     void setValue(Task task) {
         if(task.getStartDate()!=null)
-            startDate.setText(task.getStartDate());
+        startDate.setText(task.getStartDate());
 
         if(task.getExpEndDate()!=null)
-            endDate.setText(task.getExpEndDate());
+        endDate.setText(task.getExpEndDate());
 
         if(task.getQty()!=null)
-            quantity.setText(task.getQty());
+        quantity.setText(task.getQty());
         if (!task.getDesc().equals("")&&task.getDesc()!=null) {
             description.setVisibility(View.VISIBLE);
             description.setText(task.getDesc());
@@ -409,7 +413,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                     appByCustomer.setVisibility(View.VISIBLE);
                     Quotation quotation = dataSnapshot.getValue(Quotation.class);
                     if(quotation.getApprovedByCust()!=null)
-                        appByCustomer.setText(" "+quotation.getApprovedByCust());
+                    appByCustomer.setText(" "+quotation.getApprovedByCust());
                     uploadStatus.setText(" Yes");
                 } else {
                     appByCustomer.setVisibility(View.GONE);

@@ -12,6 +12,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,18 +21,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
+import com.example.rajk.leasingmanagers.ForwardTask.forwardTask;
 import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.Quotation.QAdapter;
 import com.example.rajk.leasingmanagers.Quotation.QuotaionTasks;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.EmployeeTask_Adapter;
 import com.example.rajk.leasingmanagers.chat.ChatActivity;
-import com.example.rajk.leasingmanagers.model.CompletedBy;
 import com.example.rajk.leasingmanagers.model.QuotationBatch;
-import com.example.rajk.leasingmanagers.model.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -46,7 +47,6 @@ import java.util.Map;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
-import static java.security.AccessController.getContext;
 
 public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapter.EmployeeTask_AdapterListener, QAdapter.QAdapterListener {
 
@@ -59,11 +59,12 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     private RecyclerView.Adapter mAdapter;
     List<String> listoftasks;
     List<QuotationBatch> listofquotations;
-    private AlertDialog open_options ;
+    private AlertDialog open_options;
     CoordinatorSession coordinatorSession;
     String mykey, dbTablekey;
     public static String emp_id;
     ImageButton callme, msgme;
+    TextView jobs_and_hideme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         Desig = (EditText) findViewById(R.id.desig);
         callme = (ImageButton) findViewById(R.id.callme);
         msgme = (ImageButton) findViewById(R.id.msgme);
+        jobs_and_hideme = (TextView) findViewById(R.id.jobs_and_hideme);
 
         rec_employeetask = (RecyclerView) findViewById(R.id.rec_employeetask);
         linearLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -128,10 +130,8 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         callme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO phone call
-
                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                callIntent.setData(Uri.parse("tel:"+ num));
+                callIntent.setData(Uri.parse("tel:" + num));
                 startActivity(callIntent);
             }
         });
@@ -154,18 +154,21 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
             db.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    QuotationBatch m = new QuotationBatch();
-                    Map<String, Object> map = (Map) dataSnapshot.getValue();
+                    if (dataSnapshot.exists()) {
+                        QuotationBatch m = new QuotationBatch();
+                        Map<String, Object> map = (Map) dataSnapshot.getValue();
 
-                    m.setEndDate((String) map.get("endDate"));
-                    long c = (long) map.get("color");
-                    m.setColor((int) c);
-                    m.setStartDate((String) map.get("startDate"));
-                    m.setNote((String) map.get("note"));
-                    m.setId((String) map.get("id"));
+                        m.setEndDate((String) map.get("endDate"));
+                        long c = (long) map.get("color");
+                        m.setColor((int) c);
+                        m.setStartDate((String) map.get("startDate"));
+                        m.setNote((String) map.get("note"));
+                        m.setId((String) map.get("id"));
 
-                    listofquotations.add(m);
-                    mAdapter.notifyDataSetChanged();
+                        jobs_and_hideme.setVisibility(View.GONE);
+                        listofquotations.add(m);
+                        mAdapter.notifyDataSetChanged();
+                    }
                 }
 
                 @Override
@@ -191,9 +194,9 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         } else {
             db.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot)
-                {
+                public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                        jobs_and_hideme.setVisibility(View.GONE);
                         listoftasks.add(childSnapshot.getKey());
                         mAdapter.notifyDataSetChanged();
                     }
@@ -263,7 +266,6 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
 
                             dialog.dismiss();
                         }
-
                     }
                 });
 
@@ -279,9 +281,57 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                 .setView(R.layout.optionsfor_employeestask).create();
         open_options.show();
 
-        LinearLayout remove = (LinearLayout)open_options.findViewById(R.id.remove);
-        LinearLayout remind = (LinearLayout)open_options.findViewById(R.id.remind);
-        LinearLayout info = (LinearLayout)open_options.findViewById(R.id.info);
+        LinearLayout remove = (LinearLayout) open_options.findViewById(R.id.remove);
+        LinearLayout remind = (LinearLayout) open_options.findViewById(R.id.remind);
+        LinearLayout info = (LinearLayout) open_options.findViewById(R.id.info);
+        LinearLayout swap = (LinearLayout) open_options.findViewById(R.id.swap);
+        LinearLayout editNote = (LinearLayout)open_options.findViewById(R.id.editNote);
+        LinearLayout repeatedreminder =(LinearLayout)open_options.findViewById(R.id.repeatedreminder);
+
+        repeatedreminder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater layoutInflaterAndroid = LayoutInflater.from(Emp_details.this);
+                View mView = layoutInflaterAndroid.inflate(R.layout.repeatedreminderlayout, null);
+                AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(Emp_details.this);
+                alertDialogBuilderUserInput.setView(mView);
+                final String empId = id;
+                final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
+                alertDialogBuilderUserInput
+                        .setCancelable(false)
+                        .setPositiveButton("SET", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogBox, int id) {
+                                final String task_id = listoftasks.get(position);
+                                final String taskName = holder.employeename.getText().toString().trim();
+
+                                String minutes = userInputDialogEditText.getText().toString().trim();
+                                if (minutes != null && minutes.equals("")) {
+                                    Integer Minutes = Integer.parseInt(minutes);
+                                    if (Minutes > 0) {
+                                        String contentforme = "You reminded " + holder.employeename.getText().toString().trim() + " for " + taskName;
+                                        sendNotif(mykey, mykey, "repeatedReminder", contentforme, task_id);
+                                        String contentforother = "Coordinator " + coordinatorSession.getName() + " reminded you of " + taskName;
+                                        sendNotif(mykey, empId, "repeatedReminder" + " " + minutes, contentforother, task_id);
+                                        Toast.makeText(Emp_details.this, contentforme, Toast.LENGTH_SHORT).show();
+                                        dialogBox.dismiss();
+                                    }
+                                }
+                            }
+                        })
+
+                        .setNegativeButton("CANCEL",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialogBox, int id) {
+                                        dialogBox.cancel();
+                                    }
+                                });
+
+                AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+                alertDialogAndroid.show();
+                open_options.dismiss();
+
+            }
+        });
 
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -298,24 +348,26 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                                 dbEmployee.removeValue(); //for employee
                                 final String task_id = listoftasks.get(position);
                                 String taskName = holder.employeename.getText().toString().trim();
-                                String contentforme = "You relieved "+name+" of "+taskName;
-                                sendNotif(mykey,mykey,"cancelJob",contentforme,task_id);
-                                String contentforother= "Coordinator "+coordinatorSession.getName()+" relieved you of "+taskName;
-                                sendNotif(mykey,id,"cancelJob",contentforother,task_id);
+                                String contentforme = "You relieved " + name + " of " + taskName;
+                                sendNotif(mykey, mykey, "cancelJob", contentforme, task_id);
+                                String contentforother = "Coordinator " + coordinatorSession.getName() + " relieved you of " + taskName;
+                                sendNotif(mykey, id, "cancelJob", contentforother, task_id);
                                 listoftasks.remove(position);
                                 mAdapter.notifyDataSetChanged();
                                 dialog.dismiss();
 
 
+
                             }
                         })
-                        .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.dismiss();
                             }
                         });
                 AlertDialog alert = builder.create();
                 alert.show();
+                open_options.dismiss();
             }
         });
 
@@ -328,15 +380,85 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                 sendNotif(mykey,mykey,"remindJob",contentforme,task_id);
                 String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+taskName;
                 sendNotif(mykey,id,"remindJob",contentforother,task_id);
+                open_options.dismiss();
             }
         });
 
         info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                open_options.dismiss();
                 Intent intent = new Intent(getApplicationContext(),TaskDetail.class);
                 intent.putExtra("task_id",listoftasks.get(position));
                 startActivity(intent);
+            }
+        });
+
+        swap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(Emp_details.this);
+                builder.setMessage("Are you sure you want to swap this task")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int id) {
+                                Intent intent1 = new Intent(Emp_details.this, forwardTask.class);
+                                intent1.putExtra("task_id", listoftasks.get(position));
+                                intent1.putExtra("swaping_id", emp_id);
+                                startActivity(intent1);
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+                open_options.dismiss();
+            }
+        });
+                
+        editNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater layoutInflaterAndroid = LayoutInflater.from(Emp_details.this);
+                View mView = layoutInflaterAndroid.inflate(R.layout.editcoordinatornote, null);
+                AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(Emp_details.this);
+                alertDialogBuilderUserInput.setView(mView);
+                final String empId = id;
+                final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
+                alertDialogBuilderUserInput
+                        .setCancelable(false)
+                        .setPositiveButton("SET", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogBox, int id) {
+                                final String task_id = listoftasks.get(position);
+                                final String taskName = holder.employeename.getText().toString().trim();
+
+                                String note = userInputDialogEditText.getText().toString().trim();
+                                if(note!=null&&note.equals("")){
+                                    DBREF.child("Task").child(task_id).child("AssignedTo").child(empId).child("note").setValue(note);
+                                    Toast.makeText(Emp_details.this, "Coordinator note changed successfully", Toast.LENGTH_SHORT).show();
+                                    String contentforme = "You changed the coordinator note for "+taskName;
+                                    sendNotif(mykey,mykey,"changedNote",contentforme,task_id);
+                                    String contentforother= "Coordinator "+coordinatorSession.getName()+" changed the note of "+taskName;
+                                    sendNotif(mykey,empId,"changedNote",contentforother,task_id);
+                                    dialogBox.dismiss();
+                                }}
+                        })
+
+                        .setNegativeButton("CANCEL",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialogBox, int id) {
+                                        dialogBox.cancel();
+                                    }
+                                });
+
+                AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+                alertDialogAndroid.show();
+                open_options.dismiss();
+
             }
         });
     }

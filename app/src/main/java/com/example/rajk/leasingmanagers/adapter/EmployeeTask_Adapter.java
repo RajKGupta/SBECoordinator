@@ -64,6 +64,7 @@ public class EmployeeTask_Adapter extends RecyclerView.Adapter<EmployeeTask_Adap
                     holder.dateassigned.setText(emp.getDateassigned());
                     holder.dateCompleted.setText(emp.getDatecompleted());
                     holder.noteString.setText(emp.getNote());
+                    holder.assignedBy.setText(emp.getAssignedByName());
 
                     DatabaseReference dbEmp = DBREF.child("Task").child(list.get(position)).getRef();
                     dbEmp.addListenerForSingleValueEvent(
@@ -72,7 +73,6 @@ public class EmployeeTask_Adapter extends RecyclerView.Adapter<EmployeeTask_Adap
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     String taskname = dataSnapshot.child("name").getValue(String.class);
                                     holder.employeename.setText(taskname);
-
                                     //String empdesig = dataSnapshot.child("designation").getValue(String.class);
                                     holder.employeeDesig.setVisibility(View.GONE);
                                     //holder.employeeDesig.setText(empdesig);
@@ -101,7 +101,7 @@ public class EmployeeTask_Adapter extends RecyclerView.Adapter<EmployeeTask_Adap
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView dateCompleted, employeename, employeeDesig, dateassigned, tv_dateCompleted, noteAuthor, noteString;
+        public TextView dateCompleted, employeename, employeeDesig, dateassigned, tv_dateCompleted, noteAuthor, noteString,assignedBy;
         public ImageButton dotmenu;
 
         public MyViewHolder(View itemView) {
@@ -125,7 +125,7 @@ public class EmployeeTask_Adapter extends RecyclerView.Adapter<EmployeeTask_Adap
 
             noteAuthor = (TextView) itemView.findViewById(R.id.noteAuthor);
             noteString = (TextView) itemView.findViewById(R.id.noteString);
-
+            assignedBy = (TextView) itemView.findViewById(R.id.assignedBy);
             dotmenu = (ImageButton) itemView.findViewById(R.id.dotmenu);
         }
     }
