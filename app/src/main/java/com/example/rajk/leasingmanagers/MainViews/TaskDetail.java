@@ -58,9 +58,16 @@ import java.util.List;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 
+<<<<<<< HEAD
 public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener {
 
     private DatabaseReference dbRef, dbTask, dbCompleted, dbAssigned, dbMeasurement, dbDescImages;
+=======
+public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener{
+    
+    private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned,dbMeasurement,dbDescImages;
+    ValueEventListener dbTaskVle;
+>>>>>>> 7f9dc7af8d50bb78f8b70c21b20aaa927b6e261c
     ImageButton download;
     ProgressBar progressBar;
     private String task_id, mykey;
@@ -149,7 +156,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
         prepareListData();
 
-        dbTask.addValueEventListener(new ValueEventListener() {
+        dbTaskVle = dbTask.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 task = dataSnapshot.getValue(Task.class);
@@ -386,11 +393,21 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         });
     }
 
+<<<<<<< HEAD
     void setValue(Task task) {
+=======
+    void setValue(Task task)
+    {
+        if(task.getStartDate()!=null)
+>>>>>>> 7f9dc7af8d50bb78f8b70c21b20aaa927b6e261c
         startDate.setText(task.getStartDate());
+
+        if(task.getExpEndDate()!=null)
         endDate.setText(task.getExpEndDate());
+
+        if(task.getQty()!=null)
         quantity.setText(task.getQty());
-        if (!task.getDesc().equals("")) {
+        if (!task.getDesc().equals("")&&task.getDesc()!=null) {
             description.setVisibility(View.VISIBLE);
             description.setText(task.getDesc());
         }
@@ -400,7 +417,12 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 if (dataSnapshot.exists()) {
                     appByCustomer.setVisibility(View.VISIBLE);
                     Quotation quotation = dataSnapshot.getValue(Quotation.class);
+<<<<<<< HEAD
                     appByCustomer.setText(" " + quotation.getApprovedByCust());
+=======
+                    if(quotation.getApprovedByCust()!=null)
+                    appByCustomer.setText(" "+quotation.getApprovedByCust());
+>>>>>>> 7f9dc7af8d50bb78f8b70c21b20aaa927b6e261c
                     uploadStatus.setText(" Yes");
                 } else {
                     appByCustomer.setVisibility(View.GONE);
@@ -615,6 +637,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                         .setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, final int id) {
+                                if(dbTaskVle!=null)
+                                    dbTask.removeEventListener(dbTaskVle);
                                 final ProgressDialog progressDialog = new ProgressDialog(TaskDetail.this);
                                 progressDialog.setMessage("Deleting Task");
                                 progressDialog.setCancelable(false);
@@ -664,4 +688,15 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         }
         return true;
     }
+<<<<<<< HEAD
 }
+=======
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(dbTaskVle!=null)
+            dbTask.removeEventListener(dbTaskVle);
+    }
+}
+>>>>>>> 7f9dc7af8d50bb78f8b70c21b20aaa927b6e261c
