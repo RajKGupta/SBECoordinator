@@ -71,7 +71,7 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
     private int REQUEST_CODE = 1;
     private String desc;
     LinearLayoutManager linearLayoutManager;
-    GridLayoutManager imagegrid;
+    LinearLayoutManager imagegrid;
     ViewImageAdapter adapter;
     taskimagesadapter tadapter;
     CompressMe compressMe;
@@ -328,10 +328,10 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                             if (i > 0) {
                                 desc_photo_grid.setVisibility(View.VISIBLE);
 
-                                imagegrid = new GridLayoutManager(getApplicationContext(), 2);
+                                imagegrid = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
                                 desc_photo_grid.setLayoutManager(imagegrid);
                                 desc_photo_grid.setItemAnimator(new DefaultItemAnimator());
-                                desc_photo_grid.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
+                                desc_photo_grid.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.HORIZONTAL));
 
                                 tadapter = new taskimagesadapter(picUriList, getApplicationContext());
                                 desc_photo_grid.setAdapter(tadapter);
@@ -340,9 +340,6 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                             } else {
                                 viewSelectedImages.dismiss();
                             }
-                            //onpressing save button dont forget to add this
-                            //upload images to storage
-                            //on success add informatio to database
                         }
                     });
                 }

@@ -3,6 +3,7 @@ package com.example.rajk.leasingmanagers.MainViews;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -12,6 +13,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,12 +40,18 @@ import com.example.rajk.leasingmanagers.model.Task;
 import com.example.rajk.leasingmanagers.model.measurement;
 import com.example.rajk.leasingmanagers.services.DeleteTask;
 import com.example.rajk.leasingmanagers.services.DownloadFileService;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -180,10 +188,13 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!marshmallowPermissions.checkPermissionForCamera()) {
-                    marshmallowPermissions.requestPermissionForExternalStorage();
+                if (!marshmallowPermissions.checkPermissionForCamera())
+                {
+                    marshmallowPermissions.requestPermissionForCamera();
                     if (!marshmallowPermissions.checkPermissionForExternalStorage())
-                        showToast("Cannot Download because external storage permission not granted");
+                    {
+                        marshmallowPermissions.requestPermissionForExternalStorage();
+                    }
                     else
                         launchLibrary();
                 } else {
@@ -193,10 +204,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             }
         });
 
-    }
-
-    private void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -211,9 +218,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     }
 
     private void launchLibrary() {
-        //TODO : loader aur completion of download show karna hai
-        //download.setVisibility(View.GONE);
-        //progressBar.setVisibility(View.VISIBLE);
         final String[] url = new String[1];
         dbQuotation.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -433,8 +437,43 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
 
     @Override
-    public void ondownloadButtonClicked(int position) {
-        // TODO :download task image code here
+    public void ondownloadButtonClicked(final int position, final bigimage_adapter.MyViewHolder holder)
+    {
+        if (!marshmallowPermissions.checkPermissionForExternalStorage()) {
+            marshmallowPermissions.requestPermissionForExternalStorage();
+        }
+        else {
+            holder.progressBar.setVisibility(View.VISIBLE);
+            holder.download_taskdetail_image.setVisibility(View.GONE);
+            String url = DescImages.get(position);
+            StorageReference str = FirebaseStorage.getInstance().getReferenceFromUrl(url);
+            File rootPath = new File(Environment.getExternalStorageDirectory(), "MeChat/TaskDetailImages");
+
+            if (!rootPath.exists()) {
+                rootPath.mkdirs();
+            }
+            String uriSting = System.currentTimeMillis() + ".jpg";
+
+            final File localFile = new File(rootPath, uriSting);
+
+            str.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Log.e("firebase ", ";local tem file created  created " + localFile.toString());
+                    holder.download_taskdetail_image.setVisibility(View.VISIBLE);
+                    holder.progressBar.setVisibility(View.GONE);
+                    Toast.makeText(TaskDetail.this, "Image " + position + 1 + " Downloaded", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Log.e("firebase ", ";local tem file not created  created " + exception.toString());
+                    holder.download_taskdetail_image.setVisibility(View.VISIBLE);
+                    holder.progressBar.setVisibility(View.GONE);
+                    Toast.makeText(TaskDetail.this, "Failed to download image " + position + 1, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     @Override
@@ -570,10 +609,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.item1:
-
-                break;
-
             case R.id.item2:
                 final AlertDialog.Builder builder = new AlertDialog.Builder(TaskDetail.this);
                 builder.setMessage("Are you sure you want to delete this task??")
@@ -629,5 +664,4 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         }
         return true;
     }
-
 }
