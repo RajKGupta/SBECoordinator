@@ -37,6 +37,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.AppName;
+
 public class DownloadFileService extends IntentService {
 
     String TaskId;
@@ -85,7 +87,7 @@ public class DownloadFileService extends IntentService {
     public void downloadFile(final String url, final String task_id) {
 
         StorageReference mStorageRef = FirebaseStorage.getInstance().getReferenceFromUrl(url);
-        File rootPath = new File(Environment.getExternalStorageDirectory(), "MeChat/Quotations");
+        File rootPath = new File(Environment.getExternalStorageDirectory(), AppName+"/Quotations");
         if (!rootPath.exists()) {
             rootPath.mkdirs();
         }

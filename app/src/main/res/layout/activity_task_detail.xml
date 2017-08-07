@@ -121,7 +121,7 @@
                                 android:id="@+id/assign_and_hideme"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Job hasn't started yet" />
+                                android:text="Currently not assigned to anybody" />
 
                         </LinearLayout>
 

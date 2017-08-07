@@ -57,6 +57,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.AppName;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotifToAllCoordinators;
@@ -249,7 +250,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     }
 
     private void prepareListData() {
-        dbCompleted.addChildEventListener(new ChildEventListener() {
+        dbCompleted.orderByChild("timestamp").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
@@ -459,7 +460,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             holder.download_taskdetail_image.setVisibility(View.GONE);
             String url = DescImages.get(position);
             StorageReference str = FirebaseStorage.getInstance().getReferenceFromUrl(url);
-            File rootPath = new File(Environment.getExternalStorageDirectory(), "MeChat/TaskDetailImages");
+            File rootPath = new File(Environment.getExternalStorageDirectory(), AppName+"/TaskDetailImages");
 
             if (!rootPath.exists()) {
                 rootPath.mkdirs();
@@ -586,16 +587,16 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                         .setPositiveButton("SET", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogBox, int id) {
                                 String minutes = userInputDialogEditText.getText().toString().trim();
-                                if(minutes!=null&&minutes.equals("")){
-                                Integer Minutes = Integer.parseInt(minutes);
-                                if(Minutes>0)
-                                {
-                                    String contentforme = "You reminded "+holder.employeename.getText().toString().trim() +" for "+task.getName();
-                                    sendNotif(mykey,mykey,"repeatedReminder",contentforme,task_id);
-                                    String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+task.getName();
-                                    sendNotif(mykey,adapter_assignedto.emp.getEmpId(),"repeatedReminder"+" "+minutes,contentforother,task_id);
-                                    Toast.makeText(TaskDetail.this, contentforme, Toast.LENGTH_SHORT).show();
-                                    dialogBox.dismiss();
+                                if (minutes != null && minutes.equals("")) {
+                                    Integer Minutes = Integer.parseInt(minutes);
+                                    if (Minutes > 0) {
+                                        String contentforme = "You reminded " + holder.employeename.getText().toString().trim() + " for " + task.getName();
+                                        sendNotif(mykey, mykey, "repeatedReminder", contentforme, task_id);
+                                        String contentforother = "Coordinator " + coordinatorSession.getName() + " reminded you of " + task.getName();
+                                        sendNotif(mykey, adapter_assignedto.emp.getEmpId(), "repeatedReminder" + " " + minutes, contentforother, task_id);
+                                        Toast.makeText(TaskDetail.this, contentforme, Toast.LENGTH_SHORT).show();
+                                        dialogBox.dismiss();
+                                    }
                                 }
                             }
                         })
@@ -688,9 +689,11 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                                     .setCancelable(false)
                                                     .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                                                         public void onClick(final DialogInterface dialog, final int id) {
+                                                            long idLong = Calendar.getInstance().getTimeInMillis();
+                                                            idLong = 9999999999999L - idLong;
                                                             sendNotifToAllCoordinators(mykey,"completeJob","Task "+task.getName()+" has been successfully completed",task_id);
                                                             sendNotif(mykey,task.getCustomerId(),"completeJob","Task "+task.getName()+ " has been successfully completed",task_id);
-                                                            dbCompleted.child(mykey).setValue(new CompletedJob(mykey,task.getStartDate(),simpleDateFormat.format(Calendar.getInstance().getTime()),mykey,coordinatorSession.getName(),"Customer has been notified","Task is successfully completed"));
+                                                            dbCompleted.child(mykey).setValue(new CompletedJob(mykey,task.getStartDate(),simpleDateFormat.format(Calendar.getInstance().getTime()),mykey,coordinatorSession.getName(),"Customer has been notified","Task is successfully completed",idLong+""));
                                                             Toast.makeText(TaskDetail.this,"Job completed sucessfully",Toast.LENGTH_SHORT).show();
                                                             dialog.dismiss();
 

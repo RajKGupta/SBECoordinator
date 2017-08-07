@@ -21,6 +21,7 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
     public static SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
     public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
     String userkey;
+    public static String AppName = "MeChat";
     private CoordinatorSession session;
     @Override
     public void onCreate() {
@@ -30,7 +31,7 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
         if(!FirebaseApp.getApps(this).isEmpty()){
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         }
-        DBREF = FirebaseDatabase.getInstance().getReference().child("MeChat").getRef();
+        DBREF = FirebaseDatabase.getInstance().getReference().child(AppName).getRef();
         notif = DBREF.child("Notification");
         session = new CoordinatorSession(this);
         userkey = session.getUsername();

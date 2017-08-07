@@ -26,6 +26,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+
 public class QuotaionTasks extends AppCompatActivity implements taskAdapter.TaskAdapterListener {
 
     String start, end, note, id;
@@ -64,7 +66,7 @@ public class QuotaionTasks extends AppCompatActivity implements taskAdapter.Task
 
         recycler = (RecyclerView) findViewById(R.id.recycler);
 
-        dbTask = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Employee").child(emp_id).child("AssignedTask").child(id).child("tasks").getRef();
+        dbTask = DBREF.child("Employee").child(emp_id).child("AssignedTask").child(id).child("tasks").getRef();
 
         mAdapter = new taskAdapter(TaskList, QuotaionTasks.this, this);
         linearLayoutManager = new LinearLayoutManager(QuotaionTasks.this);
@@ -117,7 +119,7 @@ public class QuotaionTasks extends AppCompatActivity implements taskAdapter.Task
 
 
         void LoadData() {
-            db = FirebaseDatabase.getInstance().getReference().child("MeChat").child("Task").child(list.get(i));
+            db = DBREF.child("Task").child(list.get(i));
 
 
             vl = db.addValueEventListener(new ValueEventListener() {

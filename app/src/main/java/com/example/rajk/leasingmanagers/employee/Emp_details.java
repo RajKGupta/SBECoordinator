@@ -286,7 +286,52 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         LinearLayout info = (LinearLayout) open_options.findViewById(R.id.info);
         LinearLayout swap = (LinearLayout) open_options.findViewById(R.id.swap);
         LinearLayout editNote = (LinearLayout)open_options.findViewById(R.id.editNote);
+        LinearLayout repeatedreminder =(LinearLayout)open_options.findViewById(R.id.repeatedreminder);
 
+        repeatedreminder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater layoutInflaterAndroid = LayoutInflater.from(Emp_details.this);
+                View mView = layoutInflaterAndroid.inflate(R.layout.repeatedreminderlayout, null);
+                AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(Emp_details.this);
+                alertDialogBuilderUserInput.setView(mView);
+                final String empId = id;
+                final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
+                alertDialogBuilderUserInput
+                        .setCancelable(false)
+                        .setPositiveButton("SET", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogBox, int id) {
+                                final String task_id = listoftasks.get(position);
+                                final String taskName = holder.employeename.getText().toString().trim();
+
+                                String minutes = userInputDialogEditText.getText().toString().trim();
+                                if (minutes != null && minutes.equals("")) {
+                                    Integer Minutes = Integer.parseInt(minutes);
+                                    if (Minutes > 0) {
+                                        String contentforme = "You reminded " + holder.employeename.getText().toString().trim() + " for " + taskName;
+                                        sendNotif(mykey, mykey, "repeatedReminder", contentforme, task_id);
+                                        String contentforother = "Coordinator " + coordinatorSession.getName() + " reminded you of " + taskName;
+                                        sendNotif(mykey, empId, "repeatedReminder" + " " + minutes, contentforother, task_id);
+                                        Toast.makeText(Emp_details.this, contentforme, Toast.LENGTH_SHORT).show();
+                                        dialogBox.dismiss();
+                                    }
+                                }
+                            }
+                        })
+
+                        .setNegativeButton("CANCEL",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialogBox, int id) {
+                                        dialogBox.cancel();
+                                    }
+                                });
+
+                AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+                alertDialogAndroid.show();
+                open_options.dismiss();
+
+            }
+        });
 
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
