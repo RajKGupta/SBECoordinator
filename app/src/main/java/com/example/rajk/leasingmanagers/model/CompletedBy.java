@@ -28,6 +28,24 @@ public class CompletedBy {
         this.assignedByName = assignedByName;
     }
 
+    private String assignedByUsername,assignedByName;
+
+    public String getAssignedByUsername() {
+        return assignedByUsername;
+    }
+
+    public void setAssignedByUsername(String assignedByUsername) {
+        this.assignedByUsername = assignedByUsername;
+    }
+
+    public String getAssignedByName() {
+        return assignedByName;
+    }
+
+    public void setAssignedByName(String assignedByName) {
+        this.assignedByName = assignedByName;
+    }
+
     public String getNote() {
         return note;
     }

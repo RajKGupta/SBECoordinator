@@ -40,7 +40,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Date Assigned"
                     android:id="@+id/dateAssign"
                     android:textStyle="italic"/>
             </LinearLayout>
@@ -53,18 +52,38 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Date Completed :"
+                    android:text="Expected Deadline :"
                     android:id="@+id/tv_datecompleted"
                     android:textStyle="italic"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Date Completed"
                     android:id="@+id/dateCompleted"
                     android:textStyle="italic"/>
 
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/dateCompleted_ll2">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Assigned By :"
+                    android:id="@+id/tv_assignedBy"
+                    android:textStyle="italic"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/assignedBy"
+                    android:textStyle="italic"/>
+
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -74,7 +93,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Note :"
+                    android:text="Coordinator Note :"
                     android:id="@+id/noteAuthor"
                     android:textStyle="italic|bold"/>
 
