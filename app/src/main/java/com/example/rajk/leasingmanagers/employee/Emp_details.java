@@ -30,9 +30,7 @@ import com.example.rajk.leasingmanagers.Quotation.QuotaionTasks;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.EmployeeTask_Adapter;
 import com.example.rajk.leasingmanagers.chat.ChatActivity;
-import com.example.rajk.leasingmanagers.model.CompletedBy;
 import com.example.rajk.leasingmanagers.model.QuotationBatch;
-import com.example.rajk.leasingmanagers.model.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,7 +45,6 @@ import java.util.Map;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
-import static java.security.AccessController.getContext;
 
 public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapter.EmployeeTask_AdapterListener, QAdapter.QAdapterListener {
 
@@ -350,7 +347,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
             @Override
             public void onClick(View v) {
                 LayoutInflater layoutInflaterAndroid = LayoutInflater.from(Emp_details.this);
-                View mView = layoutInflaterAndroid.inflate(R.layout.editCoordinatorNote, null);
+                View mView = layoutInflaterAndroid.inflate(R.layout.editcoordinatornote, null);
                 AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(Emp_details.this);
                 alertDialogBuilderUserInput.setView(mView);
                 final String empId = id;

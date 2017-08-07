@@ -29,7 +29,6 @@ import com.example.rajk.leasingmanagers.adapter.bigimage_adapter;
 import com.example.rajk.leasingmanagers.adapter.completedBy_adapter;
 import com.example.rajk.leasingmanagers.adapter.measurement_adapter;
 import com.example.rajk.leasingmanagers.adapter.taskdetailDescImageAdapter;
-import com.example.rajk.leasingmanagers.customer.Cust_details;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
 import com.example.rajk.leasingmanagers.model.CompletedJob;
@@ -595,7 +594,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             @Override
             public void onClick(View v) {
                 LayoutInflater layoutInflaterAndroid = LayoutInflater.from(TaskDetail.this);
-                View mView = layoutInflaterAndroid.inflate(R.layout.editCoordinatorNote, null);
+                View mView = layoutInflaterAndroid.inflate(R.layout.editcoordinatornote, null);
                 AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(TaskDetail.this);
                 alertDialogBuilderUserInput.setView(mView);
 
