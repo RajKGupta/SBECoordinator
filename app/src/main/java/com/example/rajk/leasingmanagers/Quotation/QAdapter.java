@@ -35,7 +35,7 @@ public class QAdapter extends RecyclerView.Adapter<QAdapter.MyViewHolder> {
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView taskname, customername, timestamp, icon_text;
+        TextView taskname, customername, timestamp, icon_text,YesOrNo, quote;
         ImageView imgProfile;
         public LinearLayout messageContainer;
 
@@ -43,10 +43,13 @@ public class QAdapter extends RecyclerView.Adapter<QAdapter.MyViewHolder> {
             super(itemView);
             taskname = (TextView) itemView.findViewById(R.id.tv_taskname);
             customername = (TextView) itemView.findViewById(R.id.tv_customerName);
+            YesOrNo = (TextView) itemView.findViewById(R.id.YesOrNo);
+            quote = (TextView) itemView.findViewById(R.id.quote);
             timestamp = (TextView) itemView.findViewById(R.id.timestamp);
             icon_text = (TextView) itemView.findViewById(R.id.icon_text);
             imgProfile = (ImageView) itemView.findViewById(R.id.icon_profile);
             messageContainer = (LinearLayout) itemView.findViewById(R.id.message_container);
+
         }
 
     }
@@ -69,6 +72,8 @@ public class QAdapter extends RecyclerView.Adapter<QAdapter.MyViewHolder> {
         holder.timestamp.setText(batch.getStartDate());
         holder.taskname.setText(iconText);
         holder.customername.setText("");
+        holder.YesOrNo.setVisibility(View.GONE);
+        holder.quote.setVisibility(View.GONE);
 
         DatabaseReference dbCustomerName = DBREF.child("Customer").child(batch.getId()).getRef();
         dbCustomerName.addListenerForSingleValueEvent(new ValueEventListener() {
