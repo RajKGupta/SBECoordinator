@@ -45,7 +45,7 @@ public class taskAdapter extends RecyclerView.Adapter<taskAdapter.MyViewHolder> 
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
-        TextView taskname, customername, timestamp, icon_text;
+        TextView taskname, customername, timestamp, icon_text, YesOrNo;
         ImageView imgProfile;
         public LinearLayout messageContainer;
         RelativeLayout iconBack, iconFront, iconContainer;
@@ -53,6 +53,7 @@ public class taskAdapter extends RecyclerView.Adapter<taskAdapter.MyViewHolder> 
         public MyViewHolder(View itemView) {
             super(itemView);
             taskname = (TextView) itemView.findViewById(R.id.tv_taskname);
+            YesOrNo = (TextView) itemView.findViewById(R.id.YesOrNo);
             customername = (TextView) itemView.findViewById(R.id.tv_customerName);
             timestamp = (TextView) itemView.findViewById(R.id.timestamp);
             icon_text = (TextView) itemView.findViewById(R.id.icon_text);
@@ -87,6 +88,22 @@ public class taskAdapter extends RecyclerView.Adapter<taskAdapter.MyViewHolder> 
         holder.imgProfile.setImageResource(R.drawable.bg_circle);
         holder.imgProfile.setColorFilter(task.getColor());
         holder.timestamp.setText(task.getStartDate());
+        DatabaseReference dbQuotation = DBREF.child("Task").child(task.getTaskId()).child("Quotation").getRef();
+        dbQuotation.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                if (dataSnapshot.exists())
+                    holder.YesOrNo.setText("Yes");
+                else
+                    holder.YesOrNo.setText("No");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         DatabaseReference dbCustomerName = DBREF.child("Customer").child(task.getCustomerId()).getRef();
         dbCustomerName.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
