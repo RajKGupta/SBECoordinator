@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
+import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotifToAllCoordinators;
 
 public class Cust_details extends AppCompatActivity implements CustomerTasks_Adapter.CustomerTaskAdapterListener, View.OnClickListener {
 
@@ -286,14 +288,21 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                     @Override
                     public void onClick(View v) {
                         CustomerAccount customerAccount = new CustomerAccount();
-                        customerAccount.setTotal(Integer.parseInt(total.getText().toString()));
-                        customerAccount.setAdvance(Integer.parseInt(advance.getText().toString()));
+                        Integer total_amount = Integer.parseInt(total.getText().toString().trim());
+                        customerAccount.setTotal(total_amount);
+
+                        Integer advance_amount =   Integer.parseInt(advance.getText().toString().trim());
+
+                        customerAccount.setAdvance(advance_amount);
+
                         dbaccountinfo.setValue(customerAccount);
                         total.setEnabled(false);
                         advance.setEnabled(false);
                         balanceLayout.setVisibility(View.VISIBLE);
                         submit.setVisibility(View.GONE);
                         edit.setVisibility(View.VISIBLE);
+                        sendNotif(mykey,id,"accountReset","Your advance deposited is Rs."+advance_amount+" and balance left is Rs."+(total_amount-advance_amount),id);
+                        sendNotifToAllCoordinators(mykey,"accountReset",name+" advance deposited is Rs."+advance_amount+" and balance left is Rs."+(total_amount-advance_amount),id);
 
                     }
                 });
@@ -306,7 +315,6 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.hasChildren())
                             dbaccountinfo.removeValue();
-
                     }
 
                     @Override
