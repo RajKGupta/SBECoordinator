@@ -96,7 +96,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
-
         coordinatorSession = new CoordinatorSession(this);
         mykey = coordinatorSession.getUsername();
         marshmallowPermissions = new MarshmallowPermissions(this);
@@ -109,7 +108,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         measure_and_hideme = (TextView) findViewById(R.id.measure_and_hideme);
         assign_and_hideme = (TextView) findViewById(R.id.assign_and_hideme);
         complete_and_hideme = (TextView) findViewById(R.id.complete_and_hideme);
-
         forward = (FloatingActionButton) findViewById(R.id.forward);
         startDate = (EditText) findViewById(R.id.startDate);
         endDate = (EditText) findViewById(R.id.endDate);
@@ -662,7 +660,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item1:
-                DatabaseReference dbTaskCompleteStatus = DBREF.child("Customer").child(task.getCustomerId()).child("Task").child(task_id).getRef();
+                final DatabaseReference dbTaskCompleteStatus = DBREF.child("Customer").child(task.getCustomerId()).child("Task").child(task_id).getRef();
                 dbTaskCompleteStatus.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -682,10 +680,11 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                                         public void onClick(final DialogInterface dialog, final int id) {
                                                             long idLong = Calendar.getInstance().getTimeInMillis();
                                                             idLong = 9999999999999L - idLong;
-                                                            sendNotifToAllCoordinators(mykey, "completeJob", "Task " + task.getName() + " has been successfully completed", task_id);
-                                                            sendNotif(mykey, task.getCustomerId(), "completeJob", "Task " + task.getName() + " has been successfully completed", task_id);
-                                                            dbCompleted.child(mykey).setValue(new CompletedJob(mykey, task.getStartDate(), simpleDateFormat.format(Calendar.getInstance().getTime()), mykey, coordinatorSession.getName(), "Customer has been notified", "Task is successfully completed", idLong + ""));
-                                                            Toast.makeText(TaskDetail.this, "Job completed sucessfully", Toast.LENGTH_SHORT).show();
+                                                            sendNotifToAllCoordinators(mykey,"completeJob","Task "+task.getName()+" has been successfully completed",task_id);
+                                                            sendNotif(mykey,task.getCustomerId(),"completeJob","Task "+task.getName()+ " has been successfully completed",task_id);
+                                                            dbCompleted.child(mykey).setValue(new CompletedJob(mykey,task.getStartDate(),simpleDateFormat.format(Calendar.getInstance().getTime()),mykey,coordinatorSession.getName(),"Customer has been notified","Task is successfully completed",idLong+""));
+                                                            Toast.makeText(TaskDetail.this,"Job completed sucessfully",Toast.LENGTH_SHORT).show();
+                                                            dbTaskCompleteStatus.setValue("complete");
                                                             dialog.dismiss();
 
                                                         }

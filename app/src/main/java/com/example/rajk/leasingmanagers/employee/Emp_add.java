@@ -11,8 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.rajk.leasingmanagers.MainViews.CreateTask;
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.model.GlobalEmployee;
 import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -84,7 +84,7 @@ public class Emp_add extends AppCompatActivity {
                                 DBREF.child("Fcmtokens").child(username).child("token").setValue("nil");
                                 DBREF.child("Users").child("Usersessions").child(username).child("num").setValue(num);
                                 String id = Calendar.getInstance().getTimeInMillis()+"";
-                                Employee employee1 = new Employee(getRandomMaterialColor("400"),name,num,add,desig, AppName+"_"+username);
+                                GlobalEmployee employee1 = new GlobalEmployee(name,num,add,desig, AppName+"_"+username,"na");
                                 FirebaseDatabase.getInstance().getReference().child("GlobalEmployee").child("EmployeeDetail").child(id).setValue(employee1);
 
                             }
