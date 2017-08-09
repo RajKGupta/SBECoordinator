@@ -20,31 +20,29 @@ import java.util.List;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
-public class completedBy_adapter extends  RecyclerView.Adapter<completedBy_adapter.MyViewHolder>
-{
+public class completedBy_adapter extends RecyclerView.Adapter<completedBy_adapter.MyViewHolder> {
     List<CompletedJob> list = new ArrayList<>();
     private Context context;
-    SharedPreferences sharedPreferences ;
+    SharedPreferences sharedPreferences;
     String taskId;
     public CompletedJob emp = new CompletedJob();
 
     public completedBy_adapter(List<CompletedJob> list, Context context, String taskId) {
         this.list = list;
         this.context = context;
-        sharedPreferences = context.getSharedPreferences("SESSION",Context.MODE_PRIVATE);
-        this.taskId=taskId;
+        sharedPreferences = context.getSharedPreferences("SESSION", Context.MODE_PRIVATE);
+        this.taskId = taskId;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.completedby_listrow,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.completedby_listrow, parent, false);
         return new MyViewHolder(view);
 
     }
 
     @Override
-    public void onBindViewHolder(final completedBy_adapter.MyViewHolder holder, final int position)
-    {
+    public void onBindViewHolder(final completedBy_adapter.MyViewHolder holder, final int position) {
         emp = list.get(position);
 
         DatabaseReference dbEmp = DBREF.child("Employee").child(emp.getEmpId()).getRef();
@@ -78,11 +76,11 @@ public class completedBy_adapter extends  RecyclerView.Adapter<completedBy_adapt
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView dateCompleted,employeename,employeeDesig,dateassigned,tv_dateCompleted,noteAuthor,noteString,assignedby,employeeNote;
+        public TextView dateCompleted, employeename, employeeDesig, dateassigned, tv_dateCompleted, noteAuthor, noteString, assignedby, employeeNote;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            employeeNote = (TextView)itemView.findViewById(R.id.employeeNote);
+            employeeNote = (TextView) itemView.findViewById(R.id.employeeNote);
             dateCompleted = (TextView) itemView.findViewById(R.id.dateCompleted);
 
             employeename = (TextView)
@@ -99,9 +97,9 @@ public class completedBy_adapter extends  RecyclerView.Adapter<completedBy_adapt
             tv_dateCompleted = (TextView)
                     itemView.findViewById(R.id.tv_datecompleted);
 
-            noteAuthor = (TextView)itemView.findViewById(R.id.noteAuthor);
+            noteAuthor = (TextView) itemView.findViewById(R.id.noteAuthor);
             noteString = (TextView) itemView.findViewById(R.id.noteString);
-            assignedby = (TextView)itemView.findViewById(R.id.assignedBy);
+            assignedby = (TextView) itemView.findViewById(R.id.assignedBy);
         }
     }
 

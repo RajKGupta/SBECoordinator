@@ -28,8 +28,6 @@ public class CompletedBy {
         this.assignedByName = assignedByName;
     }
 
-
-
     public String getNote() {
         return note;
     }
@@ -63,11 +61,11 @@ public class CompletedBy {
         this.datecompleted = datecompleted;
     }
 
-
     public CompletedBy() {
     }
 
-    public CompletedBy(String empId, String dateassigned, String datecompleted, String note, String assignedByUsername, String assignedByName) {
+    public CompletedBy(String empId, String dateassigned, String datecompleted, String note, String assignedByUsername, String assignedByName)
+    {
         this.empId = empId;
         this.dateassigned = dateassigned;
         this.datecompleted = datecompleted;
