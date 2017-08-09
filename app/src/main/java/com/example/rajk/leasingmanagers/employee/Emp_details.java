@@ -285,8 +285,8 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         LinearLayout remind = (LinearLayout) open_options.findViewById(R.id.remind);
         LinearLayout info = (LinearLayout) open_options.findViewById(R.id.info);
         LinearLayout swap = (LinearLayout) open_options.findViewById(R.id.swap);
-        LinearLayout editNote = (LinearLayout)open_options.findViewById(R.id.editNote);
-        LinearLayout repeatedreminder =(LinearLayout)open_options.findViewById(R.id.repeatedreminder);
+        LinearLayout editNote = (LinearLayout) open_options.findViewById(R.id.editNote);
+        LinearLayout repeatedreminder = (LinearLayout) open_options.findViewById(R.id.repeatedreminder);
 
         repeatedreminder.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -357,7 +357,6 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                                 dialog.dismiss();
 
 
-
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -376,10 +375,10 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
             public void onClick(View v) {
                 final String task_id = listoftasks.get(position);
                 String taskName = holder.employeename.getText().toString().trim();
-                String contentforme = "You reminder "+name+" for "+taskName;
-                sendNotif(mykey,mykey,"remindJob",contentforme,task_id);
-                String contentforother= "Coordinator "+coordinatorSession.getName()+" reminded you of "+taskName;
-                sendNotif(mykey,id,"remindJob",contentforother,task_id);
+                String contentforme = "You reminder " + name + " for " + taskName;
+                sendNotif(mykey, mykey, "remindJob", contentforme, task_id);
+                String contentforother = "Coordinator " + coordinatorSession.getName() + " reminded you of " + taskName;
+                sendNotif(mykey, id, "remindJob", contentforother, task_id);
                 open_options.dismiss();
             }
         });
@@ -388,8 +387,8 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
             @Override
             public void onClick(View v) {
                 open_options.dismiss();
-                Intent intent = new Intent(getApplicationContext(),TaskDetail.class);
-                intent.putExtra("task_id",listoftasks.get(position));
+                Intent intent = new Intent(getApplicationContext(), TaskDetail.class);
+                intent.putExtra("task_id", listoftasks.get(position));
                 startActivity(intent);
             }
         });
@@ -419,7 +418,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                 open_options.dismiss();
             }
         });
-                
+
         editNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -437,15 +436,16 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                                 final String taskName = holder.employeename.getText().toString().trim();
 
                                 String note = userInputDialogEditText.getText().toString().trim();
-                                if(note!=null&&note.equals("")){
+                                if (note != null && note.equals("")) {
                                     DBREF.child("Task").child(task_id).child("AssignedTo").child(empId).child("note").setValue(note);
                                     Toast.makeText(Emp_details.this, "Coordinator note changed successfully", Toast.LENGTH_SHORT).show();
-                                    String contentforme = "You changed the coordinator note for "+taskName;
-                                    sendNotif(mykey,mykey,"changedNote",contentforme,task_id);
-                                    String contentforother= "Coordinator "+coordinatorSession.getName()+" changed the note of "+taskName;
-                                    sendNotif(mykey,empId,"changedNote",contentforother,task_id);
+                                    String contentforme = "You changed the coordinator note for " + taskName;
+                                    sendNotif(mykey, mykey, "changedNote", contentforme, task_id);
+                                    String contentforother = "Coordinator " + coordinatorSession.getName() + " changed the note of " + taskName;
+                                    sendNotif(mykey, empId, "changedNote", contentforother, task_id);
                                     dialogBox.dismiss();
-                                }}
+                                }
+                            }
                         })
 
                         .setNegativeButton("CANCEL",

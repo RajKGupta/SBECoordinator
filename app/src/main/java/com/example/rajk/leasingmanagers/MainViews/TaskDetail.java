@@ -63,17 +63,17 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotifToAllCoordinators;
 import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormat;
 
-public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener{
-    
-    private DatabaseReference dbRef, dbTask,dbCompleted,dbAssigned,dbMeasurement,dbDescImages;
+public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener {
+
+    private DatabaseReference dbRef, dbTask, dbCompleted, dbAssigned, dbMeasurement, dbDescImages;
     ValueEventListener dbTaskVle;
     ImageButton download;
     ProgressBar progressBar;
     private String task_id, mykey;
     private Task task;
     private String customername;
-    EditText startDate,endDate,quantity,description;
-    RecyclerView rec_assignedto,rec_completedby,rec_measurement, rec_DescImages ;
+    EditText startDate, endDate, quantity, description;
+    RecyclerView rec_assignedto, rec_completedby, rec_measurement, rec_DescImages;
     assignedto_adapter adapter_assignedto;
     completedBy_adapter adapter_completedby;
     taskdetailDescImageAdapter adapter_taskimages;
@@ -126,13 +126,13 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         rec_assignedto.setLayoutManager(new LinearLayoutManager(this));
         rec_assignedto.setItemAnimator(new DefaultItemAnimator());
         rec_assignedto.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        adapter_assignedto = new assignedto_adapter(assignedtoList, getApplicationContext(),task_id,this);
+        adapter_assignedto = new assignedto_adapter(assignedtoList, getApplicationContext(), task_id, this);
         rec_assignedto.setAdapter(adapter_assignedto);
 
         rec_completedby.setLayoutManager(new LinearLayoutManager(this));
         rec_completedby.setItemAnimator(new DefaultItemAnimator());
         rec_completedby.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        adapter_completedby = new completedBy_adapter(completedbyList, getApplicationContext(),task_id);
+        adapter_completedby = new completedBy_adapter(completedbyList, getApplicationContext(), task_id);
         rec_completedby.setAdapter(adapter_completedby);
 
         rec_measurement.setLayoutManager(new LinearLayoutManager(this));
@@ -195,14 +195,11 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!marshmallowPermissions.checkPermissionForCamera())
-                {
+                if (!marshmallowPermissions.checkPermissionForCamera()) {
                     marshmallowPermissions.requestPermissionForCamera();
-                    if (!marshmallowPermissions.checkPermissionForExternalStorage())
-                    {
+                    if (!marshmallowPermissions.checkPermissionForExternalStorage()) {
                         marshmallowPermissions.requestPermissionForExternalStorage();
-                    }
-                    else
+                    } else
                         launchLibrary();
                 } else {
 
@@ -394,15 +391,15 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     }
 
     void setValue(Task task) {
-        if(task.getStartDate()!=null)
-        startDate.setText(task.getStartDate());
+        if (task.getStartDate() != null)
+            startDate.setText(task.getStartDate());
 
-        if(task.getExpEndDate()!=null)
-        endDate.setText(task.getExpEndDate());
+        if (task.getExpEndDate() != null)
+            endDate.setText(task.getExpEndDate());
 
-        if(task.getQty()!=null)
-        quantity.setText(task.getQty());
-        if (!task.getDesc().equals("")&&task.getDesc()!=null) {
+        if (task.getQty() != null)
+            quantity.setText(task.getQty());
+        if (!task.getDesc().equals("") && task.getDesc() != null) {
             description.setVisibility(View.VISIBLE);
             description.setText(task.getDesc());
         }
@@ -412,8 +409,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 if (dataSnapshot.exists()) {
                     appByCustomer.setVisibility(View.VISIBLE);
                     Quotation quotation = dataSnapshot.getValue(Quotation.class);
-                    if(quotation.getApprovedByCust()!=null)
-                    appByCustomer.setText(" "+quotation.getApprovedByCust());
+                    if (quotation.getApprovedByCust() != null)
+                        appByCustomer.setText(" " + quotation.getApprovedByCust());
                     uploadStatus.setText(" Yes");
                 } else {
                     appByCustomer.setVisibility(View.GONE);
@@ -450,17 +447,15 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
 
     @Override
-    public void ondownloadButtonClicked(final int position, final bigimage_adapter.MyViewHolder holder)
-    {
+    public void ondownloadButtonClicked(final int position, final bigimage_adapter.MyViewHolder holder) {
         if (!marshmallowPermissions.checkPermissionForExternalStorage()) {
             marshmallowPermissions.requestPermissionForExternalStorage();
-        }
-        else {
+        } else {
             holder.progressBar.setVisibility(View.VISIBLE);
             holder.download_taskdetail_image.setVisibility(View.GONE);
             String url = DescImages.get(position);
             StorageReference str = FirebaseStorage.getInstance().getReferenceFromUrl(url);
-            File rootPath = new File(Environment.getExternalStorageDirectory(), AppName+"/TaskDetailImages");
+            File rootPath = new File(Environment.getExternalStorageDirectory(), AppName + "/TaskDetailImages");
 
             if (!rootPath.exists()) {
                 rootPath.mkdirs();
@@ -495,11 +490,11 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 .setView(R.layout.options_forassignedtask).create();
         open_options.show();
 
-        LinearLayout remove = (LinearLayout)open_options.findViewById(R.id.remove);
-        LinearLayout remind = (LinearLayout)open_options.findViewById(R.id.remind);
-        LinearLayout repeatedreminder =(LinearLayout)open_options.findViewById(R.id.repeatedreminder);
-        LinearLayout swap = (LinearLayout)open_options.findViewById(R.id.swap);
-        LinearLayout editNote = (LinearLayout)open_options.findViewById(R.id.editNote);
+        LinearLayout remove = (LinearLayout) open_options.findViewById(R.id.remove);
+        LinearLayout remind = (LinearLayout) open_options.findViewById(R.id.remind);
+        LinearLayout repeatedreminder = (LinearLayout) open_options.findViewById(R.id.repeatedreminder);
+        LinearLayout swap = (LinearLayout) open_options.findViewById(R.id.swap);
+        LinearLayout editNote = (LinearLayout) open_options.findViewById(R.id.editNote);
 
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -629,15 +624,16 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                         .setPositiveButton("SET", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogBox, int id) {
                                 String note = userInputDialogEditText.getText().toString().trim();
-                                if(note!=null&&note.equals("")){
+                                if (note != null && note.equals("")) {
                                     DBREF.child("Task").child(task_id).child("AssignedTo").child(adapter_assignedto.emp.getEmpId()).child("note").setValue(note);
                                     Toast.makeText(TaskDetail.this, "Coordinator note changed successfully", Toast.LENGTH_SHORT).show();
-                                    String contentforme = "You changed the coordinator note for "+task.getName();
-                                    sendNotif(mykey,mykey,"changedNote",contentforme,task_id);
-                                    String contentforother= "Coordinator "+coordinatorSession.getName()+" changed the note of "+task.getName();
-                                    sendNotif(mykey,adapter_assignedto.emp.getEmpId(),"changedNote",contentforother,task_id);
+                                    String contentforme = "You changed the coordinator note for " + task.getName();
+                                    sendNotif(mykey, mykey, "changedNote", contentforme, task_id);
+                                    String contentforother = "Coordinator " + coordinatorSession.getName() + " changed the note of " + task.getName();
+                                    sendNotif(mykey, adapter_assignedto.emp.getEmpId(), "changedNote", contentforother, task_id);
                                     dialogBox.dismiss();
-                                }}
+                                }
+                            }
                         })
 
                         .setNegativeButton("CANCEL",
@@ -670,20 +666,15 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 dbTaskCompleteStatus.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.exists())
-                        {
-                            String status= dataSnapshot.getValue(String.class);
-                            if(status.equals("pending"))
-                            {
+                        if (dataSnapshot.exists()) {
+                            String status = dataSnapshot.getValue(String.class);
+                            if (status.equals("pending")) {
                                 dbAssigned.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
-                                        if(dataSnapshot.exists()&&dataSnapshot.getChildrenCount()>0)
-                                        {
-                                            Toast.makeText(TaskDetail.this,"You have to un-assign all tasks before marking this task as complete",Toast.LENGTH_LONG).show();
-                                        }
-                                        else
-                                        {
+                                        if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+                                            Toast.makeText(TaskDetail.this, "You have to un-assign all tasks before marking this task as complete", Toast.LENGTH_LONG).show();
+                                        } else {
                                             final AlertDialog.Builder builderCompleteTask = new AlertDialog.Builder(TaskDetail.this);
                                             builderCompleteTask.setMessage("Are you sure you want to mark this task as complete??")
                                                     .setCancelable(false)
@@ -691,15 +682,15 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                                         public void onClick(final DialogInterface dialog, final int id) {
                                                             long idLong = Calendar.getInstance().getTimeInMillis();
                                                             idLong = 9999999999999L - idLong;
-                                                            sendNotifToAllCoordinators(mykey,"completeJob","Task "+task.getName()+" has been successfully completed",task_id);
-                                                            sendNotif(mykey,task.getCustomerId(),"completeJob","Task "+task.getName()+ " has been successfully completed",task_id);
-                                                            dbCompleted.child(mykey).setValue(new CompletedJob(mykey,task.getStartDate(),simpleDateFormat.format(Calendar.getInstance().getTime()),mykey,coordinatorSession.getName(),"Customer has been notified","Task is successfully completed",idLong+""));
-                                                            Toast.makeText(TaskDetail.this,"Job completed sucessfully",Toast.LENGTH_SHORT).show();
+                                                            sendNotifToAllCoordinators(mykey, "completeJob", "Task " + task.getName() + " has been successfully completed", task_id);
+                                                            sendNotif(mykey, task.getCustomerId(), "completeJob", "Task " + task.getName() + " has been successfully completed", task_id);
+                                                            dbCompleted.child(mykey).setValue(new CompletedJob(mykey, task.getStartDate(), simpleDateFormat.format(Calendar.getInstance().getTime()), mykey, coordinatorSession.getName(), "Customer has been notified", "Task is successfully completed", idLong + ""));
+                                                            Toast.makeText(TaskDetail.this, "Job completed sucessfully", Toast.LENGTH_SHORT).show();
                                                             dialog.dismiss();
 
                                                         }
                                                     })
-                                                    .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int id) {
                                                             dialog.dismiss();
                                                         }
@@ -715,10 +706,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                     }
                                 });
 
-                            }
-                            else
-                            {
-                                Toast.makeText(TaskDetail.this,"Task Already Marked As Complete",Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(TaskDetail.this, "Task Already Marked As Complete", Toast.LENGTH_LONG).show();
                             }
                         }
                     }
@@ -736,7 +725,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                         .setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, final int id) {
-                                if(dbTaskVle!=null)
+                                if (dbTaskVle != null)
                                     dbTask.removeEventListener(dbTaskVle);
                                 final ProgressDialog progressDialog = new ProgressDialog(TaskDetail.this);
                                 progressDialog.setMessage("Deleting Task");
@@ -755,14 +744,13 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         if (dataSnapshot.exists()) {
                                             Boolean status = dataSnapshot.getValue(Boolean.class);
-                                            if(status==true)
-                                            {
+                                            if (status == true) {
                                                 dbDelete.removeValue();
                                                 progressDialog.dismiss();
-                                                sendNotifToAllCoordinators(mykey,"deleteTask","Task "+task.getName()+" has been deleted",task_id);
+                                                sendNotifToAllCoordinators(mykey, "deleteTask", "Task " + task.getName() + " has been deleted", task_id);
                                                 //todo refresh the layout so that the layout is updated
-                                                sendNotif(mykey,task.getCustomerId(),"deleteTask",coordinatorSession.getName()+" deleted the "+task.getName()+" task",task_id);
-                                                Toast.makeText(TaskDetail.this,"Job deleted sucessfully",Toast.LENGTH_SHORT).show();
+                                                sendNotif(mykey, task.getCustomerId(), "deleteTask", coordinatorSession.getName() + " deleted the " + task.getName() + " task", task_id);
+                                                Toast.makeText(TaskDetail.this, "Job deleted sucessfully", Toast.LENGTH_SHORT).show();
                                                 onBackPressed();
                                                 finish();
                                                 dbDelete.removeEventListener(this);
@@ -797,9 +785,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(dbTaskVle!=null)
+        if (dbTaskVle != null)
             dbTask.removeEventListener(dbTaskVle);
     }
-
-
 }
