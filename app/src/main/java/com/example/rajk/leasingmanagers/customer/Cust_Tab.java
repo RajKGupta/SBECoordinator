@@ -122,6 +122,7 @@ public class Cust_Tab extends Fragment {
                                 }
                                 cust = dataSnapshot.getValue(Customer.class);
                                 cust.setId(dataSnapshot.getKey());
+                                if(!list.contains(cust))
                                 list.add(cust);
                                 adapter.notifyDataSetChanged();
 

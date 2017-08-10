@@ -33,6 +33,7 @@ import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.EmployeeTask_Adapter;
 import com.example.rajk.leasingmanagers.chat.ChatActivity;
 import com.example.rajk.leasingmanagers.model.QuotationBatch;
+import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -525,6 +526,17 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         intent.putExtra("end", batch.getEndDate());
         intent.putExtra("start", batch.getStartDate());
         startActivity(intent);
+
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(Emp_details.this, Tabs.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("page",1);
+        finish();
 
     }
 }

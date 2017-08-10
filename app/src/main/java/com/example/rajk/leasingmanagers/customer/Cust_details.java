@@ -1,13 +1,11 @@
 package com.example.rajk.leasingmanagers.customer;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -20,13 +18,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.MainViews.CreateTask;
 import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.CustomerTasks_Adapter;
 import com.example.rajk.leasingmanagers.chat.ChatActivity;
+import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
 import com.example.rajk.leasingmanagers.model.CustomerAccount;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -56,7 +54,6 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
     ValueEventListener dblistener, dbtasklistener, dbaccountlistener;
     private ArrayList<Task> TaskList = new ArrayList<>();
     private CustomerTasks_Adapter mAdapter;
-    private ProgressDialog progressDialog;
     public AlertDialog customerAccountDialog;
     CoordinatorSession coordinatorSession;
     private Button quotationButton;
@@ -71,7 +68,6 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         coordinatorSession = new CoordinatorSession(this);
         quotationButton = (Button) findViewById(R.id.quotation);
         quotationButton.setOnClickListener(this);
-        progressDialog = new ProgressDialog(this);
         id = getIntent().getStringExtra("id");
         mykey = coordinatorSession.getUsername();
         Name = (EditText) findViewById(R.id.name);
@@ -81,8 +77,6 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         msgme = (ImageButton) findViewById(R.id.msgme);
         pendingJobCount = (TextView) findViewById(R.id.pendingTasks);
         completeJobCount = (TextView) findViewById(R.id.completedTasks);
-
-
         rec_customertasks = (RecyclerView) findViewById(R.id.rec_customertasks);
         linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         rec_customertasks.setLayoutManager(linearLayoutManager);
@@ -146,6 +140,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         dbtasklistener = dbTask.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                    listoftasks.clear();
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                         listoftasks.add(childSnapshot.getKey());
@@ -310,11 +305,12 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
             case R.id.item6:
                 // TODO : Null pointer exception (Null Object Refrence)
                 //if nothing is added to account this error would occur
-                dbaccountinfo.addListenerForSingleValueEvent(new ValueEventListener() {
+                final DatabaseReference dbAccount = db.child("Account").getRef();
+                dbAccount.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.hasChildren())
-                            dbaccountinfo.removeValue();
+                            dbAccount.removeValue();
                     }
 
                     @Override
