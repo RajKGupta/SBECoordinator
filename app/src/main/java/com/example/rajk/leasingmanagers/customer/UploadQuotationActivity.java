@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
+
 import com.example.rajk.leasingmanagers.MainViews.TaskHome;
 import com.example.rajk.leasingmanagers.R;
 
@@ -16,20 +17,20 @@ public class UploadQuotationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-            setContentView(R.layout.activity_upload_quotation);
-            Intent intent = getIntent();
-            String custId = intent.getStringExtra("custId");
-            Bundle bundle = new Bundle();
-            bundle.putString("custId", custId);
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            Fragment fragment = new TaskHome();
-            fragment.setArguments(bundle);
-            fragmentTransaction.add(R.id.fragment_container,fragment);
-            fragmentTransaction.commit();
+        setContentView(R.layout.activity_upload_quotation);
+        Intent intent = getIntent();
+        String custId = intent.getStringExtra("custId");
+        Bundle bundle = new Bundle();
+        bundle.putString("custId", custId);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        Fragment fragment = new TaskHome();
+        fragment.setArguments(bundle);
+        fragmentTransaction.add(R.id.fragment_container, fragment);
+        fragmentTransaction.commit();
     }
 
-    }
+}
 
 
 

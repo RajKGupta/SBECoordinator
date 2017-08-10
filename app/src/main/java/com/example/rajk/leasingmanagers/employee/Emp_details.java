@@ -370,7 +370,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
             public void onClick(View v) {
                 final String task_id = listoftasks.get(position);
                 String taskName = holder.employeename.getText().toString().trim();
-                String contentforme = "You reminder " + name + " for " + taskName;
+                String contentforme = "You reminded " + name + " for " + taskName;
                 sendNotif(mykey, mykey, "remindJob", contentforme, task_id);
                 String contentforother = "Coordinator " + coordinatorSession.getName() + " reminded you of " + taskName;
                 sendNotif(mykey, id, "remindJob", contentforother, task_id);
@@ -431,8 +431,9 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                                 final String taskName = holder.employeename.getText().toString().trim();
 
                                 String note = userInputDialogEditText.getText().toString().trim();
-                                if (note != null && note.equals("")) {
+                                if (note != null && !note.equals("")) {
                                     DBREF.child("Task").child(task_id).child("AssignedTo").child(empId).child("note").setValue(note);
+                                    holder.noteAuthor.setText(note);
                                     Toast.makeText(Emp_details.this, "Coordinator note changed successfully", Toast.LENGTH_SHORT).show();
                                     String contentforme = "You changed the coordinator note for " + taskName;
                                     sendNotif(mykey, mykey, "changedNote", contentforme, task_id);
@@ -440,6 +441,8 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                                     sendNotif(mykey, empId, "changedNote", contentforother, task_id);
                                     dialogBox.dismiss();
                                 }
+                                else
+                                    dialogBox.dismiss();
                             }
                         })
 

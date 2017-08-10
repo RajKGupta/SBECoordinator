@@ -245,9 +245,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 if (description.getVisibility() == View.VISIBLE) {
                     desc = description.getText().toString().trim();
                     description2.setText(desc);
-                } else
-                    description2.setText("Description here");
-
+                }
                 oksave.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -841,8 +839,9 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                         .setPositiveButton("SET", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogBox, int id) {
                                 String note = userInputDialogEditText.getText().toString().trim();
-                                if (note != null && note.equals("")) {
+                                if (note != null && !note.equals("")) {
                                     DBREF.child("Task").child(task_id).child("AssignedTo").child(adapter_assignedto.emp.getEmpId()).child("note").setValue(note);
+                                    holder.noteAuthor.setText(note);
                                     Toast.makeText(TaskDetail.this, "Coordinator note changed successfully", Toast.LENGTH_SHORT).show();
                                     String contentforme = "You changed the coordinator note for " + task.getName();
                                     sendNotif(mykey, mykey, "changedNote", contentforme, task_id);
@@ -850,6 +849,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                     sendNotif(mykey, adapter_assignedto.emp.getEmpId(), "changedNote", contentforother, task_id);
                                     dialogBox.dismiss();
                                 }
+                                else
+                                    dialogBox.dismiss();
                             }
                         })
 
