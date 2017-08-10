@@ -167,8 +167,6 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
                     if (!marshMallowPermission.checkPermissionForExternalStorage())
                         marshMallowPermission.requestPermissionForExternalStorage();
                     else {
-
-                        //TODO check if quotation is already uploaded
                         UploadQuotation();
                     }
                     mode = null;

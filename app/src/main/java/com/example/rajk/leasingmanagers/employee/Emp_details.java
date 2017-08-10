@@ -51,7 +51,7 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapter.EmployeeTask_AdapterListener, QAdapter.QAdapterListener {
 
     Dialog dialog;
-    String id, name, num, add, desig, temp_name, temp_add, temp_num, temp_designation;
+    String id, name, num, add, desig, temp_name, temp_add, temp_num;
     EditText Name, Num, Add, Desig;
     DatabaseReference db;
     RecyclerView rec_employeetask;
@@ -221,7 +221,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         switch (item.getItemId()) {
             case R.id.item1:
 
-                final EditText name_new, num_new, add_new, desig_new;
+                final EditText name_new, num_new, add_new;
                 Button sub;
 
                 dialog = new Dialog(Emp_details.this);
@@ -231,13 +231,11 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                 name_new = (EditText) dialog.findViewById(R.id.name);
                 num_new = (EditText) dialog.findViewById(R.id.num);
                 add_new = (EditText) dialog.findViewById(R.id.add);
-                desig_new = (EditText) dialog.findViewById(R.id.desig);
                 sub = (Button) dialog.findViewById(R.id.submit);
 
                 name_new.setText(name);
                 num_new.setText(num);
                 add_new.setText(add);
-                desig_new.setText(desig);
 
                 sub.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -249,10 +247,8 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                         temp_name = name_new.getText().toString().trim();
                         temp_name = WordUtils.capitalizeFully(temp_name);
                         temp_num = num_new.getText().toString().trim();
-                        temp_designation = desig_new.getText().toString().trim();
-                        temp_designation = WordUtils.capitalizeFully(temp_designation);
 
-                        if (TextUtils.isEmpty(temp_add) || TextUtils.isEmpty(temp_name) || TextUtils.isEmpty(temp_num) || TextUtils.isEmpty(temp_designation))
+                        if (TextUtils.isEmpty(temp_add) || TextUtils.isEmpty(temp_name) || TextUtils.isEmpty(temp_num))
                             Toast.makeText(Emp_details.this, "Enter details...", Toast.LENGTH_SHORT).show();
 
                         else {
@@ -261,7 +257,6 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                             db.child("name").setValue(temp_name);
                             db.child("address").setValue(temp_add);
                             db.child("phone_num").setValue(temp_num);
-                            db.child("designation").setValue(temp_designation);
                             DBREF.child("Users").child("Usersessions").child(emp_id).child("num").setValue(num);
 
                             dialog.dismiss();
