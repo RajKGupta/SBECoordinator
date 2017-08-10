@@ -62,8 +62,8 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
     private static final int PICK_FILE_REQUEST = 1;
     private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
     ProgressDialog progressDialog;
-    DatabaseReference dbQuotation;
     private String custId = "nocust";
+    private String custName = "nocust";
 
     public TaskHome() {
         // Required empty public constructor
@@ -84,6 +84,7 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             custId = bundle.getString("custId");
+            custName = bundle.getString("custName");
         }
         marshMallowPermission = new MarshmallowPermissions(getActivity());
         progressDialog = new ProgressDialog(getActivity());
@@ -172,7 +173,7 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
                     mode = null;
                     return true;
 
-                case R.id.Forwardtoquotationwala:
+/*                case R.id.Forwardtoquotationwala:
                     Intent intent = new Intent(getActivity(), forwardTask.class);
                     intent.putExtra("forQuotation", true);
                     List<Integer> selectedItems = mAdapter.getSelectedItems();
@@ -182,9 +183,10 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
                         taskIds.add(task.getTaskId());
                     }
                     intent.putExtra("custId", custId);
+                    intent.putExtra("custName", custName);
                     intent.putStringArrayListExtra("taskIds", taskIds);
                     startActivity(intent);
-                    return true;
+                    return true;*/
                 default:
                     return false;
             }

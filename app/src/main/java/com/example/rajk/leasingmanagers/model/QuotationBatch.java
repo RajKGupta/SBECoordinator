@@ -2,16 +2,17 @@ package com.example.rajk.leasingmanagers.model;
 
 public class QuotationBatch {
 
-    String endDate, startDate, note, id;
+    String endDate, startDate, coordnote, id, custName;
     private int color = -1;
 
     public QuotationBatch() {
     }
 
-    public QuotationBatch(String id, String note, String startDate, String endDate, int color) {
+    public QuotationBatch(String id, String coordnote, String startDate, String endDate, int color, String custName) {
         this.endDate = endDate;
         this.id = id;
-        this.note = note;
+        this.coordnote = coordnote;
+        this.custName = custName;
         this.startDate = startDate;
         this.color = color;
     }
@@ -32,12 +33,20 @@ public class QuotationBatch {
         this.id = id;
     }
 
-    public String getNote() {
-        return note;
+    public String getCoordnote() {
+        return coordnote;
     }
 
-    public void setNote(String note) {
-        this.note = note;
+    public void setCoordnote(String coordnote) {
+        this.coordnote = coordnote;
+    }
+
+    public String getCustName() {
+        return custName;
+    }
+
+    public void setCustName(String custName) {
+        this.custName = custName;
     }
 
     public String getStartDate() {

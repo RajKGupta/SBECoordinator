@@ -12,11 +12,11 @@
         android:title="Upload"
         app:showAsAction="always" />
 
-    <item
+    <!--item
         android:id="@+id/Forwardtoquotationwala"
         android:icon="@drawable/ic_forward"
         android:orderInCategory="100"
         android:title="Upload"
-        app:showAsAction="always" />
+        app:showAsAction="always" /-->
 
 </menu>

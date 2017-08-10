@@ -156,6 +156,7 @@ public class phonebook extends AppCompatActivity implements phonebook_adapter.ph
     @Override
     public void onDELETEMEclicked(final int position)
     {
+        Contact = contact_list.get(position).getContact();
         final AlertDialog.Builder builder = new AlertDialog.Builder(phonebook.this);
         builder.setMessage("Are you sure you want to delete this contact")
                 .setCancelable(false)

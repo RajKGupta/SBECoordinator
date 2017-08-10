@@ -44,7 +44,7 @@ public class forwardTask extends AppCompatActivity {
     Employee emp;
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     ProgressDialog pDialog;
-    String task_id, custId, mykey;
+    String task_id, custId, mykey, custName;
     ArrayList<String> taskIds;
     Boolean forQuotation;
     String swaping_id = "", curdate;
@@ -69,6 +69,7 @@ public class forwardTask extends AppCompatActivity {
         if (forQuotation == true) {
             taskIds = intent.getStringArrayListExtra("taskIds");
             custId = intent.getStringExtra("custId");
+            custName = intent.getStringExtra("custName");
             //get the list of taskIds
         } else {
             task_id = intent.getStringExtra("task_id");
@@ -150,6 +151,7 @@ public class forwardTask extends AppCompatActivity {
                         i.putExtra("forQuotation", forQuotation);
                         i.putStringArrayListExtra("taskIds", taskIds);
                         i.putExtra("custId", custId);
+                        i.putExtra("custName", custName);
                     }
 
                     startActivity(i);
@@ -254,6 +256,7 @@ public class forwardTask extends AppCompatActivity {
         } else {
             Intent intent = new Intent(this, UploadQuotationActivity.class);
             intent.putExtra("custId", custId);
+            intent.putExtra("custName", custName);
             intent.putExtra("forQuotation", forQuotation);
             startActivity(intent);
             finish();

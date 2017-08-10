@@ -48,7 +48,7 @@ import java.util.Map;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 
-public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapter.EmployeeTask_AdapterListener, QAdapter.QAdapterListener {
+public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapter.EmployeeTask_AdapterListener{//}, QAdapter.QAdapterListener {
 
     Dialog dialog;
     String id, name, num, add, desig, temp_name, temp_add, temp_num;
@@ -58,7 +58,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     LinearLayoutManager linearLayoutManager;
     private RecyclerView.Adapter mAdapter;
     List<String> listoftasks;
-    List<QuotationBatch> listofquotations;
+//    List<QuotationBatch> listofquotations;
     private AlertDialog open_options;
     CoordinatorSession coordinatorSession;
     String mykey, dbTablekey;
@@ -139,17 +139,17 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
 
     private void setAdapternlist() {
         listoftasks = new ArrayList<>();
-        listofquotations = new ArrayList<>();
+/*        listofquotations = new ArrayList<>();
 
         if (desig.toLowerCase().equals("quotation")) {
             mAdapter = new QAdapter(listofquotations, getApplicationContext(), this);
-        } else
+        } else*/
             mAdapter = new EmployeeTask_Adapter(listoftasks, getApplicationContext(), id, this);
 
         rec_employeetask.setAdapter(mAdapter);
 
         db = db.child("AssignedTask").getRef();
-
+/*
         if (desig.toLowerCase().equals("quotation")) {
             db.addChildEventListener(new ChildEventListener() {
                 @Override
@@ -162,7 +162,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                         long c = (long) map.get("color");
                         m.setColor((int) c);
                         m.setStartDate((String) map.get("startDate"));
-                        m.setNote((String) map.get("note"));
+                        m.setCoordnote((String) map.get("note"));
                         m.setId((String) map.get("id"));
 
                         jobs_and_hideme.setVisibility(View.GONE);
@@ -191,7 +191,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
 
                 }
             });
-        } else {
+        } else {*/
             db.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -207,7 +207,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
 
                 }
             });
-        }
+        //}
     }
 
     @Override
@@ -240,7 +240,6 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                 sub.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // update database accordingly
 
                         temp_add = add_new.getText().toString().trim();
                         temp_add = WordUtils.capitalizeFully(temp_add);
@@ -513,16 +512,16 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         in.putExtra("otheruserkey", id);
         startActivity(in);
     }
-
+/*
     @Override
     public void onTaskRowClicked(int position) {
         Intent intent = new Intent(Emp_details.this, QuotaionTasks.class);
         QuotationBatch batch = listofquotations.get(position);
         intent.putExtra("id", batch.getId());
-        intent.putExtra("note", batch.getNote());
+        intent.putExtra("note", batch.getCoordnote());
         intent.putExtra("end", batch.getEndDate());
         intent.putExtra("start", batch.getStartDate());
         startActivity(intent);
 
-    }
+    }*/
 }

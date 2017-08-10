@@ -20,8 +20,10 @@ public class UploadQuotationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_upload_quotation);
         Intent intent = getIntent();
         String custId = intent.getStringExtra("custId");
+        String custName = intent.getStringExtra("custName");
         Bundle bundle = new Bundle();
         bundle.putString("custId", custId);
+        bundle.putString("custName", custName);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Fragment fragment = new TaskHome();
