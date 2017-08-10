@@ -1,8 +1,10 @@
 package com.example.rajk.leasingmanagers.employee;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.customer.Cust_add;
 import com.example.rajk.leasingmanagers.model.GlobalEmployee;
 import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.DataSnapshot;
@@ -55,7 +58,7 @@ public class Emp_add extends AppCompatActivity {
         ArrayAdapter<String> adapterstate = new ArrayAdapter<String>
                 (this,android.R.layout.simple_dropdown_item_1line,designations);
         Desig.setAdapter(adapterstate);
-        Desig.setThreshold(1);//will start working from first character
+        Desig.setThreshold(0);//will start working from first character
         Desig.setTextColor(Color.BLACK);
 
         submit.setOnClickListener(new View.OnClickListener() {
@@ -122,5 +125,30 @@ public class Emp_add extends AppCompatActivity {
             colors.recycle();
         }
         return returnColor;
+    }
+
+    @Override
+    public void onBackPressed() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to exit?")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, int id) {
+                        Intent intent = new Intent(Emp_add.this,Tabs.class);
+                        intent.putExtra("page",1);
+                        startActivity(intent);
+                        finish();
+                    }
+
+
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+
     }
 }

@@ -37,6 +37,7 @@ import com.example.rajk.leasingmanagers.listener.ClickListener;
 import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.example.rajk.leasingmanagers.services.UploadTaskPhotosServices;
+import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.database.DatabaseReference;
@@ -231,14 +232,6 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
     }
 
     @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(CreateTask.this, Cust_details.class);
-        intent.putExtra("id", customerId);
-        startActivity(intent);
-        finish();
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
@@ -378,4 +371,26 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
             }
         }
     }
+    @Override
+    public void onBackPressed() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to exit?")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, int id) {
+                        CreateTask.super.onBackPressed();
+                    }
+
+
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+
+    }
+
 }

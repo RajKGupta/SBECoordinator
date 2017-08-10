@@ -29,15 +29,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Pending: "
-                    android:textColor="@color/black"
-                    android:textSize="12sp" />
+                    android:textColor="@color/timestamp"
+                    android:textSize="@dimen/timestamp"
+                    android:textStyle="bold" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/tv_pendingTasks"
                     android:text="0"
-                    android:textColor="@color/black"
-                    android:textSize="12sp" />
+                    android:textColor="@color/timestamp"
+                    android:textSize="@dimen/timestamp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
 
