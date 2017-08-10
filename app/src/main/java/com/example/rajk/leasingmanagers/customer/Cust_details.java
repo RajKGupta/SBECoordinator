@@ -406,6 +406,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
             case R.id.quotation:
                 Intent intent = new Intent(this, UploadQuotationActivity.class);
                 intent.putExtra("custId", id);
+                intent.putExtra("custName", name);
                 startActivity(intent);
                 break;
         }

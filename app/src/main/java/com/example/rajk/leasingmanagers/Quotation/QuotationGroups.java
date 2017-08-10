@@ -1,6 +1,5 @@
 package com.example.rajk.leasingmanagers.Quotation;
 
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -22,7 +21,6 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +76,7 @@ public class QuotationGroups extends Fragment implements QAdapter.QAdapterListen
         Intent intent = new Intent(getContext(), QuotaionTasks.class);
         QuotationBatch batch = list.get(position);
         intent.putExtra("id", batch.getId());
-        intent.putExtra("note",batch.getNote());
+        intent.putExtra("note",batch.getCoordnote());
         intent.putExtra("end",batch.getEndDate());
         intent.putExtra("start",batch.getStartDate());
         startActivity(intent);
@@ -105,11 +103,9 @@ public class QuotationGroups extends Fragment implements QAdapter.QAdapterListen
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-
                     QuotationBatch batch = dataSnapshot.getValue(QuotationBatch.class);
                     list.add(batch);
                     mAdapter.notifyDataSetChanged();
-
 
                     if (pDialog.isShowing())
                         pDialog.dismiss();
@@ -142,7 +138,6 @@ public class QuotationGroups extends Fragment implements QAdapter.QAdapterListen
         }
     }
 
-
     @Override
     public void onPause() {
         super.onPause();
@@ -161,4 +156,3 @@ public class QuotationGroups extends Fragment implements QAdapter.QAdapterListen
 
     }
 }
-
