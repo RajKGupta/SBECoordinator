@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.NotificationCompat;
 import android.widget.Toast;
+
+import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.model.Quotation;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -20,6 +22,8 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.Calendar;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
+import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotifToAllCoordinators;
 
 /**
  * Created by SoumyaAgarwal on 7/3/2017.
@@ -30,6 +34,8 @@ public class UploadQuotationService extends IntentService
     public static Uri selectedFileUri;
     private NotificationManager notificationManager;
     private NotificationCompat.Builder mBuilder;
+    CoordinatorSession coordinatorSession;
+    String mykey,customerName,customerId;
 
     public UploadQuotationService() {
         super("Upload");
@@ -58,8 +64,11 @@ public class UploadQuotationService extends IntentService
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-
+            coordinatorSession = new CoordinatorSession(this);
+            mykey =coordinatorSession.getUsername();
             TaskIdList = intent.getStringArrayListExtra("TaskIdList");
+            customerName = intent.getStringExtra("customerName");
+            customerId = intent.getStringExtra("customerId");
             selectedFileUri = Uri.parse(intent.getStringExtra("selectedFileUri"));
             saveQuotationtoFirebase(TaskIdList);
         }
@@ -82,6 +91,8 @@ public class UploadQuotationService extends IntentService
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        sendNotif(mykey,customerId,"uploadQuotation","Quotation for your tasks has been uploaded","noId");
+                        sendNotifToAllCoordinators(mykey,"uploadQuotation","Quotation for"+customerName+" tasks has been uploaded","noId");
                         for (int i = TaskIdList.size() - 1; i >= 0; i--)
                         {
                             Quotation quotation = new Quotation("No",taskSnapshot.getDownloadUrl().toString());

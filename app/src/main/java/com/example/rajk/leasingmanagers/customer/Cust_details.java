@@ -285,11 +285,8 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                         CustomerAccount customerAccount = new CustomerAccount();
                         Integer total_amount = Integer.parseInt(total.getText().toString().trim());
                         customerAccount.setTotal(total_amount);
-
                         Integer advance_amount =   Integer.parseInt(advance.getText().toString().trim());
-
                         customerAccount.setAdvance(advance_amount);
-
                         dbaccountinfo.setValue(customerAccount);
                         total.setEnabled(false);
                         advance.setEnabled(false);
@@ -412,6 +409,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
             case R.id.quotation:
                 Intent intent = new Intent(this, UploadQuotationActivity.class);
                 intent.putExtra("custId", id);
+                intent.putExtra("customerName",name);
                 startActivity(intent);
                 break;
         }

@@ -64,6 +64,7 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
     ProgressDialog progressDialog;
     DatabaseReference dbQuotation;
     private String custId = "nocust";
+    private String customerName;
 
     public TaskHome() {
         // Required empty public constructor
@@ -84,6 +85,7 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             custId = bundle.getString("custId");
+            customerName = bundle.getString("customerName");
         }
         marshMallowPermission = new MarshmallowPermissions(getActivity());
         progressDialog = new ProgressDialog(getActivity());
@@ -174,7 +176,7 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
                     mode = null;
                     return true;
 
-                case R.id.Forwardtoquotationwala:
+               /* case R.id.Forwardtoquotationwala:
                     Intent intent = new Intent(getActivity(), forwardTask.class);
                     intent.putExtra("forQuotation", true);
                     List<Integer> selectedItems = mAdapter.getSelectedItems();
@@ -187,6 +189,7 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
                     intent.putStringArrayListExtra("taskIds", taskIds);
                     startActivity(intent);
                     return true;
+                */
                 default:
                     return false;
             }
@@ -236,6 +239,8 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
                     Intent serviceIntent = new Intent(getActivity(), UploadQuotationService.class);
                     serviceIntent.putExtra("TaskIdList", taskid_list);
                     serviceIntent.putExtra("selectedFileUri", selectedFileUri.toString());
+                    serviceIntent.putExtra("customerId",custId);
+                    serviceIntent.putExtra("customerName",customerName);
 
                     getActivity().startService(serviceIntent);
                 } else {

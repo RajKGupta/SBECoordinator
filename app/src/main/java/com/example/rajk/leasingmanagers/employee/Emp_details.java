@@ -23,7 +23,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.ForwardTask.forwardTask;
 import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
