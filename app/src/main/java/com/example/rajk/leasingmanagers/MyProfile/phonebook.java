@@ -103,7 +103,7 @@ public class phonebook extends AppCompatActivity implements phonebook_adapter.ph
         switch (item.getItemId()) {
             case R.id.add:
                 add_contacts = new AlertDialog.Builder(phonebook.this)
-                        .setTitle("Add New Contact").setView(R.layout.add_contact_dialogue).create();
+                        .setView(R.layout.add_contact_dialogue).create();
                 add_contacts.show();
 
                 final EditText name = (EditText) add_contacts.findViewById(R.id.name);
