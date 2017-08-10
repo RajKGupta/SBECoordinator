@@ -44,7 +44,7 @@ public class forwardTask extends AppCompatActivity {
     Employee emp;
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     ProgressDialog pDialog;
-    String task_id,custId, mykey;
+    String task_id, custId, mykey;
     ArrayList<String> taskIds;
     Boolean forQuotation;
     String swaping_id = "", curdate;
@@ -59,26 +59,22 @@ public class forwardTask extends AppCompatActivity {
 
         session = new CoordinatorSession(getApplicationContext());
         mykey = session.getUsername();
-        if (intent.hasExtra("swaping_id"))
-        {
+        if (intent.hasExtra("swaping_id")) {
             swaping_id = intent.getStringExtra("swaping_id");
         }
         final Calendar c = Calendar.getInstance();
         curdate = dateFormat.format(c.getTime());
 
-        forQuotation = intent.getBooleanExtra("forQuotation",false);
-        if(forQuotation==true)
-        {
-            taskIds=intent.getStringArrayListExtra("taskIds");
+        forQuotation = intent.getBooleanExtra("forQuotation", false);
+        if (forQuotation == true) {
+            taskIds = intent.getStringArrayListExtra("taskIds");
             custId = intent.getStringExtra("custId");
             //get the list of taskIds
-        }
-        else
-        {
+        } else {
             task_id = intent.getStringExtra("task_id");
         }
 
-        recview = (RecyclerView)findViewById(R.id.recview);
+        recview = (RecyclerView) findViewById(R.id.recview);
         recview.setLayoutManager(new LinearLayoutManager(this));
         recview.setItemAnimator(new DefaultItemAnimator());
         recview.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
@@ -91,12 +87,10 @@ public class forwardTask extends AppCompatActivity {
             public void onClick(View view, int position) {
                 final Employee item = list.get(position);
 
-                if (!swaping_id.equals(""))
-                {
+                if (!swaping_id.equals("")) {
                     DBREF.child("Task").child(task_id).child("name").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot)
-                        {
+                        public void onDataChange(DataSnapshot dataSnapshot) {
                             final String taskName = dataSnapshot.getValue(String.class);
 
                             //cancel job
@@ -104,8 +98,7 @@ public class forwardTask extends AppCompatActivity {
 
                             dbCancelJob.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onDataChange(DataSnapshot dataSnapshot)
-                                {
+                                public void onDataChange(DataSnapshot dataSnapshot) {
 
                                     CompletedBy completedBy = dataSnapshot.getValue(CompletedBy.class);
                                     completedBy.setEmpId(item.getUsername());
@@ -120,12 +113,12 @@ public class forwardTask extends AppCompatActivity {
                                     dbEmployee = DBREF.child("Employee").child(item.getUsername()).child("AssignedTask").child(task_id);
                                     dbEmployee.setValue("pending"); //for employee
 
-                                    String contentforme = "You swapped "+taskName+" task to "+ item.getName();
-                                    sendNotif(mykey,mykey,"swapJob",contentforme,task_id);
-                                    String contentforother= "Coordinator "+session.getName()+" relieved you of "+taskName;
-                                    sendNotif(mykey,swaping_id,"cancelJob",contentforother,task_id);
-                                    contentforother = "Coordinator "+session.getName()+" assigned "+taskName+ " to you";
-                                    sendNotif(mykey,item.getUsername(),"assignment",contentforother,task_id);
+                                    String contentforme = "You swapped " + taskName + " task to " + item.getName();
+                                    sendNotif(mykey, mykey, "swapJob", contentforme, task_id);
+                                    String contentforother = "Coordinator " + session.getName() + " relieved you of " + taskName;
+                                    sendNotif(mykey, swaping_id, "cancelJob", contentforother, task_id);
+                                    contentforother = "Coordinator " + session.getName() + " assigned " + taskName + " to you";
+                                    sendNotif(mykey, item.getUsername(), "assignment", contentforother, task_id);
                                     Intent intent1 = new Intent(forwardTask.this, TaskDetail.class);
                                     intent1.putExtra("task_id", task_id);
                                     startActivity(intent1);
@@ -145,8 +138,7 @@ public class forwardTask extends AppCompatActivity {
 
                         }
                     });
-                }
-                else {
+                } else {
                     Intent i = new Intent(forwardTask.this, forwardTaskScreen2.class);
                     i.putExtra("id", item.getUsername());
                     i.putExtra("name", item.getName());
@@ -194,7 +186,7 @@ public class forwardTask extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     n[0] = (int) dataSnapshot.getChildrenCount();
-                    if (n[0]>0) {
+                    if (n[0] > 0) {
                         db.addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -202,9 +194,15 @@ public class forwardTask extends AppCompatActivity {
                                     pDialog.dismiss();
                                 }
                                 emp = dataSnapshot.getValue(Employee.class);
-                                list.add(emp);
-                                adapter.notifyDataSetChanged();
-
+                                if (forQuotation == true) {
+                                    if (emp.getDesignation().equals("Quotation")) {
+                                        list.add(emp);
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                } else {
+                                    list.add(emp);
+                                    adapter.notifyDataSetChanged();
+                                }
                                 // Dismiss the progress dialog
                                 if (pDialog.isShowing())
                                     pDialog.dismiss();
@@ -230,9 +228,7 @@ public class forwardTask extends AppCompatActivity {
 
                             }
                         });
-                    }
-                    else
-                    {
+                    } else {
                         pDialog.dismiss();
                     }
                 }
@@ -250,18 +246,15 @@ public class forwardTask extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (forQuotation == false)
-        {
+        if (forQuotation == false) {
             Intent intent = new Intent(forwardTask.this, TaskDetail.class);
             intent.putExtra("task_id", task_id);
             startActivity(intent);
             finish();
-        }
-        else
-        {
-            Intent intent =new Intent(this, UploadQuotationActivity.class);
-            intent.putExtra("custId",custId);
-            intent.putExtra("forQuotation",forQuotation);
+        } else {
+            Intent intent = new Intent(this, UploadQuotationActivity.class);
+            intent.putExtra("custId", custId);
+            intent.putExtra("forQuotation", forQuotation);
             startActivity(intent);
             finish();
         }
