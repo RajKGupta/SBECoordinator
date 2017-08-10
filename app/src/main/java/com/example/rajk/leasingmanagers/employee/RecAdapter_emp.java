@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.rajk.leasingmanagers.R;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,13 +45,30 @@ public class RecAdapter_emp extends RecyclerView.Adapter<RecAdapter_emp.RecHolde
         holder.imgProfile.setImageResource(R.drawable.bg_circle);
         holder.imgProfile.setColorFilter(item.getColor());
         DatabaseReference dbAssignedTask = DBREF.child("Employee").child(item.getUsername()).child("AssignedTask").getRef();
-        dbAssignedTask.addValueEventListener(new ValueEventListener() {
+        final Integer pendingJobs[] = {0};
+        dbAssignedTask.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()) {
-                    holder.pendingTasks.setText(dataSnapshot.getChildrenCount()+"");
-                    }
-                }
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                pendingJobs[0]++;
+                holder.pendingTasks.setText(String.valueOf(pendingJobs[0]));
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                pendingJobs[0]--;
+                holder.pendingTasks.setText(String.valueOf(pendingJobs[0]));
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {

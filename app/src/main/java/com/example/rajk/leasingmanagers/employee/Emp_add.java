@@ -87,8 +87,8 @@ public class Emp_add extends AppCompatActivity {
                                 DBREF.child("Users").child("Usersessions").child(username).child("online").setValue(Boolean.FALSE);
                                 DBREF.child("Fcmtokens").child(username).child("token").setValue("nil");
                                 DBREF.child("Users").child("Usersessions").child(username).child("num").setValue(num);
-                                String id = Calendar.getInstance().getTimeInMillis() + "";
-                                GlobalEmployee employee1 = new GlobalEmployee(name, num, add, desig, AppName + "_" + username, "na");
+                                String id = AppName+"_"+username;
+                                GlobalEmployee employee1 = new GlobalEmployee(name,num,add,desig, AppName+"_"+username,"na");
                                 FirebaseDatabase.getInstance().getReference().child("GlobalEmployee").child("EmployeeDetail").child(id).setValue(employee1);
 
                             }

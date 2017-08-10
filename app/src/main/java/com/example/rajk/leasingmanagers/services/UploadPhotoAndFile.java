@@ -1,21 +1,16 @@
 package com.example.rajk.leasingmanagers.services;
 
-import android.app.Service;
+import android.app.IntentService;
 import android.content.Intent;
+import android.content.Context;
 import android.net.Uri;
-import android.os.Binder;
-import android.os.IBinder;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.example.rajk.leasingmanagers.chat.ChatActivity;
 import com.example.rajk.leasingmanagers.model.ChatMessage;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -23,53 +18,42 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
-public class UploadFileService extends Service {
-    private static String LOG_TAG = "UploadFileService";
-    private IBinder mBinder = new MyBinder();
-    SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
+/**
+ * An {@link IntentService} subclass for handling asynchronous task requests in
+ * a service on a separate handler thread.
+ * <p>
+ * TODO: Customize class - update intent actions, extra parameters and static
+ * helper methods.
+ */
+public class UploadPhotoAndFile extends IntentService {
     StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.v(LOG_TAG, "in onCreate");
-       }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        Log.v(LOG_TAG, "in onBind");
-        return mBinder;
-    }
-
-    @Override
-    public void onRebind(Intent intent) {
-        Log.v(LOG_TAG, "in onRebind");
-        super.onRebind(intent);
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        Log.v(LOG_TAG, "in onUnbind");
-        return true;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.v(LOG_TAG, "in onDestroy");
+    public UploadPhotoAndFile() {
+        super("UploadPhotoAndFile");
     }
 
 
-    public class MyBinder extends Binder {
-        public UploadFileService getService() {
-            return UploadFileService.this;
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        if (intent != null) {
+            String filePath = intent.getStringExtra("filepath");
+            String type = intent.getStringExtra("type");
+            String mykey = intent.getStringExtra("mykey");
+            String otheruserkey = intent.getStringExtra("otheruserkey");
+            String receiverToken = intent.getStringExtra("receiverToken");
+            String dbTableKey = intent.getStringExtra("dbTableKey");
+            String timestamp = intent.getStringExtra("timestamp");
+            long id = intent.getLongExtra("id",0L);
+            DatabaseReference dbChat = DBREF.child("Chats").child(dbTableKey).child("ChatMessages");
+            uploadFile(filePath, type, mykey, otheruserkey, receiverToken, dbTableKey, dbChat, timestamp, id);
         }
     }
+
     public void uploadFile(final String path, String type, final String mykey, final String otheruserkey, final String receiverToken, final String dbTableKey, final DatabaseReference dbChat, final String timestamp, final long id) {
         //if there is a file to upload
         //put case
@@ -109,11 +93,11 @@ public class UploadFileService extends Service {
                                     int progress = (int) ((100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
                                     dbChat.child(String.valueOf(id)).child("percentUploaded").setValue(progress);
                                     //displaying percentage in progress dialog
-      //                              progressDialog.setMessage("Uploaded " + ((int) progress) + "%...");
+                                    //                              progressDialog.setMessage("Uploaded " + ((int) progress) + "%...");
                                 }
                             });
-                            break;
-                    //if there is not any file
+                    break;
+                //if there is not any file
                 case "doc":
                     //create msg with 2 extra nodes
 
@@ -153,4 +137,4 @@ public class UploadFileService extends Service {
 
         }
     }
- }
+}

@@ -1,19 +1,12 @@
 package com.example.rajk.leasingmanagers.chat;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -31,7 +24,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.ViewImageAdapter;
@@ -44,7 +36,7 @@ import com.example.rajk.leasingmanagers.listener.ClickListener;
 import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
 import com.example.rajk.leasingmanagers.model.ChatMessage;
 import com.example.rajk.leasingmanagers.model.NameAndStatus;
-import com.example.rajk.leasingmanagers.services.UploadFileService;
+import com.example.rajk.leasingmanagers.services.UploadPhotoAndFile;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -55,15 +47,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
-
 import static com.example.rajk.leasingmanagers.LeasingManagers.AppName;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.formatter;
@@ -82,8 +71,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     private ArrayList<String> mResults;
     private ActionModeCallback actionModeCallback;
     private ActionMode actionMode;
-    UploadFileService uploadFileService;
-    boolean mServiceBound = false;
     private chatAdapter mAdapter;
     private ArrayList<ChatMessage> chatList = new ArrayList<>();
     String receiverToken = "nil";
@@ -306,11 +293,18 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         final String timestamp = formatter.format(Calendar.getInstance().getTime());
         long curTime = Calendar.getInstance().getTimeInMillis();
         final long id = curTime;
-
         ChatMessage cm = new ChatMessage(mykey, otheruserkey, timestamp, "photo", id + "", "0", "nourl", receiverToken, dbTableKey, 0, filePath, "");
         dbChat.child(String.valueOf(id)).setValue(cm);
-
-        uploadFileService.uploadFile(filePath, type, mykey, otheruserkey, receiverToken, dbTableKey, dbChat, timestamp, id);
+        Intent intent = new Intent(this, UploadPhotoAndFile.class);
+        intent.putExtra("filePath",filePath);
+        intent.putExtra("type",type);
+        intent.putExtra("mykey",mykey);
+        intent.putExtra("otheruserkey",otheruserkey);
+        intent.putExtra("receiverToken",receiverToken);
+        intent.putExtra("dbTableKey",dbTableKey);
+        intent.putExtra("timestamp",timestamp);
+        intent.putExtra("id",id);
+        startService(intent);
     }
 
     public void loadData() {
@@ -378,14 +372,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     @Override
     protected void onStop() {
         super.onStop();
-        if (mServiceBound) {
-            if (mServiceConnection != null)
-                unbindService(mServiceConnection);
-            mServiceBound = false;
-        }
-        Intent intent = new Intent(ChatActivity.this,
-                UploadFileService.class);
-        stopService(intent);
+
     }
 
     @Override
@@ -452,9 +439,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = new Intent(this, UploadFileService.class);
-        startService(intent);
-        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
     }
 
@@ -476,24 +460,6 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         return true;
     }
 
-    ////////////////////binding the service
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mServiceBound = false;
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            UploadFileService.MyBinder myBinder = (UploadFileService.MyBinder) service;
-            uploadFileService = myBinder.getService();
-            mServiceBound = true;
-        }
-    };
-
-
-    ///////////Everything below is for action mode
     private class ActionModeCallback implements ActionMode.Callback {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {

@@ -1,18 +1,19 @@
 package com.example.rajk.leasingmanagers.customer;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-
 import com.example.rajk.leasingmanagers.R;
-
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import java.util.List;
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 public class RecAdapter_cust extends RecyclerView.Adapter<RecAdapter_cust.RecHolder>{
 
@@ -31,7 +32,7 @@ public class RecAdapter_cust extends RecyclerView.Adapter<RecAdapter_cust.RecHol
     }
 
     @Override
-    public void onBindViewHolder(RecHolder holder, int position) {
+    public void onBindViewHolder(final RecHolder holder, int position) {
 
         Customer item = list.get(position);
         holder.name.setText(item.getName());
@@ -39,6 +40,60 @@ public class RecAdapter_cust extends RecyclerView.Adapter<RecAdapter_cust.RecHol
         holder.icon_text.setText(iconText.charAt(0) + "");
         holder.imgProfile.setImageResource(R.drawable.bg_circle);
         holder.imgProfile.setColorFilter(item.getColor());
+        DatabaseReference dbTask = DBREF.child("Customer").child(item.getId()).child("Task").getRef();
+        final Integer pendingJobs[] = {0};
+        dbTask.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                if(dataSnapshot.exists()) {
+                        String status = dataSnapshot.getValue(String.class);
+                        if (status.equals("pending")) {
+                            pendingJobs[0]++;
+                            holder.pendingJobCount.setText(String.valueOf(pendingJobs[0]));
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                if(dataSnapshot.exists()) {
+                    String status = dataSnapshot.getValue(String.class);
+                    if (status.equals("pending")) {
+                        pendingJobs[0]++;
+                        holder.pendingJobCount.setText(String.valueOf(pendingJobs[0]));
+                    }
+                    else
+                    {
+                        pendingJobs[0]--;
+                        holder.pendingJobCount.setText(String.valueOf(pendingJobs[0]));
+
+                    }
+                }
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    String status = dataSnapshot.getValue(String.class);
+                    if (status.equals("pending")) {
+                        pendingJobs[0]--;
+                        holder.pendingJobCount.setText(String.valueOf(pendingJobs[0]));
+                    }
+                }
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     @Override
@@ -50,10 +105,9 @@ public class RecAdapter_cust extends RecyclerView.Adapter<RecAdapter_cust.RecHol
         this.list.set(p,item);
     }
 
-    // holder class
     public class RecHolder extends RecyclerView.ViewHolder{
 
-        TextView name,icon_text;
+        TextView name,icon_text,pendingJobCount;
         ImageView imgProfile;
 
         public RecHolder(View itemView) {
@@ -62,6 +116,7 @@ public class RecAdapter_cust extends RecyclerView.Adapter<RecAdapter_cust.RecHol
             name = (TextView) itemView.findViewById(R.id.name);
             icon_text =(TextView)itemView.findViewById(R.id.icon_text);
             imgProfile = (ImageView)itemView.findViewById(R.id.icon_profile);
+            pendingJobCount=(TextView)itemView.findViewById(R.id.pendingTasks);
         }
     }
     

@@ -13,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.chatListAdapter;
@@ -25,7 +24,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -218,9 +216,7 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
         ChatListModel topic = list.get(position);
         intent.putExtra("dbTableKey", topic.getDbTableKey());
         intent.putExtra("otheruserkey", topic.getUserkey());
-
         startActivity(intent);
-
     }
 
     private void sortChatList() {

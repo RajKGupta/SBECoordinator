@@ -18,7 +18,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.MainViews.CreateTask;
 import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
@@ -139,6 +138,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         dbtasklistener = dbTask.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                    listoftasks.clear();
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                         listoftasks.add(childSnapshot.getKey());
@@ -283,11 +283,8 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                         CustomerAccount customerAccount = new CustomerAccount();
                         Integer total_amount = Integer.parseInt(total.getText().toString().trim());
                         customerAccount.setTotal(total_amount);
-
-                        Integer advance_amount = Integer.parseInt(advance.getText().toString().trim());
-
+                        Integer advance_amount =   Integer.parseInt(advance.getText().toString().trim());
                         customerAccount.setAdvance(advance_amount);
-
                         dbaccountinfo.setValue(customerAccount);
                         total.setEnabled(false);
                         advance.setEnabled(false);
@@ -303,11 +300,12 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
             case R.id.item6:
                 // TODO : Null pointer exception (Null Object Refrence)
                 //if nothing is added to account this error would occur
-                dbaccountinfo.addListenerForSingleValueEvent(new ValueEventListener() {
+                final DatabaseReference dbAccount = db.child("Account").getRef();
+                dbAccount.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.hasChildren())
-                            dbaccountinfo.removeValue();
+                            dbAccount.removeValue();
                     }
 
                     @Override
@@ -406,6 +404,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
             case R.id.quotation:
                 Intent intent = new Intent(this, UploadQuotationActivity.class);
                 intent.putExtra("custId", id);
+                intent.putExtra("customerName",name);
                 intent.putExtra("custName", name);
                 startActivity(intent);
                 break;
