@@ -54,19 +54,19 @@ public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter
             holder.noteAuthor.setText("Coordinator's Note:");
             holder.tv_dateCompleted.setText("Expected Deadline :");
 
+        holder.dateassigned.setText(emp.getDateassigned());
+        holder.dateCompleted.setText(emp.getDatecompleted());
+        holder.noteString.setText(emp.getNote());
+        holder.assignedby.setText(emp.getAssignedByName());
+
         DatabaseReference dbEmp = DBREF.child("Employee").child(emp.getEmpId()).getRef();
         dbEmp.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                holder.dateassigned.setText(emp.getDateassigned());
-                holder.dateCompleted.setText(emp.getDatecompleted());
-                holder.noteString.setText(emp.getNote());
-                holder.assignedby.setText(emp.getAssignedByName());
                 String empname = dataSnapshot.child("name").getValue(String.class);
                 holder.employeename.setText(empname);
                 String empdesig = dataSnapshot.child("designation").getValue(String.class);
                 holder.employeeDesig.setText(empdesig);
-
 
             }
 

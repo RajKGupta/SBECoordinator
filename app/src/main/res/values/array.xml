@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="list" >
-        <item>449 Palo Verde Road, Gainesville, FL</item>
-        <item>6731 Thompson Street, Gainesville, FL</item>
-        <item>8771 Thomas Boulevard, Orlando, FL</item>
-        <item>1234 Verano Place, Orlando, FL</item>
+
+    <string-array name="designations" >
+        <item>Designer</item>
+        <item>Quotation</item>
+        <item>Operator</item>
+        <item>Others</item>
 
     </string-array>
+
     <array name="mdcolor_400">
         <item name="red_400" type="color">#e84e40</item>
         <item name="pink_400" type="color">#ec407a</item>

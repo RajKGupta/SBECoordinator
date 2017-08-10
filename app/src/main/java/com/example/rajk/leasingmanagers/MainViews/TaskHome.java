@@ -17,7 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
+import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -62,9 +62,9 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
     private static final int PICK_FILE_REQUEST = 1;
     private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
     ProgressDialog progressDialog;
-    DatabaseReference dbQuotation;
     private String custId = "nocust";
     private String customerName;
+    private String custName = "nocust";
 
     public TaskHome() {
         // Required empty public constructor
@@ -86,6 +86,7 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
         if (bundle != null) {
             custId = bundle.getString("custId");
             customerName = bundle.getString("customerName");
+            custName = bundle.getString("custName");
         }
         marshMallowPermission = new MarshmallowPermissions(getActivity());
         progressDialog = new ProgressDialog(getActivity());
@@ -169,14 +170,12 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
                     if (!marshMallowPermission.checkPermissionForExternalStorage())
                         marshMallowPermission.requestPermissionForExternalStorage();
                     else {
-
-                        //TODO check if quotation is already uploaded
                         UploadQuotation();
                     }
                     mode = null;
                     return true;
 
-               /* case R.id.Forwardtoquotationwala:
+/*                case R.id.Forwardtoquotationwala:
                     Intent intent = new Intent(getActivity(), forwardTask.class);
                     intent.putExtra("forQuotation", true);
                     List<Integer> selectedItems = mAdapter.getSelectedItems();
@@ -186,6 +185,7 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
                         taskIds.add(task.getTaskId());
                     }
                     intent.putExtra("custId", custId);
+                    intent.putExtra("custName", custName);
                     intent.putStringArrayListExtra("taskIds", taskIds);
                     startActivity(intent);
                     return true;

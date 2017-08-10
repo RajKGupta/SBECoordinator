@@ -27,7 +27,6 @@ public class QAdapter extends RecyclerView.Adapter<QAdapter.MyViewHolder> {
     private Context context;
     private QAdapterListener listener;
 
-
     public QAdapter(List<QuotationBatch> list, Context context, QAdapterListener listener) {
         this.list = list;
         this.listener = listener;
@@ -35,7 +34,7 @@ public class QAdapter extends RecyclerView.Adapter<QAdapter.MyViewHolder> {
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView taskname, customername, timestamp, icon_text,YesOrNo, quote;
+        TextView taskname, customername, timestamp, icon_text;
         ImageView imgProfile;
         public LinearLayout messageContainer;
 
@@ -43,20 +42,17 @@ public class QAdapter extends RecyclerView.Adapter<QAdapter.MyViewHolder> {
             super(itemView);
             taskname = (TextView) itemView.findViewById(R.id.tv_taskname);
             customername = (TextView) itemView.findViewById(R.id.tv_customerName);
-            YesOrNo = (TextView) itemView.findViewById(R.id.YesOrNo);
-            quote = (TextView) itemView.findViewById(R.id.quote);
             timestamp = (TextView) itemView.findViewById(R.id.timestamp);
             icon_text = (TextView) itemView.findViewById(R.id.icon_text);
             imgProfile = (ImageView) itemView.findViewById(R.id.icon_profile);
             messageContainer = (LinearLayout) itemView.findViewById(R.id.message_container);
 
         }
-
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_list_row, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.quote_list_row, parent, false);
         return new MyViewHolder(view);
 
     }
@@ -72,13 +68,12 @@ public class QAdapter extends RecyclerView.Adapter<QAdapter.MyViewHolder> {
         holder.timestamp.setText(batch.getStartDate());
         holder.taskname.setText(iconText);
         holder.customername.setText("");
-        holder.YesOrNo.setVisibility(View.GONE);
-        holder.quote.setVisibility(View.GONE);
 
         DatabaseReference dbCustomerName = DBREF.child("Customer").child(batch.getId()).getRef();
         dbCustomerName.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
                 String customername = dataSnapshot.child("name").getValue(String.class);
                 holder.customername.setText(customername);
             }

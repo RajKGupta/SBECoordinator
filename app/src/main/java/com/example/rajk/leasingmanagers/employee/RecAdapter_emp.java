@@ -20,7 +20,6 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 public class RecAdapter_emp extends RecyclerView.Adapter<RecAdapter_emp.RecHolder>{
 
-
     public List<Employee> list;
     Context context;
 
@@ -75,7 +74,6 @@ public class RecAdapter_emp extends RecyclerView.Adapter<RecAdapter_emp.RecHolde
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-
     }
 
     @Override
@@ -88,10 +86,9 @@ public class RecAdapter_emp extends RecyclerView.Adapter<RecAdapter_emp.RecHolde
         this.list.set(p,item);
     }
 
-    // holder class
     public class RecHolder extends RecyclerView.ViewHolder{
 
-        TextView name,desig,icon_text,completedTasks,pendingTasks;
+        TextView name,desig,icon_text,pendingTasks;
         ImageView imgProfile;
 
         public RecHolder(View itemView) {

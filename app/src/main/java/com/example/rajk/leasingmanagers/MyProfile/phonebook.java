@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
+import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -103,7 +103,7 @@ public class phonebook extends AppCompatActivity implements phonebook_adapter.ph
         switch (item.getItemId()) {
             case R.id.add:
                 add_contacts = new AlertDialog.Builder(phonebook.this)
-                        .setTitle("Add New Contact").setView(R.layout.add_contact_dialogue).create();
+                        .setView(R.layout.add_contact_dialogue).create();
                 add_contacts.show();
 
                 final EditText name = (EditText) add_contacts.findViewById(R.id.name);
@@ -156,6 +156,7 @@ public class phonebook extends AppCompatActivity implements phonebook_adapter.ph
     @Override
     public void onDELETEMEclicked(final int position)
     {
+        Contact = contact_list.get(position).getContact();
         final AlertDialog.Builder builder = new AlertDialog.Builder(phonebook.this);
         builder.setMessage("Are you sure you want to delete this contact")
                 .setCancelable(false)

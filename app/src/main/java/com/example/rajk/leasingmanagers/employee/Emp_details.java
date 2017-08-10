@@ -8,7 +8,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -31,6 +30,7 @@ import com.example.rajk.leasingmanagers.Quotation.QuotaionTasks;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.EmployeeTask_Adapter;
 import com.example.rajk.leasingmanagers.chat.ChatActivity;
+import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
 import com.example.rajk.leasingmanagers.model.QuotationBatch;
 import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.ChildEventListener;
@@ -48,17 +48,17 @@ import java.util.Map;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 
-public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapter.EmployeeTask_AdapterListener, QAdapter.QAdapterListener {
+public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapter.EmployeeTask_AdapterListener{//}, QAdapter.QAdapterListener {
 
     Dialog dialog;
-    String id, name, num, add, desig, temp_name, temp_add, temp_num, temp_designation;
+    String id, name, num, add, desig, temp_name, temp_add, temp_num;
     EditText Name, Num, Add, Desig;
     DatabaseReference db;
     RecyclerView rec_employeetask;
     LinearLayoutManager linearLayoutManager;
     private RecyclerView.Adapter mAdapter;
     List<String> listoftasks;
-    List<QuotationBatch> listofquotations;
+//    List<QuotationBatch> listofquotations;
     private AlertDialog open_options;
     CoordinatorSession coordinatorSession;
     String mykey, dbTablekey;
@@ -139,17 +139,17 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
 
     private void setAdapternlist() {
         listoftasks = new ArrayList<>();
-        listofquotations = new ArrayList<>();
+/*        listofquotations = new ArrayList<>();
 
         if (desig.toLowerCase().equals("quotation")) {
             mAdapter = new QAdapter(listofquotations, getApplicationContext(), this);
-        } else
+        } else*/
             mAdapter = new EmployeeTask_Adapter(listoftasks, getApplicationContext(), id, this);
 
         rec_employeetask.setAdapter(mAdapter);
 
         db = db.child("AssignedTask").getRef();
-
+/*
         if (desig.toLowerCase().equals("quotation")) {
             db.addChildEventListener(new ChildEventListener() {
                 @Override
@@ -162,7 +162,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                         long c = (long) map.get("color");
                         m.setColor((int) c);
                         m.setStartDate((String) map.get("startDate"));
-                        m.setNote((String) map.get("note"));
+                        m.setCoordnote((String) map.get("note"));
                         m.setId((String) map.get("id"));
 
                         jobs_and_hideme.setVisibility(View.GONE);
@@ -191,7 +191,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
 
                 }
             });
-        } else {
+        } else {*/
             db.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -207,7 +207,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
 
                 }
             });
-        }
+        //}
     }
 
     @Override
@@ -221,7 +221,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         switch (item.getItemId()) {
             case R.id.item1:
 
-                final EditText name_new, num_new, add_new, desig_new;
+                final EditText name_new, num_new, add_new;
                 Button sub;
 
                 dialog = new Dialog(Emp_details.this);
@@ -231,28 +231,23 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                 name_new = (EditText) dialog.findViewById(R.id.name);
                 num_new = (EditText) dialog.findViewById(R.id.num);
                 add_new = (EditText) dialog.findViewById(R.id.add);
-                desig_new = (EditText) dialog.findViewById(R.id.desig);
                 sub = (Button) dialog.findViewById(R.id.submit);
 
                 name_new.setText(name);
                 num_new.setText(num);
                 add_new.setText(add);
-                desig_new.setText(desig);
 
                 sub.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // update database accordingly
 
                         temp_add = add_new.getText().toString().trim();
                         temp_add = WordUtils.capitalizeFully(temp_add);
                         temp_name = name_new.getText().toString().trim();
                         temp_name = WordUtils.capitalizeFully(temp_name);
                         temp_num = num_new.getText().toString().trim();
-                        temp_designation = desig_new.getText().toString().trim();
-                        temp_designation = WordUtils.capitalizeFully(temp_designation);
 
-                        if (TextUtils.isEmpty(temp_add) || TextUtils.isEmpty(temp_name) || TextUtils.isEmpty(temp_num) || TextUtils.isEmpty(temp_designation))
+                        if (TextUtils.isEmpty(temp_add) || TextUtils.isEmpty(temp_name) || TextUtils.isEmpty(temp_num))
                             Toast.makeText(Emp_details.this, "Enter details...", Toast.LENGTH_SHORT).show();
 
                         else {
@@ -261,7 +256,6 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                             db.child("name").setValue(temp_name);
                             db.child("address").setValue(temp_add);
                             db.child("phone_num").setValue(temp_num);
-                            db.child("designation").setValue(temp_designation);
                             DBREF.child("Users").child("Usersessions").child(emp_id).child("num").setValue(num);
 
                             dialog.dismiss();
@@ -375,7 +369,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
             public void onClick(View v) {
                 final String task_id = listoftasks.get(position);
                 String taskName = holder.employeename.getText().toString().trim();
-                String contentforme = "You reminder " + name + " for " + taskName;
+                String contentforme = "You reminded " + name + " for " + taskName;
                 sendNotif(mykey, mykey, "remindJob", contentforme, task_id);
                 String contentforother = "Coordinator " + coordinatorSession.getName() + " reminded you of " + taskName;
                 sendNotif(mykey, id, "remindJob", contentforother, task_id);
@@ -436,8 +430,9 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                                 final String taskName = holder.employeename.getText().toString().trim();
 
                                 String note = userInputDialogEditText.getText().toString().trim();
-                                if (note != null && note.equals("")) {
+                                if (note != null && !note.equals("")) {
                                     DBREF.child("Task").child(task_id).child("AssignedTo").child(empId).child("note").setValue(note);
+                                    holder.noteAuthor.setText(note);
                                     Toast.makeText(Emp_details.this, "Coordinator note changed successfully", Toast.LENGTH_SHORT).show();
                                     String contentforme = "You changed the coordinator note for " + taskName;
                                     sendNotif(mykey, mykey, "changedNote", contentforme, task_id);
@@ -445,6 +440,8 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                                     sendNotif(mykey, empId, "changedNote", contentforother, task_id);
                                     dialogBox.dismiss();
                                 }
+                                else
+                                    dialogBox.dismiss();
                             }
                         })
 
@@ -515,19 +512,18 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         in.putExtra("otheruserkey", id);
         startActivity(in);
     }
-
+/*
     @Override
     public void onTaskRowClicked(int position) {
         Intent intent = new Intent(Emp_details.this, QuotaionTasks.class);
         QuotationBatch batch = listofquotations.get(position);
         intent.putExtra("id", batch.getId());
-        intent.putExtra("note", batch.getNote());
+        intent.putExtra("note", batch.getCoordnote());
         intent.putExtra("end", batch.getEndDate());
         intent.putExtra("start", batch.getStartDate());
         startActivity(intent);
 
-
-    }
+    }*/
 
     @Override
     public void onBackPressed() {

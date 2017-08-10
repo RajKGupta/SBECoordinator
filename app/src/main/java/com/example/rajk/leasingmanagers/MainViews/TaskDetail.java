@@ -1,16 +1,18 @@
 package com.example.rajk.leasingmanagers.MainViews;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,8 +20,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -28,12 +32,18 @@ import android.widget.Toast;
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.ForwardTask.forwardTask;
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.adapter.ViewImageAdapter;
 import com.example.rajk.leasingmanagers.adapter.assignedto_adapter;
 import com.example.rajk.leasingmanagers.adapter.bigimage_adapter;
 import com.example.rajk.leasingmanagers.adapter.completedBy_adapter;
 import com.example.rajk.leasingmanagers.adapter.measurement_adapter;
 import com.example.rajk.leasingmanagers.adapter.taskdetailDescImageAdapter;
+import com.example.rajk.leasingmanagers.adapter.taskimagesadapter;
+import com.example.rajk.leasingmanagers.helper.CompressMe;
+import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
+import com.example.rajk.leasingmanagers.listener.ClickListener;
+import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
 import com.example.rajk.leasingmanagers.model.CompletedJob;
 import com.example.rajk.leasingmanagers.model.Quotation;
@@ -41,6 +51,7 @@ import com.example.rajk.leasingmanagers.model.Task;
 import com.example.rajk.leasingmanagers.model.measurement;
 import com.example.rajk.leasingmanagers.services.DeleteTask;
 import com.example.rajk.leasingmanagers.services.DownloadFileService;
+import com.example.rajk.leasingmanagers.services.UploadTaskPhotosServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -51,6 +62,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.zfdang.multiple_images_selector.ImagesSelectorActivity;
+import com.zfdang.multiple_images_selector.SelectorSettings;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -87,15 +100,23 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     DatabaseReference dbQuotation;
     ProgressDialog progressDialog;
     private MarshmallowPermissions marshmallowPermissions;
-    private AlertDialog viewSelectedImages, open_options;
+    private AlertDialog viewSelectedImages, open_options, edit_description;
     LinearLayoutManager linearLayoutManager;
     bigimage_adapter adapter;
     private CoordinatorSession coordinatorSession;
+    ImageButton written_desc, photo_desc;
+    private int REQUEST_CODE = 1;
+    private ArrayList<String> mResults;
+    CompressMe compressMe;
+    private ArrayList<String> picUriList = new ArrayList<>();
+    ViewImageAdapter madapter;
+    RecyclerView desc_photo_grid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
+
         coordinatorSession = new CoordinatorSession(this);
         mykey = coordinatorSession.getUsername();
         marshmallowPermissions = new MarshmallowPermissions(this);
@@ -117,9 +138,12 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         rec_completedby = (RecyclerView) findViewById(R.id.rec_completedby);
         rec_measurement = (RecyclerView) findViewById(R.id.rec_measurement);
         rec_DescImages = (RecyclerView) findViewById(R.id.rec_DescImages);
+        photo_desc = (ImageButton) findViewById(R.id.photo_desc);
+        written_desc = (ImageButton) findViewById(R.id.written_desc);
 
         Intent intent = getIntent();
         task_id = intent.getStringExtra("task_id");
+        compressMe = new CompressMe(this);
 
         rec_assignedto.setLayoutManager(new LinearLayoutManager(this));
         rec_assignedto.setItemAnimator(new DefaultItemAnimator());
@@ -206,6 +230,147 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             }
         });
 
+        written_desc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edit_description = new AlertDialog.Builder(TaskDetail.this)
+                        .setView(R.layout.edit_description).create();
+                edit_description.show();
+
+                final EditText description2 = (EditText) edit_description.findViewById(R.id.description);
+                Button oksave = (Button) edit_description.findViewById(R.id.oksave);
+                Button okcancel = (Button) edit_description.findViewById(R.id.okcancel);
+
+                String desc;
+                if (description.getVisibility() == View.VISIBLE) {
+                    desc = description.getText().toString().trim();
+                    description2.setText(desc);
+                }
+                oksave.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String newdesc = description2.getText().toString().trim();
+                        DBREF.child("Task").child(task_id).child("desc").setValue(newdesc);
+                        edit_description.dismiss();
+                    }
+                });
+
+                okcancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        edit_description.dismiss();
+                    }
+                });
+            }
+        });
+
+        photo_desc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!marshmallowPermissions.checkPermissionForCamera() && !marshmallowPermissions.checkPermissionForExternalStorage()) {
+                    ActivityCompat.requestPermissions(TaskDetail.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
+                            2);
+                } else {
+                    Intent intent = new Intent(TaskDetail.this, ImagesSelectorActivity.class);
+                    intent.putExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, 5);
+                    intent.putExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, true);
+                    startActivityForResult(intent, REQUEST_CODE);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            if (data != null) {
+                mResults = data.getStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS);
+                assert mResults != null;
+
+                // show results in textview
+                System.out.println(String.format("Totally %d images selected:", mResults.size()));
+                for (String result : mResults) {
+                    String l = compressMe.compressImage(result, getApplicationContext());
+                    picUriList.add(l);
+                }
+                if (picUriList.size() > 0) {
+                    viewSelectedImages = new AlertDialog.Builder(TaskDetail.this)
+                            .setTitle("Selected Images").setView(R.layout.activity_view_selected_image).create();
+                    viewSelectedImages.show();
+
+                    final ImageView ImageViewlarge = (ImageView) viewSelectedImages.findViewById(R.id.ImageViewlarge);
+                    ImageButton cancel = (ImageButton) viewSelectedImages.findViewById(R.id.cancel);
+                    Button canceldone = (Button) viewSelectedImages.findViewById(R.id.canceldone);
+                    Button okdone = (Button) viewSelectedImages.findViewById(R.id.okdone);
+                    RecyclerView rv = (RecyclerView) viewSelectedImages.findViewById(R.id.viewImages);
+
+                    linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+                    rv.setLayoutManager(linearLayoutManager);
+                    rv.setItemAnimator(new DefaultItemAnimator());
+                    rv.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.HORIZONTAL));
+
+                    madapter = new ViewImageAdapter(picUriList, this);
+                    rv.setAdapter(madapter);
+
+                    final String[] item = {picUriList.get(0)};
+                    ImageViewlarge.setImageURI(Uri.parse(item[0]));
+
+                    rv.addOnItemTouchListener(new RecyclerTouchListener(this, rv, new ClickListener() {
+                        @Override
+                        public void onClick(View view, int position) {
+                            madapter.selectedPosition = position;
+                            madapter.notifyDataSetChanged();
+                            item[0] = picUriList.get(position);
+                            ImageViewlarge.setImageURI(Uri.parse(item[0]));
+                        }
+
+                        @Override
+                        public void onLongClick(View view, int position) {
+
+                        }
+                    }));
+
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            int i = picUriList.indexOf(item[0]);
+                            if (i == picUriList.size() - 1)
+                                i = 0;
+                            picUriList.remove(item[0]);
+                            madapter.selectedPosition = i;
+                            madapter.notifyDataSetChanged();
+                            item[0] = picUriList.get(i);
+                            ImageViewlarge.setImageURI(Uri.parse(item[0]));
+                        }
+                    });
+
+                    canceldone.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            viewSelectedImages.dismiss();
+                        }
+                    });
+
+                    okdone.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            if (picUriList.size() > 0) {
+                                Intent serviceIntent = new Intent(getApplicationContext(), UploadTaskPhotosServices.class);
+                                serviceIntent.putStringArrayListExtra("picUriList", picUriList);
+                                serviceIntent.putExtra("taskid", task_id);
+                                startService(serviceIntent);
+                                finish();
+                            } else {
+                                viewSelectedImages.dismiss();
+                            }
+                        }
+                    });
+                }
+            }
+        }
     }
 
     @Override
@@ -371,7 +536,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                String item = dataSnapshot.getKey();
+                String item = dataSnapshot.getValue(String.class);
                 DescImages.remove(item);
                 adapter_taskimages.notifyDataSetChanged();
             }
@@ -401,7 +566,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             description.setVisibility(View.VISIBLE);
             description.setText(task.getDesc());
         }
-        dbQuotation.addListenerForSingleValueEvent(new ValueEventListener() {
+        dbQuotation.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -411,7 +576,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                         appByCustomer.setText(" " + quotation.getApprovedByCust());
                     uploadStatus.setText(" Yes");
                 } else {
-                    appByCustomer.setVisibility(View.GONE);
+                    appByCustomer.setText("No");
                     uploadStatus.setText(" No");
                 }
             }
@@ -480,6 +645,58 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 }
             });
         }
+    }
+
+    @Override
+    public void ondeleteButtonClicked(final int position, bigimage_adapter.MyViewHolder holder) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(TaskDetail.this);
+        builder.setMessage("Are you sure you want to delete this image")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, int id) {
+                        final DatabaseReference db = DBREF.child("Task").child(task_id).child("DescImages").getRef();
+                        db.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                    String url = ds.getValue(String.class);
+                                    if (url.equals(DescImages.get(position))) {
+                                        final String key = ds.getKey();
+                                        db.child(key).removeValue();
+                                        viewSelectedImages.dismiss();
+                                        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(url);
+                                        storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                // Toast.makeText(DeleteTask.this, item + " deleted successfully", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception exception) {
+                                                // Toast.makeText(DeleteTask.this, item + " does not exist", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+
     }
 
     @Override
@@ -624,6 +841,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                 String note = userInputDialogEditText.getText().toString().trim();
                                 if (note != null && !note.equals("")) {
                                     DBREF.child("Task").child(task_id).child("AssignedTo").child(adapter_assignedto.emp.getEmpId()).child("note").setValue(note);
+                                    holder.noteAuthor.setText(note);
                                     Toast.makeText(TaskDetail.this, "Coordinator note changed successfully", Toast.LENGTH_SHORT).show();
                                     String contentforme = "You changed the coordinator note for " + task.getName();
                                     sendNotif(mykey, mykey, "changedNote", contentforme, task_id);
@@ -631,6 +849,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                     sendNotif(mykey, adapter_assignedto.emp.getEmpId(), "changedNote", contentforother, task_id);
                                     dialogBox.dismiss();
                                 }
+                                else
+                                    dialogBox.dismiss();
                             }
                         })
 
@@ -680,10 +900,10 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                                         public void onClick(final DialogInterface dialog, final int id) {
                                                             long idLong = Calendar.getInstance().getTimeInMillis();
                                                             idLong = 9999999999999L - idLong;
-                                                            sendNotifToAllCoordinators(mykey,"completeJob","Task "+task.getName()+" has been successfully completed",task_id);
-                                                            sendNotif(mykey,task.getCustomerId(),"completeJob","Task "+task.getName()+ " has been successfully completed",task_id);
-                                                            dbCompleted.child(mykey).setValue(new CompletedJob(mykey,task.getStartDate(),simpleDateFormat.format(Calendar.getInstance().getTime()),mykey,coordinatorSession.getName(),"Customer has been notified","Task is successfully completed",idLong+""));
-                                                            Toast.makeText(TaskDetail.this,"Job completed sucessfully",Toast.LENGTH_SHORT).show();
+                                                            sendNotifToAllCoordinators(mykey, "completeJob", "Task " + task.getName() + " has been successfully completed", task_id);
+                                                            sendNotif(mykey, task.getCustomerId(), "completeJob", "Task " + task.getName() + " has been successfully completed", task_id);
+                                                            dbCompleted.child(mykey).setValue(new CompletedJob(mykey, task.getStartDate(), simpleDateFormat.format(Calendar.getInstance().getTime()), mykey, coordinatorSession.getName(), "Customer has been notified", "Task is successfully completed", idLong + ""));
+                                                            Toast.makeText(TaskDetail.this, "Job completed sucessfully", Toast.LENGTH_SHORT).show();
                                                             dbTaskCompleteStatus.setValue("complete");
                                                             dialog.dismiss();
 
