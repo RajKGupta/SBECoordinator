@@ -1,13 +1,11 @@
 package com.example.rajk.leasingmanagers.customer;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -27,8 +25,8 @@ import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.CustomerTasks_Adapter;
 import com.example.rajk.leasingmanagers.chat.ChatActivity;
+import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
 import com.example.rajk.leasingmanagers.model.CustomerAccount;
-import com.example.rajk.leasingmanagers.model.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -54,24 +52,22 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
     LinearLayoutManager linearLayoutManager;
     private String dbTablekey, mykey;
     ValueEventListener dblistener, dbtasklistener, dbaccountlistener;
-    private ArrayList<Task> TaskList = new ArrayList<>();
     private CustomerTasks_Adapter mAdapter;
-    private ProgressDialog progressDialog;
     public AlertDialog customerAccountDialog;
     CoordinatorSession coordinatorSession;
     private Button quotationButton;
     private List<String> listoftasks = new ArrayList<>();
     ImageButton callme, msgme;
-    private TextView pendingJobCount,completeJobCount;
+    private TextView pendingJobCount, completeJobCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cust_details);
+
         coordinatorSession = new CoordinatorSession(this);
         quotationButton = (Button) findViewById(R.id.quotation);
         quotationButton.setOnClickListener(this);
-        progressDialog = new ProgressDialog(this);
         id = getIntent().getStringExtra("id");
         mykey = coordinatorSession.getUsername();
         Name = (EditText) findViewById(R.id.name);
@@ -82,14 +78,11 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         pendingJobCount = (TextView) findViewById(R.id.pendingTasks);
         completeJobCount = (TextView) findViewById(R.id.completedTasks);
 
-
         rec_customertasks = (RecyclerView) findViewById(R.id.rec_customertasks);
         linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         rec_customertasks.setLayoutManager(linearLayoutManager);
         rec_customertasks.setItemAnimator(new DefaultItemAnimator());
         rec_customertasks.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.VERTICAL));
-
-        // get name, num and address from database using id and show them in activity
 
         db = DBREF.child("Customer").child(id);
         dblistener = db.addValueEventListener(new ValueEventListener() {
@@ -117,7 +110,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Integer pendingJobs = 0, completeJobs = 0;
-                if(dataSnapshot.exists()) {
+                if (dataSnapshot.exists()) {
 
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         String status = ds.getValue(String.class);
@@ -130,10 +123,10 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                         }
                     }
                 }
-                    if(pendingJobs==0)
-                        quotationButton.setVisibility(View.GONE);
-                    else
-                        quotationButton.setVisibility(View.VISIBLE);
+                if (pendingJobs == 0)
+                    quotationButton.setVisibility(View.GONE);
+                else
+                    quotationButton.setVisibility(View.VISIBLE);
 
             }
 
@@ -150,7 +143,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                     for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                         listoftasks.add(childSnapshot.getKey());
                     }
-                    mAdapter = new CustomerTasks_Adapter(listoftasks, getApplication(), Cust_details.this,id);
+                    mAdapter = new CustomerTasks_Adapter(listoftasks, getApplication(), Cust_details.this, id);
                     rec_customertasks.setAdapter(mAdapter);
                 }
             }
@@ -291,7 +284,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                         Integer total_amount = Integer.parseInt(total.getText().toString().trim());
                         customerAccount.setTotal(total_amount);
 
-                        Integer advance_amount =   Integer.parseInt(advance.getText().toString().trim());
+                        Integer advance_amount = Integer.parseInt(advance.getText().toString().trim());
 
                         customerAccount.setAdvance(advance_amount);
 
@@ -301,8 +294,8 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                         balanceLayout.setVisibility(View.VISIBLE);
                         submit.setVisibility(View.GONE);
                         edit.setVisibility(View.VISIBLE);
-                        sendNotif(mykey,id,"accountReset","Your advance deposited is Rs."+advance_amount+" and balance left is Rs."+(total_amount-advance_amount),id);
-                        sendNotifToAllCoordinators(mykey,"accountReset",name+" advance deposited is Rs."+advance_amount+" and balance left is Rs."+(total_amount-advance_amount),id);
+                        sendNotif(mykey, id, "accountReset", "Your advance deposited is Rs." + advance_amount + " and balance left is Rs." + (total_amount - advance_amount), id);
+                        sendNotifToAllCoordinators(mykey, "accountReset", name + " advance deposited is Rs." + advance_amount + " and balance left is Rs." + (total_amount - advance_amount), id);
 
                     }
                 });
@@ -360,7 +353,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    dbTablekey = mykey+otheruserkey;
+                    dbTablekey = mykey + otheruserkey;
                     goToChatActivity();
 
                 } else {
@@ -381,12 +374,9 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists())
-                {
+                if (dataSnapshot.exists()) {
                     goToChatActivity();
-                }
-                else
-                {
+                } else {
 
                     DBREF.child("Users").child("Userchats").child(mykey).child(otheruserkey).setValue(dbTablekey);
                     DBREF.child("Users").child("Userchats").child(otheruserkey).child(mykey).setValue(dbTablekey);
