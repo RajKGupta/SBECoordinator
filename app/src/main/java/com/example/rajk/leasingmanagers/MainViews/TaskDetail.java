@@ -684,7 +684,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
                             }
                         });
-
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -694,7 +693,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 });
         AlertDialog alert = builder.create();
         alert.show();
-
     }
 
     @Override

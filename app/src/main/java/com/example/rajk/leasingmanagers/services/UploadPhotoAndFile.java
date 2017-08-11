@@ -38,7 +38,7 @@ public class UploadPhotoAndFile extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-            String filePath = intent.getStringExtra("filepath");
+            String filePath = intent.getStringExtra("filePath");
             String type = intent.getStringExtra("type");
             String mykey = intent.getStringExtra("mykey");
             String otheruserkey = intent.getStringExtra("otheruserkey");
@@ -54,7 +54,7 @@ public class UploadPhotoAndFile extends IntentService {
     public void uploadFile(final String path, String type, final String mykey, final String otheruserkey, final String receiverToken, final String dbTableKey, final DatabaseReference dbChat, final String timestamp, final long id) {
         //if there is a file to upload
         //put case
-        System.out.println("uri found" + Uri.fromFile(new File(path)));
+//        System.out.println("uri found" + Uri.fromFile(new File(path)));
         if (Uri.fromFile(new File(path)) != null) {
             //displaying a progress dialog while upload is going on
             StorageReference riversRef = mStorageRef.child(dbTableKey).child("files");
