@@ -31,12 +31,9 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 public class UploadPhotoAndFile extends IntentService {
     StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
 
-
     public UploadPhotoAndFile() {
         super("UploadPhotoAndFile");
     }
-
-
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -48,7 +45,7 @@ public class UploadPhotoAndFile extends IntentService {
             String receiverToken = intent.getStringExtra("receiverToken");
             String dbTableKey = intent.getStringExtra("dbTableKey");
             String timestamp = intent.getStringExtra("timestamp");
-            long id = intent.getLongExtra("id",0L);
+            long id = intent.getLongExtra("id", 0L);
             DatabaseReference dbChat = DBREF.child("Chats").child(dbTableKey).child("ChatMessages");
             uploadFile(filePath, type, mykey, otheruserkey, receiverToken, dbTableKey, dbChat, timestamp, id);
         }
@@ -71,7 +68,7 @@ public class UploadPhotoAndFile extends IntentService {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                                    ChatMessage cm = new ChatMessage(mykey,otheruserkey,timestamp,"photo",id+"","0",downloadUrl.toString(),receiverToken,dbTableKey,100,path,"");
+                                    ChatMessage cm = new ChatMessage(mykey, otheruserkey, timestamp, "photo", id + "", "0", downloadUrl.toString(), receiverToken, dbTableKey, 100, path, "");
                                     dbChat.child(String.valueOf(id)).setValue(cm);
                                     Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
                                     DBREF.child("Chats").child(dbTableKey).child("lastMsg").setValue(id);
@@ -106,12 +103,10 @@ public class UploadPhotoAndFile extends IntentService {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                                    ChatMessage cm = new ChatMessage(mykey,otheruserkey,timestamp,"doc",id+"","0",downloadUrl.toString(),receiverToken,dbTableKey,100,path,"");
+                                    ChatMessage cm = new ChatMessage(mykey, otheruserkey, timestamp, "doc", id + "", "0", downloadUrl.toString(), receiverToken, dbTableKey, 100, path, "");
                                     dbChat.child(String.valueOf(id)).setValue(cm);
                                     Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
                                     DBREF.child("Chats").child(dbTableKey).child("lastMsg").setValue(id);
-
-
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {

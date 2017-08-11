@@ -289,7 +289,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 mResults = data.getStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS);
                 assert mResults != null;
 
-                // show results in textview
                 System.out.println(String.format("Totally %d images selected:", mResults.size()));
                 for (String result : mResults) {
                     String l = compressMe.compressImage(result, getApplicationContext());
@@ -406,7 +405,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
             }
         });
-
     }
 
     private void prepareListData() {

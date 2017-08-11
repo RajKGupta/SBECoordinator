@@ -13,8 +13,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
+
 import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
+
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -37,17 +38,12 @@ import com.example.rajk.leasingmanagers.listener.ClickListener;
 import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.example.rajk.leasingmanagers.services.UploadTaskPhotosServices;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.gu.toolargetool.TooLargeTool;
 import com.zfdang.multiple_images_selector.ImagesSelectorActivity;
 import com.zfdang.multiple_images_selector.SelectorSettings;
 
 import org.apache.commons.lang3.text.WordUtils;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -262,6 +258,7 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                     String l = compressMe.compressImage(result, getApplicationContext());
                     picUriList.add(l);
                 }
+
                 if (picUriList.size() > 0) {
                     viewSelectedImages = new AlertDialog.Builder(CreateTask.this)
                             .setTitle("Selected Images").setView(R.layout.activity_view_selected_image).create();
@@ -280,7 +277,6 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
 
                     adapter = new ViewImageAdapter(picUriList, this);
                     rv.setAdapter(adapter);
-
 
                     final String[] item = {picUriList.get(0)};
                     ImageViewlarge.setImageURI(Uri.parse(item[0]));

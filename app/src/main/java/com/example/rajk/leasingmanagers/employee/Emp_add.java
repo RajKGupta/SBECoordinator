@@ -24,8 +24,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.apache.commons.lang3.text.WordUtils;
 
-import java.util.Calendar;
-
 import static com.example.rajk.leasingmanagers.LeasingManagers.AppName;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
@@ -55,7 +53,7 @@ public class Emp_add extends AppCompatActivity {
         ArrayAdapter<String> adapterstate = new ArrayAdapter<String>
                 (this,android.R.layout.simple_dropdown_item_1line,designations);
         Desig.setAdapter(adapterstate);
-        Desig.setThreshold(1);//will start working from first character
+        Desig.setThreshold(0);//will start working from first character
         Desig.setTextColor(Color.BLACK);
 
         submit.setOnClickListener(new View.OnClickListener() {
