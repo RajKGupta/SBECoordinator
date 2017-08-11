@@ -794,7 +794,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                         .setPositiveButton("SET", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogBox, int id) {
                                 String minutes = userInputDialogEditText.getText().toString().trim();
-                                if (minutes != null && minutes.equals("")) {
+                                if (minutes != null && !minutes.equals("")) {
                                     Integer Minutes = Integer.parseInt(minutes);
                                     if (Minutes > 0) {
                                         String contentforme = "You reminded " + holder.employeename.getText().toString().trim() + " for " + task.getName();

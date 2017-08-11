@@ -252,9 +252,9 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             CustomerAccount customerAccount = dataSnapshot.getValue(CustomerAccount.class);
-                            total.setText(customerAccount.getTotal() + "");
-                            advance.setText(customerAccount.getAdvance() + "");
-                            balance.setText((customerAccount.getTotal() - customerAccount.getAdvance()) + "");
+                            total.setText("Total :"+customerAccount.getTotal() + "");
+                            advance.setText("Advance :"+customerAccount.getAdvance() + "");
+                            balance.setText("Balance :"+(customerAccount.getTotal() - customerAccount.getAdvance()) + "");
                         }
                     }
 

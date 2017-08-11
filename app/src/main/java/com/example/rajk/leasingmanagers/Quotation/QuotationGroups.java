@@ -76,7 +76,7 @@ public class QuotationGroups extends Fragment implements QAdapter.QAdapterListen
         Intent intent = new Intent(getContext(), QuotaionTasks.class);
         QuotationBatch batch = list.get(position);
         intent.putExtra("id", batch.getId());
-        intent.putExtra("note",batch.getCoordnote());
+     //   intent.putExtra("note",batch.getCoordnote());
         intent.putExtra("end",batch.getEndDate());
         intent.putExtra("start",batch.getStartDate());
         startActivity(intent);
