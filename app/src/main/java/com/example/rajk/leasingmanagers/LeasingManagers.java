@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -17,18 +18,19 @@ import java.util.Calendar;
  */
 public class LeasingManagers extends android.support.multidex.MultiDexApplication {
     private static LeasingManagers mInstance;
-    public static DatabaseReference DBREF,notif;
+    public static DatabaseReference DBREF, notif;
     public static SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
     public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
     String userkey;
     public static String AppName = "MeChat";
     private CoordinatorSession session;
+
     @Override
     public void onCreate() {
         super.onCreate();
         mInstance = this;
         Fresco.initialize(getApplicationContext());
-        if(!FirebaseApp.getApps(this).isEmpty()){
+        if (!FirebaseApp.getApps(this).isEmpty()) {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         }
         DBREF = FirebaseDatabase.getInstance().getReference().child(AppName).getRef();
@@ -39,13 +41,13 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
         Fresco.initialize(getApplicationContext());
 
     }
+
     public static synchronized LeasingManagers getInstance() {
         return mInstance;
     }
 
-    public static void setOnlineStatus(String userkey)
-    {
-        if(!userkey.equals("")){
+    public static void setOnlineStatus(String userkey) {
+        if (!userkey.equals("")) {
             final FirebaseDatabase database = FirebaseDatabase.getInstance();
             final DatabaseReference myConnectionsRef = DBREF.child("Users").child("Usersessions").child(userkey).child("online").getRef();
 
@@ -73,20 +75,18 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
             });
         }
     }
-    public static void sendNotif(final String senderId, final String receiverId, final String type, final String content, final String taskId)
-    {
+
+    public static void sendNotif(final String senderId, final String receiverId, final String type, final String content, final String taskId) {
         long idLong = Calendar.getInstance().getTimeInMillis();
         idLong = 9999999999999L - idLong;
-        final String id=String.valueOf(idLong);
+        final String id = String.valueOf(idLong);
         final String timestamp = formatter.format(Calendar.getInstance().getTime());
         notif = DBREF.child("Notification");
-        DBREF.child("Fcmtokens").child(receiverId).child("token").addListenerForSingleValueEvent(new ValueEventListener()
-        {
+        DBREF.child("Fcmtokens").child(receiverId).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
+            public void onDataChange(DataSnapshot dataSnapshot) {
                 String receiverFCMToken = dataSnapshot.getValue(String.class);
-                if (receiverFCMToken!=null&&receiverFCMToken.equals("")) {
+                if (receiverFCMToken != null && receiverFCMToken.equals("")) {
                     Notif newNotif = new Notif(id, timestamp, type, senderId, receiverId, receiverFCMToken, content, taskId);
                     notif.child(receiverId).child(id).setValue(newNotif);
                 }
@@ -98,25 +98,24 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
             }
         });
     }
-    public static void sendNotifToAllCoordinators(final String senderId, final String type, final String content, final String taskId)
-    {
+
+    public static void sendNotifToAllCoordinators(final String senderId, final String type, final String content, final String taskId) {
         long idLong = Calendar.getInstance().getTimeInMillis();
         idLong = 9999999999999L - idLong;
-        final String id=String.valueOf(idLong);
+        final String id = String.valueOf(idLong);
         final String timestamp = formatter.format(Calendar.getInstance().getTime());
         final DatabaseReference dbCoordinator = DBREF.child("Coordinator").getRef();
         dbCoordinator.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds:dataSnapshot.getChildren())
-                {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     final String receiverId = ds.getKey();
                     DBREF.child("Fcmtokens").child(receiverId).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            String receiverFCMToken=dataSnapshot.getValue(String.class);
-                            if(!receiverFCMToken.equals("")&&receiverFCMToken!=null){
-                                Notif newNotif = new Notif(id,timestamp,type,senderId,receiverId,receiverFCMToken,content,taskId);
+                            String receiverFCMToken = dataSnapshot.getValue(String.class);
+                            if (!receiverFCMToken.equals("") && receiverFCMToken != null) {
+                                Notif newNotif = new Notif(id, timestamp, type, senderId, receiverId, receiverFCMToken, content, taskId);
                                 DBREF.child("Notification").child(receiverId).child(id).setValue(newNotif);
 
                             }

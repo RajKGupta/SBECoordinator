@@ -21,6 +21,9 @@ public class UploadQuotationActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String custId = intent.getStringExtra("custId");
         String custName = intent.getStringExtra("custName");
+
+        getSupportActionBar().setTitle(custName);
+
         Bundle bundle = new Bundle();
         bundle.putString("custId", custId);
         bundle.putString("custName", custName);
@@ -33,8 +36,3 @@ public class UploadQuotationActivity extends AppCompatActivity {
     }
 
 }
-
-
-
-
-

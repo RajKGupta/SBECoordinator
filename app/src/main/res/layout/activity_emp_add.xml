@@ -72,7 +72,6 @@
                 android:background="@drawable/edittext_bg_whitebg"
                 android:inputType="textPostalAddress" />
 
-
             <AutoCompleteTextView
                 android:id="@+id/desig"
                 android:layout_width="match_parent"

@@ -63,13 +63,32 @@ public class CustomerTasks_Adapter extends RecyclerView.Adapter<CustomerTasks_Ad
     }
 
     @Override
-    public void onBindViewHolder(final CustomerTasks_Adapter.MyViewHolder holder, final int position) {
+    public void onBindViewHolder(final CustomerTasks_Adapter.MyViewHolder holder, final int position)
+    {
         final DatabaseReference taskStatus = DBREF.child("Customer").child(customerId).child("Task").child(list.get(position)).getRef();
-        taskStatus.addChildEventListener(new ChildEventListener() {
+        taskStatus.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String status = dataSnapshot.getValue(String.class);
+                if(status.equals("pending"))
+                {
+                    holder.tv_taskStatus.setText("(Pending)");
+                }
+                else
+                {
+                    holder.tv_taskStatus.setText("(Completed)");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });/*ChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String status = dataSnapshot.getValue(String.class);
-                if(status.equals("pending"))
+                if(status.equals("pending")&&dataSnapshot.getKey().equals(list.get(position)))
                 {
                     holder.tv_taskStatus.setText("(Pending)");
                 }
@@ -106,7 +125,7 @@ public class CustomerTasks_Adapter extends RecyclerView.Adapter<CustomerTasks_Ad
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
         DatabaseReference refh = DBREF.child("Task").child(list.get(position)).getRef();
         refh.addValueEventListener(new ValueEventListener() {
             @Override
