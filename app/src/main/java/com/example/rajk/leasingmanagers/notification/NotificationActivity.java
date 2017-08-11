@@ -9,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
-import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.notification_adapter;
 import com.example.rajk.leasingmanagers.model.Notif;

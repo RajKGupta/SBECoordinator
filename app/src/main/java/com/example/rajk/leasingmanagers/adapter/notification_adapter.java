@@ -12,12 +12,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.model.NameAndStatus;
 import com.example.rajk.leasingmanagers.model.Notif;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 /**
  * Created by SoumyaAgarwal on 7/20/2017.
@@ -60,10 +67,27 @@ public class notification_adapter extends RecyclerView.Adapter<notification_adap
     public void onBindViewHolder(final notification_adapter.MyViewHolder holder, final int position) {
         Notif notif = list.get(position);
 
-        holder.notif_sender.setText(notif.getSenderId());
+        DatabaseReference dbname = DBREF.child("Users").child("Usersessions").child(notif.getSenderId()).getRef();
+
+        dbname.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+
+                    NameAndStatus nameAndStatus = dataSnapshot.getValue(NameAndStatus.class);
+                    holder.notif_sender.setText(nameAndStatus.getName());
+                    String caps = nameAndStatus.getName().toUpperCase();
+                    holder.icon_text.setText(caps.charAt(0)+"");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         holder.notif_message.setText(notif.getContent());
-        String caps = notif.getSenderId().toUpperCase();
-        holder.icon_text.setText(caps.charAt(0) + "");
         applyProfilePicture(holder);
 
         String timestamp = formatter.format(Calendar.getInstance().getTime());
@@ -72,7 +96,6 @@ public class notification_adapter extends RecyclerView.Adapter<notification_adap
             senderTimestamp = notif.getTimestamp().substring(12).trim();
 
         holder.notif_timestamp.setText(senderTimestamp);
-
     }
 
     @Override
