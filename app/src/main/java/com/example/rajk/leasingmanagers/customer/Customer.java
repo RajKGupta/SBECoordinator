@@ -10,7 +10,6 @@ public class Customer {
     private String phone_num;
     private String address;
     private String id,password;
-
     public String getPassword() {
         return password;
     }

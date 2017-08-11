@@ -12,8 +12,8 @@
         android:id="@+id/my_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/grey_300"
         android:layout_above="@+id/sendComment"
+        android:background="@color/backgroundColorLight"
         android:padding="3dp"/>
 
     <RelativeLayout
@@ -22,7 +22,7 @@
         android:orientation="vertical"
         android:padding="5dp"
         android:id="@+id/sendComment"
-        android:background="@drawable/edittext_bg_whitebg"
+        android:background="@drawable/edittext_bg_white"
         android:layout_alignParentBottom="true"
         android:windowSoftInputMode="adjustResize">
         <LinearLayout

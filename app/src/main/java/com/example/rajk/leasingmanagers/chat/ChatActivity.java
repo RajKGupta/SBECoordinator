@@ -50,6 +50,8 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
@@ -325,7 +327,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                             dbChat.child(comment.getId()).child("status").setValue("1");
                         comment.setStatus("1");  // all message status set to read
                     }
-
+                    sortChatMessages();
                     chatList.add(comment);
                     mAdapter.notifyDataSetChanged();
 
@@ -649,6 +651,15 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                 break;
         }
     }
+    private void sortChatMessages() {
+        Collections.sort(chatList, new Comparator<ChatMessage>() {
+            @Override
+            public int compare(ChatMessage o1, ChatMessage o2) {
+                return Long.parseLong(o1.getId()) < Long.parseLong(o2.getId()) ? -1 : 0; // Increasing Order
+            }
+        });
+    }
+
 
 
 }

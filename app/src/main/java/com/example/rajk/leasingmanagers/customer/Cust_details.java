@@ -1,5 +1,6 @@
 package com.example.rajk.leasingmanagers.customer;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
@@ -228,12 +229,12 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                 intent.putExtra("customerId", id);
                 intent.putExtra("customerName", Name.getText().toString().trim());
                 startActivity(intent);
+                finish();
                 break;
 
             case R.id.item3:
                 customerAccountDialog = new AlertDialog.Builder(this)
-                        .setTitle("Account Information")
-                        .setView(R.layout.account_info_layout).setIcon(R.mipmap.ic_account_info_pink)
+                        .setView(R.layout.account_info_layout)
                         .create();
                 customerAccountDialog.show();
                 final Button edit, submit;
@@ -250,7 +251,6 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-
                             CustomerAccount customerAccount = dataSnapshot.getValue(CustomerAccount.class);
                             total.setText(customerAccount.getTotal() + "");
                             advance.setText(customerAccount.getAdvance() + "");
@@ -297,19 +297,37 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
             case R.id.item6:
                 // TODO : Null pointer exception (Null Object Refrence)
                 //if nothing is added to account this error would occur
-                final DatabaseReference dbAccount = db.child("Account").getRef();
-                dbAccount.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.hasChildren())
-                            dbAccount.removeValue();
-                    }
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Are you sure you want to reset the account?")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, int id) {
+                                final DatabaseReference dbAccount = db.child("Account").getRef();
+                                dbAccount.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.hasChildren())
+                                            dbAccount.removeValue();
+                                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
+                                    }
+                                });
+
+                            }
+
+
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+
                 break;
         }
         return true;

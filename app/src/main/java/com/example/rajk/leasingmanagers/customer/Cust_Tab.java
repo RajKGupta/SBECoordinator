@@ -177,8 +177,8 @@ public class Cust_Tab extends Fragment {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     n[0] = (int) dataSnapshot.getChildrenCount();
 
-                    if (n[0] > 0) {
-                        db.addChildEventListener(new ChildEventListener() {
+                    if (n[0]>0) {
+                        db.orderByChild("pendingTask").addChildEventListener(new ChildEventListener() {
                             @Override
                             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                                 //pDialog.show();

@@ -37,7 +37,7 @@ public class RecAdapter_cust extends RecyclerView.Adapter<RecAdapter_cust.RecHol
     @Override
     public void onBindViewHolder(final RecHolder holder, int position) {
 
-        Customer item = list.get(position);
+        final Customer item = list.get(position);
         holder.name.setText(item.getName());
         String iconText = item.getName().toUpperCase();
         holder.icon_text.setText(iconText.charAt(0) + "");
@@ -54,6 +54,7 @@ public class RecAdapter_cust extends RecyclerView.Adapter<RecAdapter_cust.RecHol
                         if (status.equals("pending")) {
                             pendingJobs[0]++;
                             holder.pendingJobCount.setText(String.valueOf(pendingJobs[0]));
+                            DBREF.child("Customer").child(item.getId()).child("pendingTask").setValue(1000-pendingJobs[0]);
                     }
                 }
             }
@@ -65,12 +66,13 @@ public class RecAdapter_cust extends RecyclerView.Adapter<RecAdapter_cust.RecHol
                     if (status.equals("pending")) {
                         pendingJobs[0]++;
                         holder.pendingJobCount.setText(String.valueOf(pendingJobs[0]));
+                        DBREF.child("Customer").child(item.getId()).child("pendingTask").setValue(1000-pendingJobs[0]);
                     }
                     else
                     {
                         pendingJobs[0]--;
                         holder.pendingJobCount.setText(String.valueOf(pendingJobs[0]));
-
+                        DBREF.child("Customer").child(item.getId()).child("pendingTask").setValue(1000-pendingJobs[0]);
                     }
                 }
             }
@@ -82,6 +84,7 @@ public class RecAdapter_cust extends RecyclerView.Adapter<RecAdapter_cust.RecHol
                     if (status.equals("pending")) {
                         pendingJobs[0]--;
                         holder.pendingJobCount.setText(String.valueOf(pendingJobs[0]));
+                        DBREF.child("Customer").child(item.getId()).child("pendingTask").setValue(1000-pendingJobs[0]);
                     }
                 }
             }
@@ -121,7 +124,6 @@ public class RecAdapter_cust extends RecyclerView.Adapter<RecAdapter_cust.RecHol
 
         public RecHolder(View itemView) {
             super(itemView);
-
             name = (TextView) itemView.findViewById(R.id.name);
             icon_text =(TextView)itemView.findViewById(R.id.icon_text);
             imgProfile = (ImageView)itemView.findViewById(R.id.icon_profile);

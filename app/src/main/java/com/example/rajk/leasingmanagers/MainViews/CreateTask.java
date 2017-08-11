@@ -381,7 +381,10 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int id) {
-                        CreateTask.super.onBackPressed();
+                        Intent intent = new Intent(CreateTask.this, Cust_details.class);
+                        intent.putExtra("id", customerId);
+                        startActivity(intent);
+                        finish();
                     }
 
 
