@@ -224,10 +224,11 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                 final EditText name_new, num_new, add_new;
                 Button sub;
 
-                dialog = new Dialog(Emp_details.this);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setContentView(R.layout.edit_emp);
+                dialog = new AlertDialog.Builder(this)
+                    .setView(R.layout.edit_emp)
+                    .create();
 
+                dialog.show();
                 name_new = (EditText) dialog.findViewById(R.id.name);
                 num_new = (EditText) dialog.findViewById(R.id.num);
                 add_new = (EditText) dialog.findViewById(R.id.add);

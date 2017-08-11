@@ -1,13 +1,17 @@
 package com.example.rajk.leasingmanagers.tablayout;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.widget.FrameLayout;
 
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.drawer;
+import com.example.rajk.leasingmanagers.employee.Emp_add;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 
 public class Tabs extends drawer implements TabLayout.OnTabSelectedListener{
@@ -73,6 +77,27 @@ public class Tabs extends drawer implements TabLayout.OnTabSelectedListener{
 
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
+
+    }
+    @Override
+    public void onBackPressed() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to exit?")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, int id) {
+                        Tabs.super.onBackPressed();
+                    }
+
+
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
 
     }
 

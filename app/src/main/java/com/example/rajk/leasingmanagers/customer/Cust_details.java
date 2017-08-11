@@ -88,7 +88,6 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String, String> map_new = (Map<String, String>) dataSnapshot.getValue();
-
                 name = (map_new.get("name"));
                 add = (map_new.get("address"));
                 num = (map_new.get("phone_num"));
@@ -185,8 +184,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                 final EditText name_new, num_new, add_new;
                 Button sub;
                 customerEditDetails = new AlertDialog.Builder(this)
-                        .setTitle("Edit Customer Details")
-                        .setView(R.layout.edit_cust).setIcon(R.mipmap.ic_edit_pink)
+                        .setView(R.layout.edit_cust)
                         .create();
                 customerEditDetails.show();
 
@@ -230,7 +228,6 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                 intent.putExtra("customerId", id);
                 intent.putExtra("customerName", Name.getText().toString().trim());
                 startActivity(intent);
-                finish();
                 break;
 
             case R.id.item3:
