@@ -10,6 +10,24 @@ public class CompletedJob {
     private String datecompleted;
     private String assignedByUsername,assignedByName;
     private String coordinatorNote,empployeeNote,timestamp;
+    private String empName;
+    private String empDesignation;
+
+    public String getEmpName() {
+        return empName;
+    }
+
+    public void setEmpName(String empName) {
+        this.empName = empName;
+    }
+
+    public String getEmpDesignation() {
+        return empDesignation;
+    }
+
+    public void setEmpDesignation(String empDesignation) {
+        this.empDesignation = empDesignation;
+    }
 
     public String getTimestamp() {
         return timestamp;
@@ -19,7 +37,8 @@ public class CompletedJob {
         this.timestamp = timestamp;
     }
 
-    public CompletedJob(String empId, String dateassigned, String datecompleted, String assignedByUsername, String assignedByName, String coordinatorNote, String empployeeNote, String timestamp) {
+
+    public CompletedJob(String empId, String dateassigned, String datecompleted, String assignedByUsername, String assignedByName, String coordinatorNote, String empployeeNote, String timestamp, String empName, String empDesignation) {
         this.empId = empId;
         this.dateassigned = dateassigned;
         this.datecompleted = datecompleted;
@@ -28,6 +47,8 @@ public class CompletedJob {
         this.coordinatorNote = coordinatorNote;
         this.empployeeNote = empployeeNote;
         this.timestamp = timestamp;
+        this.empName = empName;
+        this.empDesignation = empDesignation;
     }
 
     public String getAssignedByUsername() {

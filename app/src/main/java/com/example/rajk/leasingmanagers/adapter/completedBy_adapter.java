@@ -43,31 +43,14 @@ public class completedBy_adapter extends RecyclerView.Adapter<completedBy_adapte
 
     @Override
     public void onBindViewHolder(final completedBy_adapter.MyViewHolder holder, final int position) {
-        emp = list.get(position);
-
-        DatabaseReference dbEmp = DBREF.child("Employee").child(emp.getEmpId()).getRef();
-        dbEmp.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+                emp = list.get(position);
                 holder.dateassigned.setText(emp.getDateassigned());
                 holder.dateCompleted.setText(emp.getDatecompleted());
                 holder.noteString.setText(emp.getCoordinatorNote());
                 holder.assignedby.setText(emp.getAssignedByName());
                 holder.employeeNote.setText(emp.getEmpployeeNote());
-                String empname = dataSnapshot.child("name").getValue(String.class);
-                holder.employeename.setText(empname);
-                String empdesig = dataSnapshot.child("designation").getValue(String.class);
-                holder.employeeDesig.setText(empdesig);
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
+                holder.employeename.setText(emp.getEmpName());
+                holder.employeeDesig.setText(emp.getEmpDesignation());
     }
 
     @Override

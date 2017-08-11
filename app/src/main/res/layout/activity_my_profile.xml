@@ -8,6 +8,7 @@
     android:layout_height="match_parent"
     tools:context="com.example.rajk.leasingmanagers.MyProfile.MyProfile"
     android:padding="7dp"
+    android:background="@color/backgroundColorLight"
     android:orientation="vertical">
 
     <android.support.v7.widget.CardView

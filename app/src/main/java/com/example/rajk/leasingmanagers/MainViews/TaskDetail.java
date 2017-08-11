@@ -66,6 +66,7 @@ import com.zfdang.multiple_images_selector.ImagesSelectorActivity;
 import com.zfdang.multiple_images_selector.SelectorSettings;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -902,7 +903,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                                             idLong = 9999999999999L - idLong;
                                                             sendNotifToAllCoordinators(mykey, "completeJob", "Task " + task.getName() + " has been successfully completed", task_id);
                                                             sendNotif(mykey, task.getCustomerId(), "completeJob", "Task " + task.getName() + " has been successfully completed", task_id);
-                                                            dbCompleted.child(mykey).setValue(new CompletedJob(mykey, task.getStartDate(), simpleDateFormat.format(Calendar.getInstance().getTime()), mykey, coordinatorSession.getName(), "Customer has been notified", "Task is successfully completed", idLong + ""));
+                                                            dbCompleted.child(mykey).setValue(new CompletedJob(coordinatorSession.getName(),"Coordinator",mykey,task.getStartDate(), new SimpleDateFormat("DD/MM/YYYY").format(Calendar.getInstance().getTime()), mykey, coordinatorSession.getName(), "Customer has been notified", "Task is successfully completed", idLong + ""));
                                                             Toast.makeText(TaskDetail.this, "Job completed sucessfully", Toast.LENGTH_SHORT).show();
                                                             dbTaskCompleteStatus.setValue("complete");
                                                             dialog.dismiss();

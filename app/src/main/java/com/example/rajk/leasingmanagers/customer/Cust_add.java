@@ -70,8 +70,10 @@ public class Cust_add extends AppCompatActivity {
                     Toast.makeText(Cust_add.this, "Enter Details", Toast.LENGTH_LONG).show();
                 else {
                             Customer customer = new Customer(name,num,add,num,getRandomMaterialColor("400"),password);
+
                             database = db.child(num);
                             database.setValue(customer);
+                            database.child(num).child("pendingTask").setValue(1000);
                     DBREF.child("Users").child("Usersessions").child(num).child("name").setValue(name);
                     DBREF.child("Users").child("Usersessions").child(num).child("online").setValue(Boolean.FALSE);
                     DBREF.child("Users").child("Usersessions").child(num).child("num").setValue(num);
@@ -109,6 +111,7 @@ public class Cust_add extends AppCompatActivity {
                     public void onClick(final DialogInterface dialog, int id) {
                         Intent intent = new Intent(Cust_add.this,Tabs.class);
                         intent.putExtra("page",0);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         finish();
                         }

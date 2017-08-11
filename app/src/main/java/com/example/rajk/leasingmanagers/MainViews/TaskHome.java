@@ -63,7 +63,6 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
     private StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
     ProgressDialog progressDialog;
     private String custId = "nocust";
-    private String customerName;
     private String custName = "nocust";
 
     public TaskHome() {
@@ -85,7 +84,6 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             custId = bundle.getString("custId");
-            customerName = bundle.getString("customerName");
             custName = bundle.getString("custName");
         }
         marshMallowPermission = new MarshmallowPermissions(getActivity());
@@ -240,7 +238,7 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
                     serviceIntent.putExtra("TaskIdList", taskid_list);
                     serviceIntent.putExtra("selectedFileUri", selectedFileUri.toString());
                     serviceIntent.putExtra("customerId",custId);
-                    serviceIntent.putExtra("customerName",customerName);
+                    serviceIntent.putExtra("customerName",custName);
 
                     getActivity().startService(serviceIntent);
                 } else {

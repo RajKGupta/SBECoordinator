@@ -11,12 +11,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.DatabaseReference;
-
 import org.apache.commons.lang3.text.WordUtils;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
@@ -33,7 +31,6 @@ public class MyProfile extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_profile);
-
         name = (EditText)findViewById(R.id.name);
         num = (EditText)findViewById(R.id.num);
         add = (EditText)findViewById(R.id.add);
@@ -72,9 +69,7 @@ public class MyProfile extends AppCompatActivity {
                 final EditText name_new,num_new,add_new;
                 Button sub;
                 customerEditDetails = new AlertDialog.Builder(this)
-                        .setTitle("Edit Profile")
-                        .setView(R.layout.edit_myself).setIcon(R.mipmap.ic_edit_pink)
-                        .create();
+                        .setView(R.layout.edit_myself).create();
                 customerEditDetails.show();
 
                 name_new = (EditText) customerEditDetails.findViewById(R.id.name);

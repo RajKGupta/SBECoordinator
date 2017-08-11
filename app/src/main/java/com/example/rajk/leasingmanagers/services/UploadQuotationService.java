@@ -92,7 +92,7 @@ public class UploadQuotationService extends IntentService
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         sendNotif(mykey,customerId,"uploadQuotation","Quotation for your tasks has been uploaded","noId");
-                        sendNotifToAllCoordinators(mykey,"uploadQuotation","Quotation for"+customerName+" tasks has been uploaded","noId");
+                        sendNotifToAllCoordinators(mykey,"uploadQuotation","Quotation for "+customerName+" tasks has been uploaded","noId");
                         for (int i = TaskIdList.size() - 1; i >= 0; i--)
                         {
                             Quotation quotation = new Quotation("No",taskSnapshot.getDownloadUrl().toString());

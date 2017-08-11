@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.phonebook_adapter;
 import com.example.rajk.leasingmanagers.model.Phonebook;
+import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -176,4 +177,11 @@ public class phonebook extends AppCompatActivity implements phonebook_adapter.ph
         alert.show();
 
     }
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, Tabs.class);
+        startActivity(intent);
+        finish();
+    }
+
 }

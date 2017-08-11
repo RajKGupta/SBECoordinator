@@ -175,7 +175,6 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
             intent.putExtra("forQuotation", forQuotation);
             startActivity(intent);
             finish();
-
         }
     }
 

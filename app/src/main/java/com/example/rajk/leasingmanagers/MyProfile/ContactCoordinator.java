@@ -14,6 +14,7 @@ import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.coordinator_adapter;
 import com.example.rajk.leasingmanagers.chat.ChatActivity;
 import com.example.rajk.leasingmanagers.model.Coordinator;
+import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -159,4 +160,11 @@ public class ContactCoordinator extends AppCompatActivity implements coordinator
         callIntent.setData(Uri.parse("tel:" + num));
         startActivity(callIntent);
     }
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, Tabs.class);
+        startActivity(intent);
+        finish();
+    }
+
 }
