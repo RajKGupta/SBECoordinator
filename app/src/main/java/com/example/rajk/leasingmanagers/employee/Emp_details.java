@@ -303,7 +303,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                                 if (minutes != null && !minutes.equals("")) {
                                     Integer Minutes = Integer.parseInt(minutes);
                                     if (Minutes > 0) {
-                                        String contentforme = "You reminded " + holder.employeename.getText().toString().trim() + " for " + taskName;
+                                        String contentforme = "You reminded " + name + " for " + taskName;
                                         sendNotif(mykey, mykey, "repeatedReminder", contentforme, task_id);
                                         String contentforother = "Coordinator " + coordinatorSession.getName() + " reminded you of " + taskName;
                                         sendNotif(mykey, empId, "repeatedReminder" + " " + minutes, contentforother, task_id);
