@@ -46,6 +46,7 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forward_task_screen2);
+
         name = (EditText) findViewById(R.id.name);
         designation = (EditText) findViewById(R.id.designation);
         enddate = (EditText) findViewById(R.id.deadline);

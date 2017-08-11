@@ -13,8 +13,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
+
+import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -27,7 +28,6 @@ import android.widget.Toast;
 
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.codetroopers.betterpickers.calendardatepicker.MonthAdapter;
-import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.ViewImageAdapter;
 import com.example.rajk.leasingmanagers.adapter.taskimagesadapter;
 import com.example.rajk.leasingmanagers.customer.Cust_details;
@@ -37,18 +37,12 @@ import com.example.rajk.leasingmanagers.listener.ClickListener;
 import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.example.rajk.leasingmanagers.services.UploadTaskPhotosServices;
-import com.example.rajk.leasingmanagers.tablayout.Tabs;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.gu.toolargetool.TooLargeTool;
 import com.zfdang.multiple_images_selector.ImagesSelectorActivity;
 import com.zfdang.multiple_images_selector.SelectorSettings;
 
 import org.apache.commons.lang3.text.WordUtils;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -274,7 +268,6 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                     adapter = new ViewImageAdapter(picUriList, this);
                     rv.setAdapter(adapter);
 
-
                     final String[] item = {picUriList.get(0)};
                     ImageViewlarge.setImageURI(Uri.parse(item[0]));
 
@@ -299,17 +292,26 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                             int i = picUriList.indexOf(item[0]);
                             if (i == picUriList.size() - 1)
                                 i = 0;
-                            picUriList.remove(item[0]);
-                            adapter.selectedPosition = i;
-                            adapter.notifyDataSetChanged();
-                            item[0] = picUriList.get(i);
-                            ImageViewlarge.setImageURI(Uri.parse(item[0]));
+                            if(picUriList.size()==1)
+                            {
+                                picUriList.clear();
+                                viewSelectedImages.dismiss();
+
+                            }
+                            else {
+                                picUriList.remove(item[0]);
+                                adapter.selectedPosition = i;
+                                adapter.notifyDataSetChanged();
+                                item[0] = picUriList.get(i);
+                                ImageViewlarge.setImageURI(Uri.parse(item[0]));
+                            }
                         }
                     });
 
                     canceldone.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            picUriList.clear();
                             viewSelectedImages.dismiss();
                         }
                     });
@@ -331,6 +333,7 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                                 viewSelectedImages.dismiss();
 
                             } else {
+                                picUriList.clear();
                                 viewSelectedImages.dismiss();
                             }
                         }
