@@ -300,7 +300,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                                 final String taskName = holder.employeename.getText().toString().trim();
 
                                 String minutes = userInputDialogEditText.getText().toString().trim();
-                                if (minutes != null && minutes.equals("")) {
+                                if (minutes != null && !minutes.equals("")) {
                                     Integer Minutes = Integer.parseInt(minutes);
                                     if (Minutes > 0) {
                                         String contentforme = "You reminded " + holder.employeename.getText().toString().trim() + " for " + taskName;

@@ -40,7 +40,7 @@
             </intent-filter>
         </activity>
 
-        <acivity
+        <activity
             android:name=".Splash"
             android:screenOrientation="portrait" />
 

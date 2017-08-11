@@ -86,7 +86,7 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String receiverFCMToken = dataSnapshot.getValue(String.class);
-                if (receiverFCMToken != null && receiverFCMToken.equals("")) {
+                if (receiverFCMToken != null && !receiverFCMToken.equals("")) {
                     Notif newNotif = new Notif(id, timestamp, type, senderId, receiverId, receiverFCMToken, content, taskId);
                     notif.child(receiverId).child(id).setValue(newNotif);
                 }
