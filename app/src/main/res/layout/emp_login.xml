@@ -54,7 +54,7 @@ android:fitsSystemWindows="true">
             android:layout_marginBottom="3dp"
             android:background="@drawable/register"
             android:layout_margin="2dp"
-            android:drawableRight="@drawable/ic_roll" />
+            android:drawableRight="@drawable/ic_profile_black" />
 
     </android.support.design.widget.TextInputLayout>
 

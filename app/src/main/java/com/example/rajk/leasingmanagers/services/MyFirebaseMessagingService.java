@@ -66,7 +66,7 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
                     if (dataSnapshot.exists()) {
                         NameAndStatus nameAndStatus = dataSnapshot.getValue(NameAndStatus.class);
                         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(MyFirebaseMessagingService.this)
-                                .setSmallIcon(R.mipmap.ic_chat_white)
+                                .setSmallIcon(R.drawable.ic_chat_white)
                                 .setContentTitle("New Notification from " + nameAndStatus.getName())
                                 .setContentText(body)
                                 .setAutoCancel(true)
@@ -123,7 +123,7 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
                         if (dataSnapshot.exists()) {
                             NameAndStatus nameAndStatus = dataSnapshot.getValue(NameAndStatus.class);
                             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(MyFirebaseMessagingService.this)
-                                    .setSmallIcon(R.mipmap.ic_chat_white)
+                                    .setSmallIcon(R.drawable.ic_chat_white)
                                     .setContentTitle("New Message from " + nameAndStatus.getName())
                                     .setContentText(msg)
                                     .setAutoCancel(true)
