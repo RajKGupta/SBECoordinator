@@ -1,16 +1,12 @@
 package com.example.rajk.leasingmanagers.model;
 
-/**
- * Created by SoumyaAgarwal on 6/6/2017.
- */
-
-public class measurement
-{
+public class measurement {
     private String tag;
     private String width;
     private String height;
     private String fleximage;
     private String unit;
+    private String id;
 
     public String getUnit() {
         return unit;
@@ -20,12 +16,13 @@ public class measurement
         this.unit = unit;
     }
 
-    public measurement(String tag, String width, String height, String fleximage,String unit) {
+    public measurement(String tag, String width, String height, String fleximage, String unit,String id) {
         this.tag = tag;
         this.width = width;
         this.height = height;
         this.fleximage = fleximage;
         this.unit = unit;
+        this.id = id;
     }
 
     public measurement() {
@@ -61,5 +58,13 @@ public class measurement
 
     public void setFleximage(String fleximage) {
         this.fleximage = fleximage;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

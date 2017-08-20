@@ -44,6 +44,7 @@ import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.listener.ClickListener;
 import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
+import com.example.rajk.leasingmanagers.measurement.MeasureList;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
 import com.example.rajk.leasingmanagers.model.CompletedJob;
 import com.example.rajk.leasingmanagers.model.Quotation;
@@ -83,7 +84,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     ValueEventListener dbTaskVle;
     ImageButton download;
     ProgressBar progressBar;
-    private String task_id, mykey;
+    public static String task_id;
+    private String mykey;
     private Task task;
     private String customername;
     EditText startDate, endDate, quantity, description;
@@ -111,7 +113,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     CompressMe compressMe;
     private ArrayList<String> picUriList = new ArrayList<>();
     ViewImageAdapter madapter;
-    RecyclerView desc_photo_grid;
+    Button measure;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +143,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         rec_DescImages = (RecyclerView) findViewById(R.id.rec_DescImages);
         photo_desc = (ImageButton) findViewById(R.id.photo_desc);
         written_desc = (ImageButton) findViewById(R.id.written_desc);
+        measure = (Button) findViewById(R.id.measure);
 
         Intent intent = getIntent();
         task_id = intent.getStringExtra("task_id");
@@ -177,7 +180,19 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         dbMeasurement = dbTask.child("Measurement").getRef();
         dbDescImages = dbTask.child("DescImages").getRef();
 
+
+        measurementList.clear();
         prepareListData();
+
+
+        measure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(TaskDetail.this, MeasureList.class));
+            }
+        });
+
+
 
         dbTaskVle = dbTask.addValueEventListener(new ValueEventListener() {
             @Override
@@ -1004,4 +1019,5 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         if (dbTaskVle != null)
             dbTask.removeEventListener(dbTaskVle);
     }
+
 }

@@ -93,6 +93,14 @@
             android:name=".ForwardTask.forwardTaskScreen2"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".measurement.MeasureList"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".measurement.dialogue"
+            android:screenOrientation="portrait" />
+
         <service
             android:name=".services.UploadTaskPhotosServices"
             android:exported="false" />
