@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusable="true"
     android:background="@color/backgroundColorLight"
+    android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical">
 
@@ -345,15 +345,14 @@
                 android:background="@color/white"
                 app:cardElevation="2dp">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:padding="8dp">
 
                     <TextView
                         android:id="@+id/open_measurement"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:gravity="center_vertical"
@@ -361,20 +360,30 @@
                         android:textColor="@color/black"
                         android:textSize="15dp" />
 
+                    <Button
+                        android:id="@+id/measure"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text="update"
+                        android:elevation="1dp"/>
+
                     <TextView
                         android:id="@+id/measure_and_hideme"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_below="@+id/open_measurement"
                         android:text="No measurements taken for this job" />
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/rec_measurement"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@+id/measure_and_hideme"
                         android:layout_marginTop="5dp"
-                        android:nestedScrollingEnabled="true"></android.support.v7.widget.RecyclerView>
+                        android:nestedScrollingEnabled="true" />
 
-                </LinearLayout>
+                </RelativeLayout>
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
