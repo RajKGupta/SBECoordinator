@@ -73,7 +73,6 @@ public class MyProfile extends AppCompatActivity {
                 customerEditDetails.show();
 
                 name_new = (EditText) customerEditDetails.findViewById(R.id.name);
-
                 num_new = (EditText) customerEditDetails.findViewById(R.id.num);
                 add_new = (EditText) customerEditDetails.findViewById(R.id.add);
                 sub = (Button) customerEditDetails.findViewById(R.id.submit);
@@ -100,6 +99,7 @@ public class MyProfile extends AppCompatActivity {
                             db.child("address").setValue(temp_add);
                             db.child("contact").setValue(temp_num);
                             DBREF.child("Users").child("Usersessions").child(session.getUsername()).child("num").setValue(temp_num);
+                            DBREF.child("Users").child("Usersessions").child(session.getUsername()).child("name").setValue(temp_name);
 
                             session.edit_oldusersession(temp_name,temp_num,temp_add);
                             customerEditDetails.dismiss();

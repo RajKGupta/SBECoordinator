@@ -12,5 +12,10 @@
         android:icon="@drawable/ic_delete"
         android:title="Delete"
         app:showAsAction="always"/>
+    <item
+        android:id="@+id/item3"
+        android:icon="@drawable/ic_edit_white"
+        android:title="Edit"
+        app:showAsAction="always"/>
 
 </menu>

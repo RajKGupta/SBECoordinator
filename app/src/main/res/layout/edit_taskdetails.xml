@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/backgroundColor"
-    android:layout_height="wrap_content">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:padding="5dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="5dp">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:drawableLeft="@drawable/ic_edit_red_24dp"
+            android:text="  Edit details"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="20dp"
-            android:layout_margin="10dp"
-            android:text="  My Profile Edit"
-            android:textStyle="bold|italic"/>
+            android:textStyle="bold|italic" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="2dp"
@@ -32,64 +34,70 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingBottom="20dp"
         android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingBottom="20dp">
+        android:paddingRight="20dp">
+
         <EditText
-            android:id="@+id/name"
+            android:id="@+id/taskname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edittext_bg_whitebg"
+            android:drawableLeft="@drawable/ic_business_center_black_24dp"
+            android:hint="  Task Name"
+            android:inputType="textCapSentences"
             android:padding="10dp"
             android:textColor="@color/colorPrimary"
-            android:drawableLeft="@drawable/ic_face_black_24dp"
-            android:hint="Name"
-            android:background="@drawable/edittext_bg_whitebg"
-            android:textSize="18dp"
-            android:layout_marginTop="10dp"
-            android:inputType="textCapSentences" />
+            android:textSize="18dp" />
 
 
         <EditText
-            android:id="@+id/num"
+            android:id="@+id/qty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:layout_marginTop="10dp"
-            android:textColor="@color/colorPrimary"
-            android:drawableLeft="@drawable/ic_local_phone_black_24dp"
-            android:hint="Contact"
             android:background="@drawable/edittext_bg_whitebg"
-            android:inputType="phone"
-            android:textSize="18dp"/>
+            android:drawableLeft="@drawable/ic_format_list_numbered_black_24dp"
+            android:hint="  Quantity"
+            android:inputType="number"
+            android:padding="10dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18dp" />
 
         <EditText
-            android:id="@+id/add"
+            android:id="@+id/endDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:layout_below="@+id/textView3"
             android:layout_marginTop="10dp"
-            android:textColor="@color/colorPrimary"
-            android:drawableLeft="@drawable/ic_home_black_24dp"
-            android:hint="Address"
-            android:textSize="18dp"
             android:background="@drawable/edittext_bg_whitebg"
-            android:inputType="textPostalAddress" />
+            android:drawableLeft="@drawable/ic_date_range_black_24dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:hint="  End Date"
+            android:inputType="date"
+            android:padding="10dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18dp" />
+
     </LinearLayout>
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardElevation="5dp">
+
         <Button
+            android:id="@+id/submit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="2dp"
+            android:background="#fff0be"
             android:text="submit"
             android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold"
-            android:id="@+id/submit"
-            android:background="#fff0be"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="2dp"/>
+            android:textStyle="bold" />
     </android.support.v7.widget.CardView>
 
 </LinearLayout>
