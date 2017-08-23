@@ -21,38 +21,35 @@ import java.util.List;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
-public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter.MyViewHolder>
-{
+public class assignedto_adapter extends RecyclerView.Adapter<assignedto_adapter.MyViewHolder> {
     List<CompletedBy> list = new ArrayList<>();
     private Context context;
-    SharedPreferences sharedPreferences ;
+    SharedPreferences sharedPreferences;
     String taskId;
     assignedto_adapterListener listener;
     public CompletedBy emp = new CompletedBy();
 
-    public assignedto_adapter(List<CompletedBy> list, Context context,String taskId,assignedto_adapterListener listener) {
+    public assignedto_adapter(List<CompletedBy> list, Context context, String taskId, assignedto_adapterListener listener) {
         this.list = list;
         this.context = context;
-        sharedPreferences = context.getSharedPreferences("SESSION",Context.MODE_PRIVATE);
-        this.taskId=taskId;
+        sharedPreferences = context.getSharedPreferences("SESSION", Context.MODE_PRIVATE);
+        this.taskId = taskId;
         this.listener = listener;
 
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.assignedto_list_row,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.assignedto_list_row, parent, false);
         return new MyViewHolder(view);
 
     }
 
     @Override
-    public void onBindViewHolder(final assignedto_adapter.MyViewHolder holder, final int position)
-    {
+    public void onBindViewHolder(final assignedto_adapter.MyViewHolder holder, final int position) {
         emp = list.get(position);
         holder.open_options.setVisibility(View.VISIBLE);
-            holder.noteAuthor.setText("Coordinator's Note:");
-            holder.tv_dateCompleted.setText("Expected Deadline :");
+        holder.tv_dateCompleted.setText("Expected Deadline :");
 
         holder.dateassigned.setText(emp.getDateassigned());
         holder.dateCompleted.setText(emp.getDatecompleted());
@@ -67,7 +64,6 @@ public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter
                 holder.employeename.setText(empname);
                 String empdesig = dataSnapshot.child("designation").getValue(String.class);
                 holder.employeeDesig.setText(empdesig);
-
             }
 
             @Override
@@ -76,7 +72,7 @@ public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter
             }
         });
 
-        applyClickEvents(holder,position);
+        applyClickEvents(holder, position);
     }
 
     @Override
@@ -85,43 +81,33 @@ public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView dateCompleted,employeename,employeeDesig,dateassigned,tv_dateCompleted,noteAuthor,noteString,assignedby;
+        public TextView dateCompleted, employeename, employeeDesig, dateassigned, tv_dateCompleted, noteString, assignedby;
         ImageButton open_options;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
             dateCompleted = (TextView) itemView.findViewById(R.id.dateCompleted);
-
-            employeename = (TextView)
-                    itemView.findViewById(R.id.employeeName);
-
-
-            employeeDesig = (TextView)
-                    itemView.findViewById(R.id.employeeDesig);
-
-            dateassigned = (TextView)
-                    itemView.findViewById(R.id.dateAssign);
-
-
-            tv_dateCompleted = (TextView)
-                    itemView.findViewById(R.id.tv_datecompleted);
-
-            noteAuthor = (TextView)itemView.findViewById(R.id.noteAuthor);
+            employeename = (TextView) itemView.findViewById(R.id.employeeName);
+            employeeDesig = (TextView) itemView.findViewById(R.id.employeeDesig);
+            dateassigned = (TextView) itemView.findViewById(R.id.dateAssign);
+            tv_dateCompleted = (TextView) itemView.findViewById(R.id.tv_datecompleted);
             noteString = (TextView) itemView.findViewById(R.id.noteString);
-            assignedby = (TextView)itemView.findViewById(R.id.assignedBy);
-            open_options = (ImageButton)itemView.findViewById(R.id.open_options);
+            assignedby = (TextView) itemView.findViewById(R.id.assignedBy);
+            open_options = (ImageButton) itemView.findViewById(R.id.open_options);
         }
     }
+
     public interface assignedto_adapterListener {
-        void onOptionsButtonClicked(int position,MyViewHolder holder);
+        void onOptionsButtonClicked(int position, MyViewHolder holder);
     }
+
     private void applyClickEvents(final MyViewHolder holder, final int position) {
 
         holder.open_options.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.onOptionsButtonClicked(position,holder);
+                listener.onOptionsButtonClicked(position, holder);
             }
         });
     }
