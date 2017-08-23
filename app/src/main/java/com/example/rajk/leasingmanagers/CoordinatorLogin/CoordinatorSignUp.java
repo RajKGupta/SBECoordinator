@@ -70,7 +70,7 @@ public class CoordinatorSignUp extends AppCompatActivity {
                     }
                 }
                 if (TextUtils.isEmpty(Username)) {
-                    input_email.setError("Enter Username");
+                    input_email.setError("Enter Email");
                     if (input_email.requestFocus()) {
                         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                     }

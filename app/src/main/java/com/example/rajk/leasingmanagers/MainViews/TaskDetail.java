@@ -80,7 +80,6 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotifToAllCoordinators;
 import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormat;
-import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormatDDMMYYYY;
 
 public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener {
 
@@ -860,7 +859,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                 String note = userInputDialogEditText.getText().toString().trim();
                                 if (note != null && !note.equals("")) {
                                     DBREF.child("Task").child(task_id).child("AssignedTo").child(adapter_assignedto.emp.getEmpId()).child("note").setValue(note);
-                                    holder.noteAuthor.setText(note);
+                                    holder.noteString.setText(note);
                                     Toast.makeText(TaskDetail.this, "Coordinator note changed successfully", Toast.LENGTH_SHORT).show();
                                     String contentforme = "You changed the coordinator note for " + task.getName();
                                     sendNotif(mykey, mykey, "changedNote", contentforme, task_id);
@@ -921,7 +920,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                                             idLong = 9999999999999L - idLong;
                                                             sendNotifToAllCoordinators(mykey, "completeJob", "Task " + task.getName() + " has been successfully completed", task_id);
                                                             sendNotif(mykey, task.getCustomerId(), "completeJob", "Task " + task.getName() + " has been successfully completed", task_id);
-                                                            dbCompleted.child(mykey).setValue(new CompletedJob(coordinatorSession.getName(),"Coordinator",mykey,task.getStartDate(), simpleDateFormatDDMMYYYY.format(Calendar.getInstance().getTime()), mykey, coordinatorSession.getName(), "Customer has been notified", "Task is successfully completed", idLong + ""));
+                                                            dbCompleted.child(mykey).setValue(new CompletedJob(coordinatorSession.getName(),"Coordinator",mykey,task.getStartDate(), new SimpleDateFormat("DD/MM/YYYY").format(Calendar.getInstance().getTime()), mykey, coordinatorSession.getName(), "Customer has been notified", "Task is successfully completed", idLong + ""));
                                                             Toast.makeText(TaskDetail.this, "Job completed sucessfully", Toast.LENGTH_SHORT).show();
                                                             dbTaskCompleteStatus.setValue("complete");
                                                             dialog.dismiss();
