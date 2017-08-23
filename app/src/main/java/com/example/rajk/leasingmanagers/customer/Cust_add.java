@@ -73,7 +73,7 @@ public class Cust_add extends AppCompatActivity {
 
                             database = db.child(num);
                             database.setValue(customer);
-                            database.child(num).child("pendingTask").setValue(1000);
+                            database.child("pendingTask").setValue(1000);
                     DBREF.child("Users").child("Usersessions").child(num).child("name").setValue(name);
                     DBREF.child("Users").child("Usersessions").child(num).child("online").setValue(Boolean.FALSE);
                     DBREF.child("Users").child("Usersessions").child(num).child("num").setValue(num);

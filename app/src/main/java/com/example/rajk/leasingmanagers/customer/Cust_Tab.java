@@ -20,21 +20,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.listener.ClickListener;
 import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
-import com.example.rajk.leasingmanagers.notification.NotificationActivity;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 public class Cust_Tab extends Fragment {

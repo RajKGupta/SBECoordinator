@@ -15,16 +15,19 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_alignParentRight="true"
+        android:layout_centerInParent="true"
         >
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -60,6 +63,7 @@
             android:text="Employee Name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxWidth="170dp"
             android:ellipsize="end"
             android:lines="1"
             android:textColor="#000000"
@@ -68,6 +72,7 @@
             <TextView
                 android:id="@+id/desig"
                 android:text="Designation"
+                android:maxWidth="170dp"
                 android:layout_marginTop="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

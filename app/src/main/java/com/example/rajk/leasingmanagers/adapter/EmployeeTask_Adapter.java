@@ -6,16 +6,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
@@ -65,7 +68,8 @@ public class EmployeeTask_Adapter extends RecyclerView.Adapter<EmployeeTask_Adap
                     holder.dateCompleted.setText(emp.getDatecompleted());
                     holder.noteString.setText(emp.getNote());
                     holder.assignedBy.setText(emp.getAssignedByName());
-
+                    applyClickEvents(holder, position);
+                    applyBackgroundColor(holder,emp);
                     DatabaseReference dbEmp = DBREF.child("Task").child(list.get(position)).getRef();
                     dbEmp.addListenerForSingleValueEvent(
                             new ValueEventListener() {
@@ -92,7 +96,6 @@ public class EmployeeTask_Adapter extends RecyclerView.Adapter<EmployeeTask_Adap
 
             }
         });
-        applyClickEvents(holder, position);
     }
 
     @Override
@@ -103,12 +106,13 @@ public class EmployeeTask_Adapter extends RecyclerView.Adapter<EmployeeTask_Adap
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView dateCompleted, employeename, employeeDesig, dateassigned, tv_dateCompleted, noteAuthor, noteString,assignedBy;
         public ImageButton dotmenu;
+        private LinearLayout overall_ll;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
             dateCompleted = (TextView) itemView.findViewById(R.id.dateCompleted);
-
+            overall_ll = (LinearLayout)itemView.findViewById(R.id.overall_ll);
             employeename = (TextView)
                     itemView.findViewById(R.id.employeeName);
 
@@ -127,6 +131,28 @@ public class EmployeeTask_Adapter extends RecyclerView.Adapter<EmployeeTask_Adap
             noteString = (TextView) itemView.findViewById(R.id.noteString);
             assignedBy = (TextView) itemView.findViewById(R.id.assignedBy);
             dotmenu = (ImageButton) itemView.findViewById(R.id.dotmenu);
+        }
+    }
+    private void applyBackgroundColor(EmployeeTask_Adapter.MyViewHolder holder, CompletedBy emp) {
+
+        try {
+            Date curDate = new Date();
+            curDate.setTime(Calendar.DATE);
+            curDate.setTime(Calendar.MONTH);
+            curDate.setTime(Calendar.YEAR);
+
+            Date aDate = new SimpleDateFormat("DD/MM/YYYY").parse(emp.getDateassigned());
+
+            if(curDate.compareTo(aDate)>-1)
+            {
+                holder.overall_ll.setBackgroundColor(R.color.colorAccent);
+            }
+            else
+            {
+                holder.overall_ll.setBackgroundColor(R.color.white);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 
