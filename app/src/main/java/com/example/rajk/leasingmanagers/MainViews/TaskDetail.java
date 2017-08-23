@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,6 +45,7 @@ import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
 import com.example.rajk.leasingmanagers.listener.ClickListener;
 import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
+import com.example.rajk.leasingmanagers.measurement.MeasureList;
 import com.example.rajk.leasingmanagers.model.CompletedBy;
 import com.example.rajk.leasingmanagers.model.CompletedJob;
 import com.example.rajk.leasingmanagers.model.Quotation;
@@ -65,6 +67,8 @@ import com.google.firebase.storage.StorageReference;
 import com.zfdang.multiple_images_selector.ImagesSelectorActivity;
 import com.zfdang.multiple_images_selector.SelectorSettings;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -84,7 +88,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     ValueEventListener dbTaskVle;
     ImageButton download;
     ProgressBar progressBar;
-    private String task_id, mykey;
+    public static String task_id;
+    private String mykey;
     private Task task;
     private String customername;
     EditText startDate, endDate, quantity, description;
@@ -112,7 +117,10 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     CompressMe compressMe;
     private ArrayList<String> picUriList = new ArrayList<>();
     ViewImageAdapter madapter;
-    RecyclerView desc_photo_grid;
+    Button measure;
+    AlertDialog taskEditDetails;
+    String temp_taskname,temp_qty,temp_enddate;
+    DatabaseReference dbedit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +150,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         rec_DescImages = (RecyclerView) findViewById(R.id.rec_DescImages);
         photo_desc = (ImageButton) findViewById(R.id.photo_desc);
         written_desc = (ImageButton) findViewById(R.id.written_desc);
+        measure = (Button) findViewById(R.id.measure);
 
         Intent intent = getIntent();
         task_id = intent.getStringExtra("task_id");
@@ -178,7 +187,19 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         dbMeasurement = dbTask.child("Measurement").getRef();
         dbDescImages = dbTask.child("DescImages").getRef();
 
+
+        measurementList.clear();
         prepareListData();
+
+
+        measure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(TaskDetail.this, MeasureList.class));
+            }
+        });
+
+
 
         dbTaskVle = dbTask.addValueEventListener(new ValueEventListener() {
             @Override
@@ -990,6 +1011,51 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 AlertDialog alert = builder.create();
                 alert.show();
                 break;
+            case R.id.item3:
+                final EditText taskname_new,qty_new,enddate_new;
+                Button sub;
+
+                taskEditDetails = new AlertDialog.Builder(this)
+                        .setView(R.layout.edit_taskdetails).create();
+                taskEditDetails.show();
+
+                dbedit = dbTask;
+                taskname_new = (EditText) taskEditDetails.findViewById(R.id.taskname);
+                qty_new = (EditText) taskEditDetails.findViewById(R.id.qty);
+                enddate_new = (EditText) taskEditDetails.findViewById(R.id.endDate);
+                sub = (Button) taskEditDetails.findViewById(R.id.submit);
+
+                taskname_new.setText(task.getName());
+                qty_new.setText(task.getQty());
+                enddate_new.setText(task.getExpEndDate());
+
+                sub.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        temp_taskname = taskname_new.getText().toString().trim();
+                        temp_taskname= WordUtils.capitalizeFully(temp_taskname);
+                        temp_qty = qty_new.getText().toString().trim();
+                        temp_enddate = enddate_new.getText().toString();
+
+                        if(TextUtils.isEmpty(temp_taskname) || TextUtils.isEmpty(temp_qty) || TextUtils.isEmpty(temp_enddate))
+                            Toast.makeText(TaskDetail.this,"Enter details...",Toast.LENGTH_SHORT).show();
+
+                        else
+                        {
+                            dbedit.child("name").setValue(temp_taskname);
+                            dbedit.child("qty").setValue(temp_qty);
+                            dbedit.child("expEndDate").setValue(temp_enddate);
+
+                            taskEditDetails.dismiss();
+
+                            getSupportActionBar().setTitle(temp_taskname);
+                            quantity.setText(temp_qty);
+                            endDate.setText(temp_enddate);
+                        }
+                    }
+                });
+
+                break;
         }
         return true;
     }
@@ -1005,4 +1071,5 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         if (dbTaskVle != null)
             dbTask.removeEventListener(dbTaskVle);
     }
+
 }

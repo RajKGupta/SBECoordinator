@@ -37,8 +37,8 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 public class Cust_add extends AppCompatActivity {
 
-    EditText Name, Add, Num,Password;
-    String name, add, num,password;
+    EditText Name, Add, Num,Password, Username;
+    String name, add, num,password,username;
     Button submit;
     DatabaseReference db = DBREF.child("Customer").getRef();
     DatabaseReference database;
@@ -53,6 +53,7 @@ public class Cust_add extends AppCompatActivity {
         Name = (EditText) findViewById(R.id.name);
         Add = (EditText) findViewById(R.id.add);
         Num = (EditText) findViewById(R.id.num);
+        Username = (EditText) findViewById(R.id.username);
         Password =(EditText)findViewById(R.id.password);
         submit = (Button) findViewById(R.id.submit);
 
@@ -66,18 +67,19 @@ public class Cust_add extends AppCompatActivity {
                 add = WordUtils.capitalizeFully(add);
                 num = Num.getText().toString().trim();
                 password = Password.getText().toString().trim();
-                if (TextUtils.isEmpty(name) || TextUtils.isEmpty(add) || TextUtils.isEmpty(num))
+                username = Username.getText().toString().trim();
+                if (TextUtils.isEmpty(name) || TextUtils.isEmpty(add) || TextUtils.isEmpty(num) || TextUtils.isEmpty(username))
                     Toast.makeText(Cust_add.this, "Enter Details", Toast.LENGTH_LONG).show();
                 else {
-                            Customer customer = new Customer(name,num,add,num,getRandomMaterialColor("400"),password);
+                            Customer customer = new Customer(name,num,add,username,getRandomMaterialColor("400"),password);
 
-                            database = db.child(num);
+                            database = db.child(username);
                             database.setValue(customer);
                             database.child("pendingTask").setValue(1000);
-                    DBREF.child("Users").child("Usersessions").child(num).child("name").setValue(name);
-                    DBREF.child("Users").child("Usersessions").child(num).child("online").setValue(Boolean.FALSE);
-                    DBREF.child("Users").child("Usersessions").child(num).child("num").setValue(num);
-                    DBREF.child("Fcmtokens").child(num).child("token").setValue("nil");
+                    DBREF.child("Users").child("Usersessions").child(username).child("name").setValue(name);
+                    DBREF.child("Users").child("Usersessions").child(username).child("online").setValue(Boolean.FALSE);
+                    DBREF.child("Users").child("Usersessions").child(username).child("num").setValue(num);
+                    DBREF.child("Fcmtokens").child(username).child("token").setValue("nil");
 
                     Intent intent = new Intent(Cust_add.this, Tabs.class);
                     intent.putExtra("page",0);

@@ -16,9 +16,6 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-/**
- * Created by RajK on 16-05-2017.
- */
 
 public class measurement_adapter extends RecyclerView.Adapter<measurement_adapter.MyViewHolder> {
     List<measurement> list = new ArrayList<>();
@@ -58,7 +55,8 @@ public class measurement_adapter extends RecyclerView.Adapter<measurement_adapte
         holder.width.setText(msr.getWidth());
         holder.height.setText(msr.getHeight());
         holder.unit.setText(msr.getUnit());
-        Picasso.with(context).load(msr.getFleximage()).into(holder.fleximage);
+        if(!msr.getFleximage().equals(""))
+            Picasso.with(context).load(msr.getFleximage()).placeholder(R.drawable.wait).into(holder.fleximage);
 
     }
 

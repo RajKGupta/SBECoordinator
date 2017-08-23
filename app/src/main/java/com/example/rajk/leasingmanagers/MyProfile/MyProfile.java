@@ -73,7 +73,6 @@ public class MyProfile extends AppCompatActivity {
                 customerEditDetails.show();
 
                 name_new = (EditText) customerEditDetails.findViewById(R.id.name);
-
                 num_new = (EditText) customerEditDetails.findViewById(R.id.num);
                 add_new = (EditText) customerEditDetails.findViewById(R.id.add);
                 sub = (Button) customerEditDetails.findViewById(R.id.submit);

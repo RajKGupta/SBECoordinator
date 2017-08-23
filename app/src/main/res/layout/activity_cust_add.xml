@@ -45,9 +45,6 @@ android:orientation="vertical">
             android:layout_marginTop="10dp"
             android:inputType="textCapSentences" />
 
-
-
-
         <EditText
             android:id="@+id/add"
             android:layout_width="match_parent"
@@ -58,7 +55,21 @@ android:orientation="vertical">
             android:drawableLeft="@drawable/ic_home_black_24dp"
             android:hint="Address"
             android:background="@drawable/edittext_bg_whitebg"
-            android:inputType="textPostalAddress" />
+            android:inputType="textPostalAddress"
+            android:textSize="18dp"/>
+
+        <EditText
+            android:id="@+id/num"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/colorPrimary"
+            android:drawableLeft="@drawable/ic_local_phone_black_24dp"
+            android:hint="Contact"
+            android:background="@drawable/edittext_bg_whitebg"
+            android:inputType="phone"
+            android:textSize="18dp"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -75,14 +86,14 @@ android:orientation="vertical">
             android:layout_marginTop="5dp"
             android:background="@color/colorPrimary"></LinearLayout>
         <EditText
-            android:id="@+id/num"
+            android:id="@+id/username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:layout_marginTop="10dp"
             android:textColor="@color/colorPrimary"
             android:drawableLeft="@drawable/ic_local_phone_black_24dp"
-            android:hint="Contact"
+            android:hint="Username"
             android:background="@drawable/edittext_bg_whitebg"
             android:inputType="phone"
             android:textSize="18dp"/>
