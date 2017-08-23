@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormatDDMMYYYY;
 
 /**
  * Created by RajK on 16-05-2017.
@@ -141,7 +142,7 @@ public class EmployeeTask_Adapter extends RecyclerView.Adapter<EmployeeTask_Adap
             curDate.setTime(Calendar.MONTH);
             curDate.setTime(Calendar.YEAR);
 
-            Date aDate = new SimpleDateFormat("DD/MM/YYYY").parse(emp.getDateassigned());
+            Date aDate = simpleDateFormatDDMMYYYY.parse(emp.getDateassigned());
 
             if(curDate.compareTo(aDate)>-1)
             {
