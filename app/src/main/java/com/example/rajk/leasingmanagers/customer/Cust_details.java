@@ -295,6 +295,8 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                 });
                 break;
             case R.id.item6:
+                // TODO : Null pointer exception (Null Object Refrence)
+                //if nothing is added to account this error would occur
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("Are you sure you want to reset the account?")
                         .setCancelable(false)
