@@ -89,9 +89,10 @@ public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter
 
         try {
             Date curDate = new Date();
-            curDate.setTime(Calendar.DATE);
+
             curDate.setTime(Calendar.MONTH);
             curDate.setTime(Calendar.YEAR);
+            curDate.setTime(Calendar.DATE);
 
             Date aDate = simpleDateFormatDDMMYYYY.parse(emp.getDateassigned());
 
