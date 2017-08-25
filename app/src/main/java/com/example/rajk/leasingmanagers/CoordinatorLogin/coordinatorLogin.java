@@ -73,7 +73,7 @@ public class coordinatorLogin extends AppCompatActivity {
                 Password = password.getText().toString().trim();
 
                 if (TextUtils.isEmpty(Username)) {
-                    input_email.setError("Enter Username");
+                    input_email.setError("Enter Email");
                     if (input_email.requestFocus()) {
                         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                     }
