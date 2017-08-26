@@ -76,8 +76,7 @@ public class CustomerTasks_Adapter extends RecyclerView.Adapter<CustomerTasks_Ad
                     } else {
                         holder.tv_taskStatus.setText("(Completed)");
                     }
-                }
-            }
+            }}
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
