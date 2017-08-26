@@ -43,14 +43,12 @@ import com.zfdang.multiple_images_selector.SelectorSettings;
 
 import org.apache.commons.lang3.text.WordUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
-
+import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormat;
 public class CreateTask extends AppCompatActivity implements CalendarDatePickerDialogFragment.OnDateSetListener {
     DatabaseReference dbRef;
     EditText taskName, startDate, endDate, quantity, description, custId;
@@ -58,7 +56,6 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
     ImageButton written_desc, photo_desc;
     String customerId, customerName, curdate;
     Button submit_task;
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     MarshmallowPermissions marshMallowPermission;
     private ArrayList<String> mResults;
     private AlertDialog descriptionDialog, viewSelectedImages;
@@ -160,7 +157,7 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
         custId.setText(customerId + ": " + customerName);
         submit_task = (Button) findViewById(R.id.submit_task);
         Calendar c = Calendar.getInstance();
-        curdate = dateFormat.format(c.getTime());
+        curdate = simpleDateFormat.format(c.getTime());
         startDate.setText(curdate);
 
         submit_task.setOnClickListener(new View.OnClickListener() {
@@ -232,9 +229,12 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
 
     @Override
     public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
-        endDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-    }
+        if(monthOfYear<9)
+            endDate.setText(dayOfMonth + "-0" + (monthOfYear + 1) + "-" + year);
+        else
+            endDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
 
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

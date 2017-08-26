@@ -2,6 +2,8 @@ package com.example.rajk.leasingmanagers.adapter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,14 +20,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
-import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormatDDMMYYYY;
+import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormat;
 
 public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter.MyViewHolder>
 {
@@ -69,11 +70,12 @@ public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter
         dbEmp.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String empname = dataSnapshot.child("name").getValue(String.class);
-                holder.employeename.setText(empname);
-                String empdesig = dataSnapshot.child("designation").getValue(String.class);
-                holder.employeeDesig.setText(empdesig);
-
+                if(dataSnapshot.exists()) {
+                    String empname = dataSnapshot.child("name").getValue(String.class);
+                    holder.employeename.setText(empname);
+                    String empdesig = dataSnapshot.child("designation").getValue(String.class);
+                    holder.employeeDesig.setText(empdesig);
+                }
             }
 
             @Override
@@ -88,22 +90,22 @@ public class assignedto_adapter extends  RecyclerView.Adapter<assignedto_adapter
     private void applyBackgroundColor(MyViewHolder holder,CompletedBy emp) {
 
         try {
-            Date curDate = new Date();
+            String curdate = simpleDateFormat.format(Calendar.getInstance().getTime());
+            Date curDate = simpleDateFormat.parse(curdate);
+            if(emp.getDatecompleted()!=null) {
+                Date aDate = simpleDateFormat.parse(emp.getDatecompleted());
 
-            curDate.setTime(Calendar.MONTH);
-            curDate.setTime(Calendar.YEAR);
-            curDate.setTime(Calendar.DATE);
-
-            Date aDate = simpleDateFormatDDMMYYYY.parse(emp.getDateassigned());
-
-            if(curDate.compareTo(aDate)>-1)
-            {
-                holder.ll_overall.setBackgroundColor(R.color.colorAccent);
+                if (curDate.compareTo(aDate) > -1) {
+                    holder.ll_overall.setBackgroundResource(R.color.colorAccent);
+                } else {
+                    holder.ll_overall.setBackgroundColor(Color.WHITE);
+                }
             }
+
             else
-            {
-                holder.ll_overall.setBackgroundColor(R.color.white);
-            }
+                holder.ll_overall.setBackgroundColor(Color.WHITE);
+
+
         } catch (ParseException e) {
             e.printStackTrace();
         }

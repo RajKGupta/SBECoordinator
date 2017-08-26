@@ -72,10 +72,11 @@ public class QAdapter extends RecyclerView.Adapter<QAdapter.MyViewHolder> {
         DatabaseReference dbCustomerName = DBREF.child("Customer").child(batch.getId()).getRef();
         dbCustomerName.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
-                String customername = dataSnapshot.child("name").getValue(String.class);
-                holder.customername.setText(customername);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String customername = dataSnapshot.child("name").getValue(String.class);
+                    holder.customername.setText(customername);
+                }
             }
 
             @Override

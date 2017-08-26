@@ -30,12 +30,12 @@ import java.util.GregorianCalendar;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
+import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormat;
 
 public class forwardTaskScreen2 extends FragmentActivity implements CalendarDatePickerDialogFragment.OnDateSetListener {
     Button submit;
     EditText name, designation, enddate, note, startDate;
     String empId, empName, empDesig;
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     String curdate, task_id, custId, mykey, myname;
     ArrayList<String> taskIds;
     Boolean forQuotation;
@@ -75,7 +75,7 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
 
 
         Calendar c = Calendar.getInstance();
-        curdate = dateFormat.format(c.getTime());
+        curdate = simpleDateFormat.format(c.getTime());
         startDate.setText(curdate);
         enddate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,24 +104,25 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
                     DBREF.child("Task").child(task_id).child("name").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            String taskName = dataSnapshot.getValue(String.class);
-                            CompletedBy completedBy = new CompletedBy(empId, curdate, deadline, cooordnote, mykey, myname);
-                            DatabaseReference dbAssigned = DBREF.child("Task").child(task_id).child("AssignedTo").child(empId);
-                            dbAssigned.setValue(completedBy);
+                            if(dataSnapshot.exists()) {
+                                String taskName = dataSnapshot.getValue(String.class);
+                                CompletedBy completedBy = new CompletedBy(empId, curdate, deadline, cooordnote, mykey, myname);
+                                DatabaseReference dbAssigned = DBREF.child("Task").child(task_id).child("AssignedTo").child(empId);
+                                dbAssigned.setValue(completedBy);
 
-                            DatabaseReference dbEmployee = DBREF.child("Employee").child(empId).child("AssignedTask").child(task_id);
-                            dbEmployee.setValue("pending"); //for employee
+                                DatabaseReference dbEmployee = DBREF.child("Employee").child(empId).child("AssignedTask").child(task_id);
+                                dbEmployee.setValue("pending"); //for employee
 
-                            Toast.makeText(forwardTaskScreen2.this, "Task Assigned to " + empName, Toast.LENGTH_SHORT).show();
-                            Intent intent1 = new Intent(forwardTaskScreen2.this, TaskDetail.class);
-                            intent1.putExtra("task_id", task_id);
-                            String contentforme = "You assigned " + taskName + " task to " + empName;
-                            sendNotif(mykey, mykey, "assignment", contentforme, task_id);
-                            String contentforother = "Coordinator " + coordinatorSession.getName() + " assigned " + taskName + " to you";
-                            sendNotif(mykey, empId, "assignment", contentforother, task_id);
-                            startActivity(intent1);
-                            finish();
-
+                                Toast.makeText(forwardTaskScreen2.this, "Task Assigned to " + empName, Toast.LENGTH_SHORT).show();
+                                Intent intent1 = new Intent(forwardTaskScreen2.this, TaskDetail.class);
+                                intent1.putExtra("task_id", task_id);
+                                String contentforme = "You assigned " + taskName + " task to " + empName;
+                                sendNotif(mykey, mykey, "assignment", contentforme, task_id);
+                                String contentforother = "Coordinator " + coordinatorSession.getName() + " assigned " + taskName + " to you";
+                                sendNotif(mykey, empId, "assignment", contentforother, task_id);
+                                startActivity(intent1);
+                                finish();
+                            }
                         }
 
                         @Override
@@ -134,46 +135,48 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
                     DBREF.child("Users").child("Usersessions").child(custId).child("name").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            String customername = dataSnapshot.getValue(String.class);
-                            final long timestamp = Calendar.getInstance().getTimeInMillis();
-                            for (String taskid : taskIds) {
-                                CompletedBy completedBy = new CompletedBy(empId, curdate, deadline, cooordnote, mykey, myname);
-                                DatabaseReference dbAssigned = DBREF.child("Task").child(taskid).child("AssignedTo").child(empId);
-                                dbAssigned.setValue(completedBy);
-                                DatabaseReference dbEmployee = DBREF.child("Employee").child(empId).child("AssignedTask").child(timestamp + "").child("listoftasks");
-                                dbEmployee.child(taskid).setValue("pending"); //for employee
+                            if (dataSnapshot.exists()) {
+                                String customername = dataSnapshot.getValue(String.class);
+                                final long timestamp = Calendar.getInstance().getTimeInMillis();
+                                for (String taskid : taskIds) {
+                                    CompletedBy completedBy = new CompletedBy(empId, curdate, deadline, cooordnote, mykey, myname);
+                                    DatabaseReference dbAssigned = DBREF.child("Task").child(taskid).child("AssignedTo").child(empId);
+                                    dbAssigned.setValue(completedBy);
+                                    DatabaseReference dbEmployee = DBREF.child("Employee").child(empId).child("AssignedTask").child(timestamp + "").child("listoftasks");
+                                    dbEmployee.child(taskid).setValue("pending"); //for employee
+                                }
+                                DatabaseReference dbEmployee = DBREF.child("Employee").child(empId).child("AssignedTask").child(timestamp + "");
+                                dbEmployee.child("deadline").setValue(deadline);
+                                dbEmployee.child("startDate").setValue(curdate);
+                                dbEmployee.child("coordnote").setValue(cooordnote);
+                                String contentforme = "You assigned " + customername + " tasks for quotation to " + empName;
+                                sendNotif(mykey, mykey, "forquotation", contentforme, timestamp + "");
+                                String contentforother = "Coordinator " + coordinatorSession.getName() + "forquotation" + " " + customername + " tasks for quotation";
+                                sendNotif(mykey, empId, "assignment", contentforother, timestamp + "");
+
+
+                                QuotationBatch temp = new QuotationBatch();
+                                String qId = "quote" + timestamp;
+                                temp.setEndDate(deadline);
+                                temp.setId(qId);
+                                temp.setNote(cooordnote);
+                                temp.setStartDate(curdate);
+                                temp.setColor(-1);
+                                temp.setEmpId(empId);
+
+
+                                quotation.child(qId).setValue(temp);
+                                for (String taskid : taskIds) {
+                                    quotation.child(qId).child("tasks").child(taskid).setValue("pending");
+                                }
+
+                                Toast.makeText(forwardTaskScreen2.this, "Task Assigned to " + empName, Toast.LENGTH_SHORT).show();
+                                Intent intent1 = new Intent(forwardTaskScreen2.this, Cust_details.class);
+                                intent1.putExtra("id", custId);
+                                startActivity(intent1);
+                                finish();
+
                             }
-                            DatabaseReference dbEmployee = DBREF.child("Employee").child(empId).child("AssignedTask").child(timestamp + "");
-                            dbEmployee.child("deadline").setValue(deadline);
-                            dbEmployee.child("startDate").setValue(curdate);
-                            dbEmployee.child("coordnote").setValue(cooordnote);
-                            String contentforme = "You assigned " + customername + " tasks for quotation to " + empName;
-                            sendNotif(mykey, mykey, "forquotation", contentforme, timestamp + "");
-                            String contentforother = "Coordinator " + coordinatorSession.getName() + "forquotation" + " " + customername + " tasks for quotation";
-                            sendNotif(mykey, empId, "assignment", contentforother, timestamp + "");
-
-
-                            QuotationBatch temp = new QuotationBatch();
-                            String qId ="quote"+timestamp;
-                            temp.setEndDate(deadline);
-                            temp.setId(qId);
-                            temp.setNote(cooordnote);
-                            temp.setStartDate(curdate);
-                            temp.setColor(-1);
-                            temp.setEmpId(empId);
-
-
-                            quotation.child(qId).setValue(temp);
-                            for (String taskid : taskIds) {
-                                quotation.child(qId).child("tasks").child(taskid).setValue("pending");
-                            }
-
-                            Toast.makeText(forwardTaskScreen2.this, "Task Assigned to " + empName, Toast.LENGTH_SHORT).show();
-                            Intent intent1 = new Intent(forwardTaskScreen2.this, Cust_details.class);
-                            intent1.putExtra("id", custId);
-                            startActivity(intent1);
-                            finish();
-
                         }
 
                         @Override
@@ -209,7 +212,10 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
 
     @Override
     public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
-        enddate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+        if(monthOfYear<9)
+        enddate.setText(dayOfMonth + "-0" + (monthOfYear + 1) + "-" + year);
+        else
+        enddate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
 
     }
 }

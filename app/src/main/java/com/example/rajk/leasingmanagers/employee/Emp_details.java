@@ -96,22 +96,23 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         db.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Map<String, String> map_new = (Map<String, String>) dataSnapshot.getValue();
 
-                Map<String, String> map_new = (Map<String, String>) dataSnapshot.getValue();
+                    name = (map_new.get("name"));
+                    add = (map_new.get("address"));
+                    num = (map_new.get("phone_num"));
+                    desig = (map_new.get("designation"));
 
-                name = (map_new.get("name"));
-                add = (map_new.get("address"));
-                num = (map_new.get("phone_num"));
-                desig = (map_new.get("designation"));
+                    Name.setText(name);
+                    Num.setText(num);
+                    Add.setText(add);
+                    Desig.setText(desig);
+                    getSupportActionBar().setTitle(name);
+                    getSupportActionBar().setSubtitle(desig);
 
-                Name.setText(name);
-                Num.setText(num);
-                Add.setText(add);
-                Desig.setText(desig);
-                getSupportActionBar().setTitle(name);
-                getSupportActionBar().setSubtitle(desig);
-
-                setAdapternlist();
+                    setAdapternlist();
+                }
             }
 
             @Override
@@ -195,10 +196,13 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
             db.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
                     for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                         jobs_and_hideme.setVisibility(View.GONE);
                         listoftasks.add(childSnapshot.getKey());
                         mAdapter.notifyDataSetChanged();
+
+                    }
                     }
                 }
 

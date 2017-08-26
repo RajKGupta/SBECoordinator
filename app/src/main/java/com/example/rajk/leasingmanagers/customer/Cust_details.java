@@ -88,14 +88,16 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         dblistener = db.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, String> map_new = (Map<String, String>) dataSnapshot.getValue();
-                name = (map_new.get("name"));
-                add = (map_new.get("address"));
-                num = (map_new.get("phone_num"));
-                getSupportActionBar().setTitle(name);
-                Name.setText(name);
-                Num.setText(num);
-                Add.setText(add);
+                if (dataSnapshot.exists()) {
+                    Map<String, String> map_new = (Map<String, String>) dataSnapshot.getValue();
+                    name = (map_new.get("name"));
+                    add = (map_new.get("address"));
+                    num = (map_new.get("phone_num"));
+                    getSupportActionBar().setTitle(name);
+                    Name.setText(name);
+                    Num.setText(num);
+                    Add.setText(add);
+                }
             }
 
             @Override
@@ -252,8 +254,8 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             CustomerAccount customerAccount = dataSnapshot.getValue(CustomerAccount.class);
-                            total.setText("Total "+customerAccount.getTotal() + "");
-                            advance.setText("Advance "+customerAccount.getAdvance() + "");
+                            total.setText(customerAccount.getTotal() + "");
+                            advance.setText(customerAccount.getAdvance() + "");
                             balance.setText((customerAccount.getTotal() - customerAccount.getAdvance()) + "");
                         }
                     }

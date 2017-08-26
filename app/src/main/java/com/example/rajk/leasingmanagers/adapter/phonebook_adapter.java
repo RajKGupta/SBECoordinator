@@ -48,7 +48,7 @@ public class phonebook_adapter extends RecyclerView.Adapter<phonebook_adapter.My
         holder.Name.setText(phonenumber.getName());
         holder.Desig.setText(phonenumber.getDesignation());
         holder.contact.setText(phonenumber.getContact());
-        if (!phonenumber.getEmail().equals("")) {
+        if (!phonenumber.getEmail().equals("")&&phonenumber.getEmail()!=null) {
             holder.email.setText(phonenumber.getEmail());
             holder.email.setVisibility(View.VISIBLE);
         } else

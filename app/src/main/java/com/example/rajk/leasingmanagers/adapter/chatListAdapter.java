@@ -20,13 +20,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormatWithMonthName;
 
 public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyViewHolder> {
     ArrayList<ChatListModel> list = new ArrayList<>();
@@ -34,7 +34,6 @@ public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyView
     private chatListAdapterListener listener;
     private HashMap<DatabaseReference, ChildEventListener> hashMapCHE;
     private HashMap<DatabaseReference, ValueEventListener> hashMapVLE;
-    private SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
     private CoordinatorSession coordinatorSession;
     private String mykey;
 
@@ -135,7 +134,7 @@ public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyView
                         holder.message.setText("Sent an Image");
                     }
 
-                    String timestamp = formatter.format(Calendar.getInstance().getTime());
+                    String timestamp = simpleDateFormatWithMonthName.format(Calendar.getInstance().getTime());
                     String senderTimestamp = chatMessage.getSendertimestamp().substring(0, 11);
                     if (timestamp.equals(senderTimestamp))
                         senderTimestamp = chatMessage.getSendertimestamp().substring(12).trim();

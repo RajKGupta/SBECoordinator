@@ -36,13 +36,13 @@ import java.util.List;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
+import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormat;
 
 public class forwardTask extends AppCompatActivity {
     RecyclerView recview;
     RecAdapter_emp adapter;
     List<Employee> list = new ArrayList<Employee>();
     Employee emp;
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     ProgressDialog pDialog;
     String task_id,custId, mykey;
     ArrayList<String> taskIds;
@@ -64,7 +64,7 @@ public class forwardTask extends AppCompatActivity {
             swaping_id = intent.getStringExtra("swaping_id");
         }
         final Calendar c = Calendar.getInstance();
-        curdate = dateFormat.format(c.getTime());
+        curdate = simpleDateFormat.format(c.getTime());
 
         forQuotation = intent.getBooleanExtra("forQuotation",false);
         if(forQuotation==true)
@@ -95,41 +95,42 @@ public class forwardTask extends AppCompatActivity {
                 {
                     DBREF.child("Task").child(task_id).child("name").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot)
-                        {
-                            final String taskName = dataSnapshot.getValue(String.class);
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists())
+                            {
+                                final String taskName = dataSnapshot.getValue(String.class);
 
                             //cancel job
                             final DatabaseReference dbCancelJob = DBREF.child("Task").child(task_id).child("AssignedTo").child(swaping_id).getRef();
 
                             dbCancelJob.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onDataChange(DataSnapshot dataSnapshot)
-                                {
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        CompletedBy completedBy = dataSnapshot.getValue(CompletedBy.class);
+                                        completedBy.setEmpId(item.getUsername());
+                                        /// /reassign job
+                                        DatabaseReference dbAssigned = DBREF.child("Task").child(task_id).child("AssignedTo").child(item.getUsername());
+                                        dbAssigned.setValue(completedBy);
 
-                                    CompletedBy completedBy = dataSnapshot.getValue(CompletedBy.class);
-                                    completedBy.setEmpId(item.getUsername());
-                                    /// /reassign job
-                                    DatabaseReference dbAssigned = DBREF.child("Task").child(task_id).child("AssignedTo").child(item.getUsername());
-                                    dbAssigned.setValue(completedBy);
+                                        dbCancelJob.removeValue();
+                                        DatabaseReference dbEmployee = DBREF.child("Employee").child(swaping_id).child("AssignedTask").child(task_id);
+                                        dbEmployee.removeValue(); //for employee
 
-                                    dbCancelJob.removeValue();
-                                    DatabaseReference dbEmployee = DBREF.child("Employee").child(swaping_id).child("AssignedTask").child(task_id);
-                                    dbEmployee.removeValue(); //for employee
+                                        dbEmployee = DBREF.child("Employee").child(item.getUsername()).child("AssignedTask").child(task_id);
+                                        dbEmployee.setValue("pending"); //for employee
 
-                                    dbEmployee = DBREF.child("Employee").child(item.getUsername()).child("AssignedTask").child(task_id);
-                                    dbEmployee.setValue("pending"); //for employee
-
-                                    String contentforme = "You swapped "+taskName+" task to "+ item.getName();
-                                    sendNotif(mykey,mykey,"swapJob",contentforme,task_id);
-                                    String contentforother= "Coordinator "+session.getName()+" relieved you of "+taskName;
-                                    sendNotif(mykey,swaping_id,"cancelJob",contentforother,task_id);
-                                    contentforother = "Coordinator "+session.getName()+" assigned "+taskName+ " to you";
-                                    sendNotif(mykey,item.getUsername(),"assignment",contentforother,task_id);
-                                    Intent intent1 = new Intent(forwardTask.this, TaskDetail.class);
-                                    intent1.putExtra("task_id", task_id);
-                                    startActivity(intent1);
-                                    finish();
+                                        String contentforme = "You swapped " + taskName + " task to " + item.getName();
+                                        sendNotif(mykey, mykey, "swapJob", contentforme, task_id);
+                                        String contentforother = "Coordinator " + session.getName() + " relieved you of " + taskName;
+                                        sendNotif(mykey, swaping_id, "cancelJob", contentforother, task_id);
+                                        contentforother = "Coordinator " + session.getName() + " assigned " + taskName + " to you";
+                                        sendNotif(mykey, item.getUsername(), "assignment", contentforother, task_id);
+                                        Intent intent1 = new Intent(forwardTask.this, TaskDetail.class);
+                                        intent1.putExtra("task_id", task_id);
+                                        startActivity(intent1);
+                                        finish();
+                                    }
                                 }
 
                                 @Override
@@ -139,6 +140,7 @@ public class forwardTask extends AppCompatActivity {
                             });
 
                         }
+                    }
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {

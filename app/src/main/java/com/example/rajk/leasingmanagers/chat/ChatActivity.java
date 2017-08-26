@@ -57,7 +57,7 @@ import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
 import static com.example.rajk.leasingmanagers.LeasingManagers.AppName;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
-import static com.example.rajk.leasingmanagers.LeasingManagers.formatter;
+import static com.example.rajk.leasingmanagers.LeasingManagers.formatterWithMonthNameAndTime;
 
 public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatAdapterListener, View.OnClickListener {
     private EditText typeComment;
@@ -292,7 +292,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
     }
 
     private void uploadFile(String filePath, String type) {
-        final String timestamp = formatter.format(Calendar.getInstance().getTime());
+        final String timestamp = formatterWithMonthNameAndTime.format(Calendar.getInstance().getTime());
         long curTime = Calendar.getInstance().getTimeInMillis();
         final long id = curTime;
         ChatMessage cm = new ChatMessage(mykey, otheruserkey, timestamp, "photo", id + "", "0", "nourl", receiverToken, dbTableKey, 0, filePath, "");
@@ -401,7 +401,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                 } else {
                     long curTime = Calendar.getInstance().getTimeInMillis();
                     long id = curTime;
-                    String timestamp = formatter.format(Calendar.getInstance().getTime());
+                    String timestamp = formatterWithMonthNameAndTime.format(Calendar.getInstance().getTime());
                     System.out.println(commentString + "time stamp" + timestamp);
                     ChatMessage cm = new ChatMessage(mykey, otheruserkey, timestamp, "text", id + "", "0", commentString, receiverToken, dbTableKey);
                     dbChat.child(String.valueOf(id)).setValue(cm);

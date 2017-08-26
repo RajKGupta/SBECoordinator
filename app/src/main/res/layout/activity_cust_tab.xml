@@ -5,12 +5,28 @@
     android:layout_height="match_parent"
     android:padding="3dp"
     android:background="#ffffff">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/recview">
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:id="@+id/recview"
+            >
             </android.support.v7.widget.RecyclerView>
 
+    <android.support.v4.widget.Space
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:id="@+id/space"
+        android:layout_alignParentBottom="true"/>
+    </LinearLayout>
+    </ScrollView>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_cust"
         android:layout_width="wrap_content"

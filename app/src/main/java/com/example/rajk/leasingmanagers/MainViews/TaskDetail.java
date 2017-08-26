@@ -70,7 +70,6 @@ import com.zfdang.multiple_images_selector.SelectorSettings;
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -203,22 +202,26 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         dbTaskVle = dbTask.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                task = dataSnapshot.getValue(Task.class);
-                setValue(task);
-                getSupportActionBar().setTitle(task.getName());
-                DatabaseReference dbCustomerName = DBREF.child("Customer").child(task.getCustomerId()).getRef();
-                dbCustomerName.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        customername = dataSnapshot.child("name").getValue(String.class);
-                        getSupportActionBar().setSubtitle(customername);
-                    }
+                if (dataSnapshot.exists()) {
+                    task = dataSnapshot.getValue(Task.class);
+                    setValue(task);
+                    getSupportActionBar().setTitle(task.getName());
+                    DatabaseReference dbCustomerName = DBREF.child("Customer").child(task.getCustomerId()).getRef();
+                    dbCustomerName.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                customername = dataSnapshot.child("name").getValue(String.class);
+                                getSupportActionBar().setSubtitle(customername);
+                            }
+                        }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
+                        }
+                    });
+                }
             }
 
             @Override
@@ -318,13 +321,13 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 }
                 if (picUriList.size() > 0) {
                     viewSelectedImages = new AlertDialog.Builder(TaskDetail.this)
-                            .setTitle("Selected Images").setView(R.layout.activity_view_selected_image).create();
+                            .setView(R.layout.activity_view_selected_image).create();
                     viewSelectedImages.show();
 
                     final ImageView ImageViewlarge = (ImageView) viewSelectedImages.findViewById(R.id.ImageViewlarge);
                     ImageButton cancel = (ImageButton) viewSelectedImages.findViewById(R.id.cancel);
-                    Button canceldone = (Button) viewSelectedImages.findViewById(R.id.canceldone);
-                    Button okdone = (Button) viewSelectedImages.findViewById(R.id.okdone);
+                    ImageButton canceldone = (ImageButton) viewSelectedImages.findViewById(R.id.canceldone);
+                    ImageButton okdone = (ImageButton) viewSelectedImages.findViewById(R.id.okdone);
                     RecyclerView rv = (RecyclerView) viewSelectedImages.findViewById(R.id.viewImages);
 
                     linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -370,6 +373,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                     canceldone.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            picUriList.clear();
                             viewSelectedImages.dismiss();
                         }
                     });
@@ -679,24 +683,26 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                         db.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                                    String url = ds.getValue(String.class);
-                                    if (url.equals(DescImages.get(position))) {
-                                        final String key = ds.getKey();
-                                        db.child(key).removeValue();
-                                        viewSelectedImages.dismiss();
-                                        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(url);
-                                        storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                // Toast.makeText(DeleteTask.this, item + " deleted successfully", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception exception) {
-                                                // Toast.makeText(DeleteTask.this, item + " does not exist", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
+                                if(dataSnapshot.exists()) {
+                                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                        String url = ds.getValue(String.class);
+                                        if (url.equals(DescImages.get(position))) {
+                                            final String key = ds.getKey();
+                                            db.child(key).removeValue();
+                                            viewSelectedImages.dismiss();
+                                            StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(url);
+                                            storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    // Toast.makeText(DeleteTask.this, item + " deleted successfully", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception exception) {
+                                                    // Toast.makeText(DeleteTask.this, item + " does not exist", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
                                     }
                                 }
                             }
@@ -920,7 +926,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                                             idLong = 9999999999999L - idLong;
                                                             sendNotifToAllCoordinators(mykey, "completeJob", "Task " + task.getName() + " has been successfully completed", task_id);
                                                             sendNotif(mykey, task.getCustomerId(), "completeJob", "Task " + task.getName() + " has been successfully completed", task_id);
-                                                            dbCompleted.child(mykey).setValue(new CompletedJob(coordinatorSession.getName(),"Coordinator",mykey,task.getStartDate(), new SimpleDateFormat("DD/MM/YYYY").format(Calendar.getInstance().getTime()), mykey, coordinatorSession.getName(), "Customer has been notified", "Task is successfully completed", idLong + ""));
+                                                            dbCompleted.child(mykey).setValue(new CompletedJob(mykey,task.getStartDate(),simpleDateFormat.format(Calendar.getInstance().getTime()), mykey, customername, "Customer has been notified", "Task is successfully completed", idLong + "",coordinatorSession.getName(),"Coordinator"));
                                                             Toast.makeText(TaskDetail.this, "Job completed sucessfully", Toast.LENGTH_SHORT).show();
                                                             dbTaskCompleteStatus.setValue("complete");
                                                             dialog.dismiss();

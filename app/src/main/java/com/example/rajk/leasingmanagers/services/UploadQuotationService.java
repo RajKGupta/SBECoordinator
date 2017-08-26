@@ -100,15 +100,12 @@ public class UploadQuotationService extends IntentService
                             dbQuotation.setValue(quotation);
                         }
                         updateNotification("Succesfully Uploaded");
-
-                        stopSelf();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
                         updateNotification("Upload failed");
-                        stopSelf();
                     }
                 });
      }
@@ -132,5 +129,7 @@ public class UploadQuotationService extends IntentService
             notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.notify(0, mBuilder.build());
         }
+        stopSelf();
     }
+
 }

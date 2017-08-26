@@ -1,6 +1,7 @@
 package com.example.rajk.leasingmanagers.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.model.CompletedBy;
 import com.example.rajk.leasingmanagers.model.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -17,10 +19,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormat;
 
 /**
  * Created by RajK on 16-05-2017.
@@ -43,12 +49,14 @@ public class CustomerTasks_Adapter extends RecyclerView.Adapter<CustomerTasks_Ad
         TextView taskname, timestamp, icon_text,tv_taskStatus;
         ImageView imgProfile;
         RelativeLayout viewdetail;
+        RelativeLayout ll_overall;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             taskname = (TextView) itemView.findViewById(R.id.tv_taskname);
             tv_taskStatus = (TextView)itemView.findViewById(R.id.tv_taskStatus);
             timestamp = (TextView) itemView.findViewById(R.id.timestamp);
+            ll_overall = (RelativeLayout)itemView.findViewById(R.id.ll_overall);
             icon_text = (TextView) itemView.findViewById(R.id.icon_text);
             imgProfile = (ImageView) itemView.findViewById(R.id.icon_profile);
             viewdetail = (RelativeLayout) itemView.findViewById(R.id.viewdetails);
@@ -76,69 +84,31 @@ public class CustomerTasks_Adapter extends RecyclerView.Adapter<CustomerTasks_Ad
                     } else {
                         holder.tv_taskStatus.setText("(Completed)");
                     }
-            }}
+                    DatabaseReference refh = DBREF.child("Task").child(list.get(position)).getRef();
+                    refh.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                Task task = dataSnapshot.getValue(Task.class);
+                                holder.taskname.setText(task.getName());
+                                String iconText = task.getName().toUpperCase();
+                                holder.icon_text.setText(iconText.charAt(0) + "");
+                                holder.imgProfile.setImageResource(R.drawable.bg_circle);
+                                holder.imgProfile.setColorFilter(task.getColor());
+                                holder.timestamp.setText("End Date:" + task.getExpEndDate());
+                                applyClickEvents(holder, position);
+                                applyBackgroundColor(holder,task);
+                            }
+                        }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });/*ChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String status = dataSnapshot.getValue(String.class);
-                if(status.equals("pending")&&dataSnapshot.getKey().equals(list.get(position)))
-                {
-                    holder.tv_taskStatus.setText("(Pending)");
-                }
-                else
-                {
-                    holder.tv_taskStatus.setText("(Completed)");
-                }
-            }
+                        }
+                    });
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                String status = dataSnapshot.getValue(String.class);
-                if(status.equals("pending"))
-                {
-                    holder.tv_taskStatus.setText("(Pending)");
-                }
-                else
-                {
-                    holder.tv_taskStatus.setText("(Completed)");
-                }
-            }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                taskStatus.removeEventListener(this);
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
-        DatabaseReference refh = DBREF.child("Task").child(list.get(position)).getRef();
-        refh.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    Task task = dataSnapshot.getValue(Task.class);
-                    holder.taskname.setText(task.getName());
-                    String iconText = task.getName().toUpperCase();
-                    holder.icon_text.setText(iconText.charAt(0) + "");
-                    holder.imgProfile.setImageResource(R.drawable.bg_circle);
-                    holder.imgProfile.setColorFilter(task.getColor());
-                    holder.timestamp.setText("End Date:" + task.getExpEndDate());
-                    applyClickEvents(holder, position);
-                }
-            }
+                }}
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -166,4 +136,33 @@ public class CustomerTasks_Adapter extends RecyclerView.Adapter<CustomerTasks_Ad
             }
         });
     }
-}
+    private void applyBackgroundColor(CustomerTasks_Adapter.MyViewHolder holder, Task emp) {
+        if(holder.tv_taskStatus.getText().toString().equals("(Completed)")){
+            holder.ll_overall.setBackgroundResource(R.color.grey_300);
+        }
+else
+        {
+        try {
+            String curdate = simpleDateFormat.format(Calendar.getInstance().getTime());
+            Date curDate = simpleDateFormat.parse(curdate);
+
+            if(emp.getExpEndDate()!=null) {
+                Date aDate = simpleDateFormat.parse(emp.getExpEndDate());
+
+                if (curDate.compareTo(aDate) > -1) {
+                    holder.ll_overall.setBackgroundResource(R.color.colorAccent);
+                } else {
+                    holder.ll_overall.setBackgroundColor(Color.WHITE);
+                }
+            }
+
+            else
+                holder.ll_overall.setBackgroundColor(Color.WHITE);
+
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+}}

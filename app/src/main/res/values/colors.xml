@@ -19,7 +19,6 @@
     <color name="bg_circle_default">#666666</color>
     <color name="bg_circle_unread">#77bc6e</color>
     <color name="sender">#dbfcd7</color>
-    <color name="other">#bdabf4</color>
     <color name="primary_text_material_light">#000000</color>
     <color name="secondary_text_material_dark">#ffffff</color>
     <color name="whitetranslucent">#33ffffff</color>

@@ -125,10 +125,11 @@ public class QuotaionTasks extends AppCompatActivity implements taskAdapter.Task
             vl = db.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Task task = dataSnapshot.getValue(Task.class);
-                    TaskList.add(task);
-                    mAdapter.notifyDataSetChanged();
-
+                    if(dataSnapshot.exists()) {
+                        Task task = dataSnapshot.getValue(Task.class);
+                        TaskList.add(task);
+                        mAdapter.notifyDataSetChanged();
+                    }
                 }
 
                 @Override

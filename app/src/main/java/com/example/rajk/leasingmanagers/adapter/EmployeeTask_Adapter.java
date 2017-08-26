@@ -1,11 +1,13 @@
 package com.example.rajk.leasingmanagers.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.rajk.leasingmanagers.R;
@@ -15,10 +17,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormat;
 
 /**
  * Created by RajK on 16-05-2017.
@@ -71,12 +77,15 @@ public class EmployeeTask_Adapter extends RecyclerView.Adapter<EmployeeTask_Adap
                             new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    String taskname = dataSnapshot.child("name").getValue(String.class);
-                                    holder.employeename.setText(taskname);
-                                    //String empdesig = dataSnapshot.child("designation").getValue(String.class);
-                                    holder.employeeDesig.setVisibility(View.GONE);
-                                    //holder.employeeDesig.setText(empdesig);
-
+                                    if(dataSnapshot.exists()) {
+                                        String taskname = dataSnapshot.child("name").getValue(String.class);
+                                        holder.employeename.setText(taskname);
+                                        //String empdesig = dataSnapshot.child("designation").getValue(String.class);
+                                        holder.employeeDesig.setVisibility(View.GONE);
+                                        //holder.employeeDesig.setText(empdesig);
+                                        applyClickEvents(holder, position);
+                                        applyBackgroundColor(holder, emp);
+                                    }
                                 }
 
                                 @Override
@@ -92,8 +101,31 @@ public class EmployeeTask_Adapter extends RecyclerView.Adapter<EmployeeTask_Adap
 
             }
         });
-        applyClickEvents(holder, position);
+        }
+    private void applyBackgroundColor(EmployeeTask_Adapter.MyViewHolder holder, CompletedBy emp) {
+
+        try {
+            String curdate = simpleDateFormat.format(Calendar.getInstance().getTime());
+            Date curDate = simpleDateFormat.parse(curdate);
+            if(emp.getDatecompleted()!=null) {
+                Date aDate = simpleDateFormat.parse(emp.getDatecompleted());
+
+                if (curDate.compareTo(aDate) > -1) {
+                    holder.ll_overall.setBackgroundResource(R.color.colorAccent);
+                } else {
+                    holder.ll_overall.setBackgroundColor(Color.WHITE);
+                }
+            }
+
+            else
+                holder.ll_overall.setBackgroundColor(Color.WHITE);
+
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
+
 
     @Override
     public int getItemCount() {
@@ -103,12 +135,13 @@ public class EmployeeTask_Adapter extends RecyclerView.Adapter<EmployeeTask_Adap
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView dateCompleted, employeename, employeeDesig, dateassigned, tv_dateCompleted, noteAuthor, noteString,assignedBy;
         public ImageButton dotmenu;
+        private LinearLayout ll_overall;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
             dateCompleted = (TextView) itemView.findViewById(R.id.dateCompleted);
-
+            ll_overall = (LinearLayout)itemView.findViewById(R.id.ll_overall);
             employeename = (TextView)
                     itemView.findViewById(R.id.employeeName);
 

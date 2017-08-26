@@ -2,41 +2,23 @@ package com.example.rajk.leasingmanagers.services;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Binder;
 import android.os.Environment;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
-
-import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
-import com.example.rajk.leasingmanagers.model.Quotation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-
 import static com.example.rajk.leasingmanagers.LeasingManagers.AppName;
 
 public class DownloadFileService extends IntentService {
@@ -101,7 +83,7 @@ public class DownloadFileService extends IntentService {
                 Log.e("firebase ", ";local tem file created  created " + localFile.toString());
                 Toast.makeText(DownloadFileService.this, "Downloaded Quotation", Toast.LENGTH_SHORT).show();
                 updateNotification("Succesfully Downloaded");
-                stopSelf();
+
 
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -109,29 +91,11 @@ public class DownloadFileService extends IntentService {
             public void onFailure(@NonNull Exception exception) {
                 Toast.makeText(DownloadFileService.this, "Download Failed", Toast.LENGTH_SHORT).show();
                 updateNotification("Download failed");
-                stopSelf();
                 Log.e("firebase ", ";local tem file not created  created " + exception.toString());
             }
         }).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
             @Override
             public void onProgress(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                /*double fprogress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                long bytes = taskSnapshot.getBytesTransferred();
-
-                String progress = String.format("%.2f", fprogress);
-                int constant = 1000;
-                if (bytes % constant == 0) {
-                    android.support.v4.app.NotificationCompat.Builder mBuilder =
-                            new NotificationCompat.Builder(getApplicationContext())
-                                    .setSmallIcon(android.R.drawable.stat_sys_download)
-                                    .setContentTitle("Downloading " + task_id + "Quotation.pdf")
-                                    .setContentText(" " + progress + "% completed");
-
-                    NotificationManager mNotificationManager =
-                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-                    mNotificationManager.notify(100, mBuilder.build());
-                }*/
             }
         });
     }
@@ -154,6 +118,8 @@ public class DownloadFileService extends IntentService {
         synchronized (this) {
             notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.notify(0, mBuilder.build());
+
         }
+        stopSelf();
     }
 }

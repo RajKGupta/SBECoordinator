@@ -19,12 +19,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormatWithMonthName;
 
 /**
  * Created by SoumyaAgarwal on 7/20/2017.
@@ -33,7 +33,6 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 public class notification_adapter extends RecyclerView.Adapter<notification_adapter.MyViewHolder> {
     List<Notif> list = new ArrayList<>();
     private Context context;
-    private SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy");
 
     public notification_adapter(List<Notif> list, Context c) {
         this.list = list;
@@ -79,6 +78,10 @@ public class notification_adapter extends RecyclerView.Adapter<notification_adap
                     String caps = nameAndStatus.getName().toUpperCase();
                     holder.icon_text.setText(caps.charAt(0)+"");
                 }
+                else
+                {
+                    //jhkjhjkn
+                }
             }
 
             @Override
@@ -90,7 +93,7 @@ public class notification_adapter extends RecyclerView.Adapter<notification_adap
         holder.notif_message.setText(notif.getContent());
         applyProfilePicture(holder);
 
-        String timestamp = formatter.format(Calendar.getInstance().getTime());
+        String timestamp = simpleDateFormatWithMonthName.format(Calendar.getInstance().getTime());
         String senderTimestamp = notif.getTimestamp().substring(0, 11);
         if (timestamp.equals(senderTimestamp))
             senderTimestamp = notif.getTimestamp().substring(12).trim();
