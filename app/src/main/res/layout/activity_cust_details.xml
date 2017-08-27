@@ -203,7 +203,7 @@
                         android:layout_below="@+id/im3"
                         android:nestedScrollingEnabled="true"
                         android:layout_marginTop="15dp"
-                        android:id="@+id/rec_customertasks"></android.support.v7.widget.RecyclerView>
+                        android:id="@+id/rec_customertasks"/>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
         </LinearLayout>

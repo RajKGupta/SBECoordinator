@@ -17,7 +17,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
+
 import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
+
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -57,7 +59,6 @@ import droidninja.filepicker.FilePickerConst;
 
 import static android.app.Activity.RESULT_OK;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
-import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 
 public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListener {
     private static final int REQUEST_CODE = 109;
@@ -75,7 +76,7 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
     ProgressDialog progressDialog;
     private String custId = "nocust";
     private String custName = "nocust";
-    private ArrayList<String> mResults =new ArrayList<>();
+    private ArrayList<String> mResults = new ArrayList<>();
     private ArrayList<String> docPaths = new ArrayList<>();
 
     public TaskHome() {
@@ -183,27 +184,9 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
                     else {
 
                         UploadQuotation();
-
-
                     }
-                    mode = null;
                     return true;
 
-/*                case R.id.Forwardtoquotationwala:
-                    Intent intent = new Intent(getActivity(), forwardTask.class);
-                    intent.putExtra("forQuotation", true);
-                    List<Integer> selectedItems = mAdapter.getSelectedItems();
-                    ArrayList<String> taskIds = new ArrayList<>();
-                    for (Integer x : selectedItems) {
-                        Task task = TaskList.get(x);
-                        taskIds.add(task.getTaskId());
-                    }
-                    intent.putExtra("custId", custId);
-                    intent.putExtra("custName", custName);
-                    intent.putStringArrayListExtra("taskIds", taskIds);
-                    startActivity(intent);
-                    return true;
-                */
                 default:
                     return false;
             }
@@ -227,51 +210,50 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         String selectedFilePath = "";
-        if(requestCode == REQUEST_CODE) {
-            if(resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
                 mResults = data.getStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS);
                 assert mResults != null;
                 selectedFilePath = mResults.get(0);
             }
         }
-        else if(requestCode== FilePickerConst.REQUEST_CODE_DOC) {
+
+        else if (requestCode == FilePickerConst.REQUEST_CODE_DOC) {
             if (resultCode == Activity.RESULT_OK && data != null) {
-               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     docPaths = new ArrayList<>();
                     docPaths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS));
-                   selectedFilePath = docPaths.get(0);
-                    
+                    selectedFilePath = docPaths.get(0);
+
                 }
             }
         }
 
-                               if (selectedFilePath != null && !selectedFilePath.equals("")) {
-                                   String temp = Uri.fromFile(new File(selectedFilePath)).toString();
-                               List<Integer> selectedItemPositions = mAdapter.getSelectedItems();
-                               ArrayList<String> taskid_list = new ArrayList<>();
+        if (selectedFilePath != null && !selectedFilePath.equals("")) {
+            String temp = Uri.fromFile(new File(selectedFilePath)).toString();
+            List<Integer> selectedItemPositions = mAdapter.getSelectedItems();
+            ArrayList<String> taskid_list = new ArrayList<>();
 
-                               for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
-                                   selectedItemPositions.get(i);
-                                   final Task task = TaskList.get(selectedItemPositions.get(i));
-                                   taskid_list.add(task.getTaskId());
-                               }
+            for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                selectedItemPositions.get(i);
+                final Task task = TaskList.get(selectedItemPositions.get(i));
+                taskid_list.add(task.getTaskId());
+            }
 
-                               Intent serviceIntent = new Intent(getActivity(), UploadQuotationService.class);
-                               serviceIntent.putExtra("TaskIdList", taskid_list);
-                               serviceIntent.putExtra("selectedFileUri", temp);
-                               serviceIntent.putExtra("customerId",custId);
-                               serviceIntent.putExtra("customerName",custName);
-                               mAdapter.clearSelections();
-                               mAdapter.resetAnimationIndex();
-                               actionMode.finish();
-                               getActivity().startService(serviceIntent);
+            Intent serviceIntent = new Intent(getActivity(), UploadQuotationService.class);
+            serviceIntent.putExtra("TaskIdList", taskid_list);
+            serviceIntent.putExtra("selectedFileUri", temp);
+            serviceIntent.putExtra("customerId", custId);
+            serviceIntent.putExtra("customerName", custName);
+            mAdapter.clearSelections();
+            mAdapter.resetAnimationIndex();
+            actionMode.finish();
+            getActivity().startService(serviceIntent);
 
-                           } else {
-                               Toast.makeText(getActivity(), "Cannot upload file to server", Toast.LENGTH_SHORT).show();
-                           }
-                       }
-
-
+        } else {
+            Toast.makeText(getActivity(), "Cannot upload file to server", Toast.LENGTH_SHORT).show();
+        }
+    }
 
 
     void LoadData() {
@@ -358,8 +340,8 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
         AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(getActivity());
         alertDialogBuilderUserInput.setView(mView);
 
-        LinearLayout uploadPhoto = (LinearLayout)mView.findViewById(R.id.uploadPhoto);
-        LinearLayout uploadDoc = (LinearLayout)mView.findViewById(R.id.uploadDoc);
+        LinearLayout uploadPhoto = (LinearLayout) mView.findViewById(R.id.uploadPhoto);
+        LinearLayout uploadDoc = (LinearLayout) mView.findViewById(R.id.uploadDoc);
 
 
         alertDialogBuilderUserInput.setCancelable(true);
@@ -378,9 +360,9 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
         uploadDoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FilePickerBuilder.getInstance().setMaxCount(10)
+                FilePickerBuilder.getInstance().setMaxCount(1)
                         .setActivityTheme(R.style.AppTheme)
-                        .pickFile(getActivity());
+                        .pickFile(TaskHome.this);
                 alertDialogAndroid.dismiss();
             }
         });
