@@ -88,13 +88,14 @@ public class taskAdapter extends RecyclerView.Adapter<taskAdapter.MyViewHolder> 
         holder.imgProfile.setColorFilter(task.getColor());
         holder.timestamp.setText(task.getStartDate());
         DatabaseReference dbQuotation = DBREF.child("Task").child(task.getTaskId()).child("Quotation").getRef();
-        dbQuotation.addListenerForSingleValueEvent(new ValueEventListener() {
+        dbQuotation.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists())
                     holder.YesOrNo.setText("Yes");
                 else
                     holder.YesOrNo.setText("No");
+
             }
 
             @Override

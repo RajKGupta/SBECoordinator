@@ -202,13 +202,13 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
 
                     if (photoPaths.size() > 0) {
                         viewSelectedImages = new AlertDialog.Builder(ChatActivity.this)
-                                .setTitle("Selected Images").setView(R.layout.activity_view_selected_image).create();
+                                .setView(R.layout.activity_view_selected_image).create();
                         viewSelectedImages.show();
 
                         final ImageView ImageViewlarge = (ImageView) viewSelectedImages.findViewById(R.id.ImageViewlarge);
                         ImageButton cancel = (ImageButton) viewSelectedImages.findViewById(R.id.cancel);
-                        Button canceldone = (Button) viewSelectedImages.findViewById(R.id.canceldone);
-                        Button okdone = (Button) viewSelectedImages.findViewById(R.id.okdone);
+                        ImageButton canceldone = (ImageButton) viewSelectedImages.findViewById(R.id.canceldone);
+                        ImageButton okdone = (ImageButton) viewSelectedImages.findViewById(R.id.okdone);
                         RecyclerView rv = (RecyclerView) viewSelectedImages.findViewById(R.id.viewImages);
 
                         linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -240,20 +240,31 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
                         cancel.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+
                                 int i = photoPaths.indexOf(item[0]);
                                 if (i == photoPaths.size() - 1)
                                     i = 0;
-                                photoPaths.remove(item[0]);
-                                adapter.selectedPosition = i;
-                                adapter.notifyDataSetChanged();
-                                item[0] = photoPaths.get(i);
-                                ImageViewlarge.setImageURI(Uri.parse(item[0]));
+                                if(photoPaths.size()==1)
+                                {
+                                    photoPaths.clear();
+                                    viewSelectedImages.dismiss();
+
+                                }
+                                else {
+                                    photoPaths.remove(item[0]);
+                                    adapter.selectedPosition = i;
+                                    adapter.notifyDataSetChanged();
+                                    item[0] = photoPaths.get(i);
+                                    ImageViewlarge.setImageURI(Uri.parse(item[0]));
+                                }
+
                             }
                         });
 
                         canceldone.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                photoPaths.clear();
                                 viewSelectedImages.dismiss();
                             }
                         });
@@ -295,7 +306,7 @@ public class ChatActivity extends AppCompatActivity implements chatAdapter.ChatA
         final String timestamp = formatterWithMonthNameAndTime.format(Calendar.getInstance().getTime());
         long curTime = Calendar.getInstance().getTimeInMillis();
         final long id = curTime;
-        ChatMessage cm = new ChatMessage(mykey, otheruserkey, timestamp, "photo", id + "", "0", "nourl", receiverToken, dbTableKey, 0, filePath, "");
+        ChatMessage cm = new ChatMessage(mykey, otheruserkey, timestamp, type, id + "", "0", "nourl", receiverToken, dbTableKey, 0, filePath, "");
         dbChat.child(String.valueOf(id)).setValue(cm);
         Intent intent = new Intent(this, UploadPhotoAndFile.class);
         intent.putExtra("filePath",filePath);

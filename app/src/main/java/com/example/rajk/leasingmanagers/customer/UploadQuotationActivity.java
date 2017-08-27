@@ -1,13 +1,11 @@
 package com.example.rajk.leasingmanagers.customer;
 
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
-
 import com.example.rajk.leasingmanagers.MainViews.TaskHome;
 import com.example.rajk.leasingmanagers.R;
 

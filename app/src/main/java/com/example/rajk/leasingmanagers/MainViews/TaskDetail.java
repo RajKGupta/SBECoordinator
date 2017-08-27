@@ -30,8 +30,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
+import com.codetroopers.betterpickers.calendardatepicker.MonthAdapter;
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.ForwardTask.forwardTask;
+import com.example.rajk.leasingmanagers.ForwardTask.forwardTaskScreen2;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.ViewImageAdapter;
 import com.example.rajk.leasingmanagers.adapter.assignedto_adapter;
@@ -72,6 +75,8 @@ import org.apache.commons.lang3.text.WordUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.AppName;
@@ -80,7 +85,7 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotifToAllCoordinators;
 import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormat;
 
-public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener {
+public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener , CalendarDatePickerDialogFragment.OnDateSetListener{
 
     private DatabaseReference dbRef, dbTask, dbCompleted, dbAssigned, dbMeasurement, dbDescImages;
     ValueEventListener dbTaskVle;
@@ -90,7 +95,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     private String mykey;
     private Task task;
     private String customername;
-    EditText startDate, endDate, quantity, description;
+    EditText startDate, endDate, quantity, description,enddate_new;
     RecyclerView rec_assignedto, rec_completedby, rec_measurement, rec_DescImages;
     assignedto_adapter adapter_assignedto;
     completedBy_adapter adapter_completedby;
@@ -362,11 +367,19 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                             int i = picUriList.indexOf(item[0]);
                             if (i == picUriList.size() - 1)
                                 i = 0;
-                            picUriList.remove(item[0]);
-                            madapter.selectedPosition = i;
-                            madapter.notifyDataSetChanged();
-                            item[0] = picUriList.get(i);
-                            ImageViewlarge.setImageURI(Uri.parse(item[0]));
+                            if(picUriList.size()==1)
+                            {
+                                picUriList.clear();
+                                viewSelectedImages.dismiss();
+
+                            }
+                            else {
+                                picUriList.remove(item[0]);
+                                madapter.selectedPosition = i;
+                                madapter.notifyDataSetChanged();
+                                item[0] = picUriList.get(i);
+                                ImageViewlarge.setImageURI(Uri.parse(item[0]));
+                            }
                         }
                     });
 
@@ -1017,7 +1030,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 alert.show();
                 break;
             case R.id.item3:
-                final EditText taskname_new,qty_new,enddate_new;
+                final EditText taskname_new,qty_new;
                 Button sub;
 
                 taskEditDetails = new AlertDialog.Builder(this)
@@ -1033,6 +1046,23 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 taskname_new.setText(task.getName());
                 qty_new.setText(task.getQty());
                 enddate_new.setText(task.getExpEndDate());
+                enddate_new.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Date now = new Date();
+                        Calendar calendar = new GregorianCalendar();
+                        calendar.setTime(now);
+                        MonthAdapter.CalendarDay minDate = new MonthAdapter.CalendarDay(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+
+                        CalendarDatePickerDialogFragment cdp = new CalendarDatePickerDialogFragment()
+                                .setOnDateSetListener(TaskDetail.this)
+                                .setFirstDayOfWeek(Calendar.SUNDAY)
+                                .setDateRange(minDate, null)
+                                .setDoneText("Ok")
+                                .setCancelText("Cancel").setThemeLight();
+                        cdp.show(getSupportFragmentManager(), "Select Day, Month and Year.");
+                    }
+                });
 
                 sub.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -1075,6 +1105,15 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         super.onDestroy();
         if (dbTaskVle != null)
             dbTask.removeEventListener(dbTaskVle);
+    }
+
+    @Override
+    public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
+        if(monthOfYear<9)
+            enddate_new.setText(dayOfMonth + "-0" + (monthOfYear + 1) + "-" + year);
+        else
+            enddate_new.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+
     }
 
 }

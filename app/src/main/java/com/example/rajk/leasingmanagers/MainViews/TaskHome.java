@@ -25,6 +25,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.ForwardTask.forwardTask;
@@ -42,14 +44,23 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.zfdang.multiple_images_selector.ImagesSelectorActivity;
+import com.zfdang.multiple_images_selector.SelectorSettings;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import droidninja.filepicker.FilePickerBuilder;
+import droidninja.filepicker.FilePickerConst;
+
+import static android.app.Activity.RESULT_OK;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 
 public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListener {
+    private static final int REQUEST_CODE = 109;
     RecyclerView task_list;
     DatabaseReference dbTask;
     LinearLayoutManager linearLayoutManager;
@@ -64,6 +75,8 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
     ProgressDialog progressDialog;
     private String custId = "nocust";
     private String custName = "nocust";
+    private ArrayList<String> mResults =new ArrayList<>();
+    private ArrayList<String> docPaths = new ArrayList<>();
 
     public TaskHome() {
         // Required empty public constructor
@@ -168,7 +181,10 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
                     if (!marshMallowPermission.checkPermissionForExternalStorage())
                         marshMallowPermission.requestPermissionForExternalStorage();
                     else {
+
                         UploadQuotation();
+
+
                     }
                     mode = null;
                     return true;
@@ -210,43 +226,53 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == PICK_FILE_REQUEST) {
-                if (data == null) {
-                    //no data present
-                    return;
-                }
-
-                String selectedFilePath = "";
-                Uri selectedFileUri = data.getData();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    selectedFilePath = FilePath.getPath(getActivity(), selectedFileUri);
-                }
-
-                if (selectedFilePath != null && !selectedFilePath.equals("")) {
-                    mAdapter.resetAnimationIndex();
-                    List<Integer> selectedItemPositions = mAdapter.getSelectedItems();
-                    ArrayList<String> taskid_list = new ArrayList<>();
-
-                    for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
-                        selectedItemPositions.get(i);
-                        final Task task = TaskList.get(selectedItemPositions.get(i));
-                        taskid_list.add(task.getTaskId());
-                    }
-
-                    Intent serviceIntent = new Intent(getActivity(), UploadQuotationService.class);
-                    serviceIntent.putExtra("TaskIdList", taskid_list);
-                    serviceIntent.putExtra("selectedFileUri", selectedFileUri.toString());
-                    serviceIntent.putExtra("customerId",custId);
-                    serviceIntent.putExtra("customerName",custName);
-
-                    getActivity().startService(serviceIntent);
-                } else {
-                    Toast.makeText(getActivity(), "Cannot upload file to server", Toast.LENGTH_SHORT).show();
+        String selectedFilePath = "";
+        if(requestCode == REQUEST_CODE) {
+            if(resultCode == RESULT_OK) {
+                mResults = data.getStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS);
+                assert mResults != null;
+                selectedFilePath = mResults.get(0);
+            }
+        }
+        else if(requestCode== FilePickerConst.REQUEST_CODE_DOC) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    docPaths = new ArrayList<>();
+                    docPaths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS));
+                   selectedFilePath = docPaths.get(0);
+                    
                 }
             }
         }
-    }
+
+                               if (selectedFilePath != null && !selectedFilePath.equals("")) {
+                                   String temp = Uri.fromFile(new File(selectedFilePath)).toString();
+                               List<Integer> selectedItemPositions = mAdapter.getSelectedItems();
+                               ArrayList<String> taskid_list = new ArrayList<>();
+
+                               for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                                   selectedItemPositions.get(i);
+                                   final Task task = TaskList.get(selectedItemPositions.get(i));
+                                   taskid_list.add(task.getTaskId());
+                               }
+
+                               Intent serviceIntent = new Intent(getActivity(), UploadQuotationService.class);
+                               serviceIntent.putExtra("TaskIdList", taskid_list);
+                               serviceIntent.putExtra("selectedFileUri", temp);
+                               serviceIntent.putExtra("customerId",custId);
+                               serviceIntent.putExtra("customerName",custName);
+                               mAdapter.clearSelections();
+                               mAdapter.resetAnimationIndex();
+                               actionMode.finish();
+                               getActivity().startService(serviceIntent);
+
+                           } else {
+                               Toast.makeText(getActivity(), "Cannot upload file to server", Toast.LENGTH_SHORT).show();
+                           }
+                       }
+
+
+
 
     void LoadData() {
 
@@ -327,12 +353,37 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
     }
 
     private void UploadQuotation() {
-        Intent intent = new Intent();
-        //sets the select file to all types of files
-        intent.setType("*/*");
-        //allows to select data and return it
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        //starts new activity to select file and return data
-        startActivityForResult(Intent.createChooser(intent, "Choose File to Upload.."), PICK_FILE_REQUEST);
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(getActivity());
+        View mView = layoutInflaterAndroid.inflate(R.layout.options_foruploadquotation, null);
+        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(getActivity());
+        alertDialogBuilderUserInput.setView(mView);
+
+        LinearLayout uploadPhoto = (LinearLayout)mView.findViewById(R.id.uploadPhoto);
+        LinearLayout uploadDoc = (LinearLayout)mView.findViewById(R.id.uploadDoc);
+
+
+        alertDialogBuilderUserInput.setCancelable(true);
+        final AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+        alertDialogAndroid.show();
+        uploadPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ImagesSelectorActivity.class);
+                intent.putExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, 1);
+                intent.putExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, true);
+                startActivityForResult(intent, REQUEST_CODE);
+                alertDialogAndroid.dismiss();
+            }
+        });
+        uploadDoc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FilePickerBuilder.getInstance().setMaxCount(10)
+                        .setActivityTheme(R.style.AppTheme)
+                        .pickFile(getActivity());
+                alertDialogAndroid.dismiss();
+            }
+        });
+
     }
 }

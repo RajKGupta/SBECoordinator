@@ -154,7 +154,7 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
 
 
         custId = (EditText) findViewById(R.id.custId);
-        custId.setText(customerId + ": " + customerName);
+        custId.setText(customerName);
         submit_task = (Button) findViewById(R.id.submit_task);
         Calendar c = Calendar.getInstance();
         curdate = simpleDateFormat.format(c.getTime());
@@ -256,8 +256,8 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
 
                     final ImageView ImageViewlarge = (ImageView) viewSelectedImages.findViewById(R.id.ImageViewlarge);
                     ImageButton cancel = (ImageButton) viewSelectedImages.findViewById(R.id.cancel);
-                    Button canceldone = (Button) viewSelectedImages.findViewById(R.id.canceldone);
-                    Button okdone = (Button) viewSelectedImages.findViewById(R.id.okdone);
+                    ImageButton canceldone = (ImageButton) viewSelectedImages.findViewById(R.id.canceldone);
+                    ImageButton okdone = (ImageButton) viewSelectedImages.findViewById(R.id.okdone);
                     RecyclerView rv = (RecyclerView) viewSelectedImages.findViewById(R.id.viewImages);
 
                     linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);

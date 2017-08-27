@@ -28,8 +28,10 @@ import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.Quotation.QAdapter;
 import com.example.rajk.leasingmanagers.Quotation.QuotaionTasks;
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.adapter.CustomerTasks_Adapter;
 import com.example.rajk.leasingmanagers.adapter.EmployeeTask_Adapter;
 import com.example.rajk.leasingmanagers.chat.ChatActivity;
+import com.example.rajk.leasingmanagers.customer.Cust_details;
 import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
 import com.example.rajk.leasingmanagers.model.QuotationBatch;
 import com.example.rajk.leasingmanagers.tablayout.Tabs;
@@ -57,7 +59,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     RecyclerView rec_employeetask;
     LinearLayoutManager linearLayoutManager;
     private RecyclerView.Adapter mAdapter;
-    List<String> listoftasks;
+    List<String> listoftasks = new ArrayList<>();
 //    List<QuotationBatch> listofquotations;
     private AlertDialog open_options;
     CoordinatorSession coordinatorSession;
@@ -65,12 +67,13 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     public static String emp_id;
     ImageButton callme, msgme;
     TextView jobs_and_hideme;
+    EmployeeTask_Adapter.EmployeeTask_AdapterListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emp_details);
-
+        listener =this;
         id = getIntent().getStringExtra("id");
         emp_id = id;
 
@@ -139,79 +142,30 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     }
 
     private void setAdapternlist() {
-        listoftasks = new ArrayList<>();
-/*        listofquotations = new ArrayList<>();
 
-        if (desig.toLowerCase().equals("quotation")) {
-            mAdapter = new QAdapter(listofquotations, getApplicationContext(), this);
-        } else*/
-            mAdapter = new EmployeeTask_Adapter(listoftasks, getApplicationContext(), id, this);
-
-        rec_employeetask.setAdapter(mAdapter);
-
-        db = db.child("AssignedTask").getRef();
-/*
-        if (desig.toLowerCase().equals("quotation")) {
-            db.addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    if (dataSnapshot.exists()) {
-                        QuotationBatch m = new QuotationBatch();
-                        Map<String, Object> map = (Map) dataSnapshot.getValue();
-
-                        m.setEndDate((String) map.get("endDate"));
-                        long c = (long) map.get("color");
-                        m.setColor((int) c);
-                        m.setStartDate((String) map.get("startDate"));
-                        m.setCoordnote((String) map.get("note"));
-                        m.setId((String) map.get("id"));
-
-                        jobs_and_hideme.setVisibility(View.GONE);
-                        listofquotations.add(m);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        } else {*/
-            db.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.exists()){
+            db.child("AssignedTask").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                listoftasks.clear();
+                if (dataSnapshot.exists()) {
+                    jobs_and_hideme.setVisibility(View.GONE);
                     for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-                        jobs_and_hideme.setVisibility(View.GONE);
                         listoftasks.add(childSnapshot.getKey());
-                        mAdapter.notifyDataSetChanged();
-
                     }
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+                    mAdapter = new EmployeeTask_Adapter(listoftasks, getApplicationContext(), id, listener);
+                    rec_employeetask.setAdapter(mAdapter);
 
                 }
-            });
-        //}
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
 
     @Override
