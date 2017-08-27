@@ -78,11 +78,7 @@ public class notification_adapter extends RecyclerView.Adapter<notification_adap
                     String caps = nameAndStatus.getName().toUpperCase();
                     holder.icon_text.setText(caps.charAt(0)+"");
                 }
-                else
-                {
-                    //jhkjhjkn
                 }
-            }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
