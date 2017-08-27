@@ -206,7 +206,7 @@ public class forwardTask extends AppCompatActivity {
                                 emp = dataSnapshot.getValue(Employee.class);
 
                                 if(forQuotation == true){
-                                    if(emp.getDesignation().toLowerCase().equals("quotation"))
+                                    if(emp.getDesignation().toLowerCase().equals("accounts"))
                                         list.add(emp);
                                 }
 

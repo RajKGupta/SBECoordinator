@@ -871,6 +871,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 alertDialogBuilderUserInput.setView(mView);
 
                 final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
+                userInputDialogEditText.setText(holder.noteString.getText().toString().trim());
                 alertDialogBuilderUserInput
                         .setCancelable(false)
                         .setPositiveButton("SET", new DialogInterface.OnClickListener() {

@@ -374,6 +374,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                 alertDialogBuilderUserInput.setView(mView);
                 final String empId = id;
                 final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
+                userInputDialogEditText.setText(holder.noteString.getText().toString().trim());
                 alertDialogBuilderUserInput
                         .setCancelable(false)
                         .setPositiveButton("SET", new DialogInterface.OnClickListener() {
@@ -384,7 +385,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                                 String note = userInputDialogEditText.getText().toString().trim();
                                 if (note != null && !note.equals("")) {
                                     DBREF.child("Task").child(task_id).child("AssignedTo").child(empId).child("note").setValue(note);
-                                    holder.noteAuthor.setText(note);
+                                    holder.noteString.setText(note);
                                     Toast.makeText(Emp_details.this, "Coordinator note changed successfully", Toast.LENGTH_SHORT).show();
                                     String contentforme = "You changed the coordinator note for " + taskName;
                                     sendNotif(mykey, mykey, "changedNote", contentforme, task_id);
