@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.example.rajk.leasingmanagers.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -18,8 +19,11 @@ import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
+
 import java.io.File;
+
 import static com.example.rajk.leasingmanagers.LeasingManagers.AppName;
+
 
 public class DownloadFileService extends IntentService {
 
@@ -31,6 +35,7 @@ public class DownloadFileService extends IntentService {
     public DownloadFileService() {
         super("Upload");
     }
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -69,7 +74,7 @@ public class DownloadFileService extends IntentService {
     public void downloadFile(final String url, final String task_id) {
 
         StorageReference mStorageRef = FirebaseStorage.getInstance().getReferenceFromUrl(url);
-        File rootPath = new File(Environment.getExternalStorageDirectory(), AppName+"/Quotations");
+        File rootPath = new File(Environment.getExternalStorageDirectory(), AppName +"/Images");
         if (!rootPath.exists()) {
             rootPath.mkdirs();
         }
@@ -84,7 +89,6 @@ public class DownloadFileService extends IntentService {
                 Toast.makeText(DownloadFileService.this, "Downloaded Quotation", Toast.LENGTH_SHORT).show();
                 updateNotification("Succesfully Downloaded");
 
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -96,6 +100,7 @@ public class DownloadFileService extends IntentService {
         }).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
             @Override
             public void onProgress(FileDownloadTask.TaskSnapshot taskSnapshot) {
+
             }
         });
     }
@@ -118,8 +123,9 @@ public class DownloadFileService extends IntentService {
         synchronized (this) {
             notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.notify(0, mBuilder.build());
-
+            stopSelf();
         }
-        stopSelf();
     }
+
+
 }

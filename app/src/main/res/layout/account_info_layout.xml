@@ -78,7 +78,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Advance Paid"
+                android:text="Advance"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="18dp"
                 android:textStyle="bold" />
@@ -92,7 +92,7 @@
                 android:drawableLeft="@mipmap/ic_indian_rupee_symbol"
                 android:enabled="false"
                 android:layout_gravity="center_vertical"
-                android:hint="Advance Paid"
+                android:hint="Advance"
                 android:inputType="phone"
                 android:textColor="@color/colorPrimary"
                 android:textSize="18dp" />
