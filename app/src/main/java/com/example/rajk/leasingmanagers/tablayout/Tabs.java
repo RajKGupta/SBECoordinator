@@ -1,17 +1,25 @@
 package com.example.rajk.leasingmanagers.tablayout;
 
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.widget.FrameLayout;
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
+import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSignUp;
+import com.example.rajk.leasingmanagers.CoordinatorLogin.coordinatorLogin;
 import com.example.rajk.leasingmanagers.R;
+import com.example.rajk.leasingmanagers.Splash;
 import com.example.rajk.leasingmanagers.drawer;
 import com.example.rajk.leasingmanagers.employee.Emp_add;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
+import com.example.rajk.leasingmanagers.model.Coordinator;
+
+import static com.example.rajk.leasingmanagers.LeasingManagers.AppName;
 
 public class Tabs extends drawer implements TabLayout.OnTabSelectedListener{
 
@@ -37,7 +45,10 @@ public class Tabs extends drawer implements TabLayout.OnTabSelectedListener{
             marshmallowPermissions.requestPermissionForLocations();
 
         session = new CoordinatorSession(getApplicationContext());
-
+        if(session.get_ShortCutInstalled()==false)
+        {
+            createShortCut();
+        }
         if(getIntent().getExtras()!=null)
             page = getIntent().getIntExtra("page",0);
         else
@@ -97,6 +108,17 @@ public class Tabs extends drawer implements TabLayout.OnTabSelectedListener{
                 });
         AlertDialog alert = builder.create();
         alert.show();
+
+    }
+    public void createShortCut(){
+        Intent shortcutintent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+        shortcutintent.putExtra("duplicate", false);
+        shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
+        Parcelable icon = Intent.ShortcutIconResource.fromContext(getApplicationContext(), R.mipmap.ic_launcher);
+        shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
+        shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, new Intent(getApplicationContext(), coordinatorLogin.class));
+        sendBroadcast(shortcutintent);
+        session.set_ShortCutInstalled();
 
     }
 

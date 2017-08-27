@@ -1,5 +1,8 @@
 package com.example.rajk.leasingmanagers;
 
+import android.content.Intent;
+import android.os.Parcelable;
+
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.model.Notif;
 import com.facebook.drawee.backends.pipeline.Fresco;
