@@ -10,8 +10,18 @@ public class Customer {
     private String phone_num;
     private String address;
     private String id,password;
+    private int pendingTask;
     public String getPassword() {
         return password;
+    }
+
+
+    public int getPendingTask() {
+        return pendingTask;
+    }
+
+    public void setPendingTask(int pendingTask) {
+        this.pendingTask = pendingTask;
     }
 
     public void setPassword(String password) {
@@ -68,6 +78,7 @@ public class Customer {
     public String getPhone_num() {
         return phone_num;
     }
+
 }
 
 
