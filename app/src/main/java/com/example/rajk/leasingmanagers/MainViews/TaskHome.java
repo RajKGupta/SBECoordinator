@@ -378,9 +378,9 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
         uploadDoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FilePickerBuilder.getInstance().setMaxCount(10)
+                FilePickerBuilder.getInstance().setMaxCount(1)
                         .setActivityTheme(R.style.AppTheme)
-                        .pickFile(getActivity());
+                        .pickFile(TaskHome.this);
                 alertDialogAndroid.dismiss();
             }
         });
