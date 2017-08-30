@@ -14,6 +14,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.example.rajk.leasingmanagers.R;
+
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
     private static final int[] ATTRS = new int[]{
@@ -59,7 +61,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
             final int top = child.getBottom() + params.bottomMargin;
             final int bottom = top + mDivider.getIntrinsicHeight();
             mDivider.setBounds(left, top, right, bottom);
-            mDivider.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
+            mDivider.setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
             mDivider.draw(c);
         }
     }
@@ -76,7 +78,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
             final int left = child.getRight() + params.rightMargin;
             final int right = left + mDivider.getIntrinsicHeight();
             mDivider.setBounds(left, top, right, bottom);
-            mDivider.setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
+            mDivider.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
             mDivider.draw(c);
         }
     }

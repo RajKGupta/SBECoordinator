@@ -280,19 +280,26 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                     @Override
                     public void onClick(View v) {
                         CustomerAccount customerAccount = new CustomerAccount();
-                        Integer total_amount = Integer.parseInt(total.getText().toString().trim());
-                        customerAccount.setTotal(total_amount);
-                        Integer advance_amount =   Integer.parseInt(advance.getText().toString().trim());
-                        customerAccount.setAdvance(advance_amount);
-                        dbaccountinfo.setValue(customerAccount);
-                        total.setEnabled(false);
-                        advance.setEnabled(false);
-                        balanceLayout.setVisibility(View.VISIBLE);
-                        submit.setVisibility(View.GONE);
-                        edit.setVisibility(View.VISIBLE);
-                        sendNotif(mykey, id, "accountReset", "Your advance deposited is Rs." + advance_amount + " and balance left is Rs." + (total_amount - advance_amount), id);
-                        sendNotifToAllCoordinators(mykey, "accountReset", name + " advance deposited is Rs." + advance_amount + " and balance left is Rs." + (total_amount - advance_amount), id);
-
+                        String totalString =total.getText().toString().trim();
+                        String advanceTotal = advance.getText().toString().trim();
+                        if(totalString!=null&&advanceTotal!=null) {
+                            Integer total_amount = Integer.parseInt(totalString);
+                            customerAccount.setTotal(total_amount);
+                            Integer advance_amount = Integer.parseInt(advanceTotal);
+                            customerAccount.setAdvance(advance_amount);
+                            dbaccountinfo.setValue(customerAccount);
+                            total.setEnabled(false);
+                            advance.setEnabled(false);
+                            balanceLayout.setVisibility(View.VISIBLE);
+                            submit.setVisibility(View.GONE);
+                            edit.setVisibility(View.VISIBLE);
+                            sendNotif(mykey, id, "accountReset", "Your advance deposited is Rs." + advance_amount + " and balance left is Rs." + (total_amount - advance_amount), id);
+                            sendNotifToAllCoordinators(mykey, "accountReset", name + " advance deposited is Rs." + advance_amount + " and balance left is Rs." + (total_amount - advance_amount), id);
+                        }
+                        else
+                        {
+                            Toast.makeText(getApplicationContext(),"Invalid amount entered",Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
                 break;

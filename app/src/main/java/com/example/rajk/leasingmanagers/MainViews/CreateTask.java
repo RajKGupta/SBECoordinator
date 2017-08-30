@@ -229,10 +229,15 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
 
     @Override
     public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
+        String day=String.valueOf(dayOfMonth);
+        if(dayOfMonth<10)
+        {
+            day= "0"+String.valueOf(dayOfMonth);
+        }
         if(monthOfYear<9)
-            endDate.setText(dayOfMonth + "-0" + (monthOfYear + 1) + "-" + year);
+            endDate.setText(day + "-0" + (monthOfYear + 1) + "-" + year);
         else
-            endDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+            endDate.setText(day + "-" + (monthOfYear + 1) + "-" + year);
 
     }
     @Override

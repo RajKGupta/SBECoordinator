@@ -17,6 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/employeeName"
+        android:textColor="@color/colorPrimaryDark"
         android:text="Employee Name"
         android:textStyle="bold"
         android:textAllCaps="true"/>
@@ -25,6 +26,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/employeeDesig"
         android:text="Employee Desig"
+        android:textColor="@color/colorPrimaryDark"
         android:textStyle="italic|bold"
         />
     <LinearLayout
@@ -35,12 +37,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Date Assigned :"
-            android:textStyle="italic"/>
+            android:textStyle="italic|bold"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/dateAssign"
+            android:textColor="@color/colorPrimaryDark"
             android:textStyle="italic"/>
     </LinearLayout>
         <LinearLayout
@@ -54,12 +57,14 @@
                 android:layout_height="wrap_content"
                 android:text="Date Completed :"
                 android:id="@+id/tv_datecompleted"
-                android:textStyle="italic"/>
+                android:textStyle="italic|bold"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/dateCompleted"
+                android:textColor="@color/colorPrimaryDark"
+
                 android:textStyle="italic"/>
 
         </LinearLayout>
@@ -74,12 +79,13 @@
                 android:layout_height="wrap_content"
                 android:text="Assigned By :"
                 android:id="@+id/tv_assignedBy"
-                android:textStyle="italic"/>
+                android:textStyle="italic|bold"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/assignedBy"
+                android:textColor="@color/colorPrimaryDark"
                 android:textStyle="italic"/>
 
         </LinearLayout>
@@ -105,6 +111,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hey you listen!!"
+            android:textColor="@color/colorPrimaryDark"
             android:id="@+id/noteString"
             android:textStyle="italic"/>
 
@@ -118,6 +125,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
             android:text="Hey you listen!!"
             android:id="@+id/employeeNote"
             android:textStyle="italic"/>
