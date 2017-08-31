@@ -24,7 +24,7 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
     public static SimpleDateFormat formatterWithMonthNameAndTime = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
     public static SimpleDateFormat simpleDateFormatWithMonthName = new SimpleDateFormat("dd-MMM-yyyy");
     public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-    public static String AppName = "demo";
+    public static String AppName = "MeChat";
     private static LeasingManagers mInstance;
     String userkey;
 

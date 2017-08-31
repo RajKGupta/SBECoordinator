@@ -17,8 +17,8 @@
         android:name=".LeasingManagers"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="aa coor"
-        tools:replace="label"
+        android:label="JobTracker(C)"
+
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
