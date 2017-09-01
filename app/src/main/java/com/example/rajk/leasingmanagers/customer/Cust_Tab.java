@@ -42,6 +42,7 @@ public class Cust_Tab extends Fragment {
     RecyclerView recview;
     RecAdapter_cust adapter;
     List<Customer> list = new ArrayList<>();
+    List<Customer> b = new ArrayList<>();
     Customer cust = new Customer();
     ProgressDialog pDialog;
     FloatingActionButton cust_add;
@@ -74,6 +75,7 @@ public class Cust_Tab extends Fragment {
 
         adapter = new RecAdapter_cust(list, getContext());
         recview.setAdapter(adapter);
+        b = list;
 
         cust_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +88,7 @@ public class Cust_Tab extends Fragment {
         recview.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recview, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Customer item = list.get(position);
+                Customer item = b.get(position);
                 Intent i = new Intent(getContext(), Cust_details.class);
                 i.putExtra("id", item.getId());
                 startActivity(i);
@@ -115,10 +117,18 @@ public class Cust_Tab extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText)
             {
-                final List<Customer> filteredModelList = filter(list, newText);
+                if (newText.equals(""))
+                {
+                    adapter = new RecAdapter_cust(list, getContext());
+                    recview.setAdapter(adapter);
+                }
+                else                {
+                    final List<Customer> filteredModelList = filter(list, newText);
+                    adapter = new RecAdapter_cust(filteredModelList, getContext());
+                    recview.setAdapter(adapter);
+                    b= filteredModelList;
+                }
 
-                adapter = new RecAdapter_cust(filteredModelList, getContext());
-                recview.setAdapter(adapter);
 
 //                adapter.setFilter(filteredModelList);
                 return true;

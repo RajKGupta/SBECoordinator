@@ -140,16 +140,15 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 listoftasks.clear();
+                mAdapter = new EmployeeTask_Adapter(listoftasks, getApplicationContext(), id, listener);
                 if (dataSnapshot.exists()) {
                     jobs_and_hideme.setVisibility(View.GONE);
                     for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                         listoftasks.add(childSnapshot.getKey());
                     }
-                    mAdapter = new EmployeeTask_Adapter(listoftasks, getApplicationContext(), id, listener);
                     rec_employeetask.setAdapter(mAdapter);
-
+                    mAdapter.notifyDataSetChanged();
                 }
-                mAdapter.notifyDataSetChanged();
             }
 
             @Override

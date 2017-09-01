@@ -43,6 +43,7 @@ import com.example.rajk.leasingmanagers.adapter.completedBy_adapter;
 import com.example.rajk.leasingmanagers.adapter.measurement_adapter;
 import com.example.rajk.leasingmanagers.adapter.taskdetailDescImageAdapter;
 import com.example.rajk.leasingmanagers.adapter.taskimagesadapter;
+import com.example.rajk.leasingmanagers.customer.Cust_details;
 import com.example.rajk.leasingmanagers.helper.CompressMe;
 import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
@@ -1020,9 +1021,14 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                                 //todo refresh the layout so that the layout is updated
                                                 sendNotif(mykey, task.getCustomerId(), "deleteTask", coordinatorSession.getName() + " deleted the " + task.getName() + " task", task_id);
                                                 Toast.makeText(TaskDetail.this, "Job deleted sucessfully", Toast.LENGTH_SHORT).show();
-                                                onBackPressed();
-                                                finish();
+                                                Intent intent = new Intent(TaskDetail.this, Cust_details.class);
+                                                intent.putExtra("id",task.getCustomerId());
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                                 dbDelete.removeEventListener(this);
+                                                DBREF.child("Task").child(task_id).removeValue();
+                                                startActivity(intent);
+                                                finish();
+
                                             }
                                         }
                                     }

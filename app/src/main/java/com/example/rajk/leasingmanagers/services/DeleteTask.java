@@ -145,7 +145,6 @@ public class DeleteTask extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        DBREF.child("Task").child(task_id).removeValue();
         final DatabaseReference dbDelete = DBREF.child("DeleteTask").child(task_id).getRef();
         dbDelete.setValue(Boolean.TRUE);
     }
