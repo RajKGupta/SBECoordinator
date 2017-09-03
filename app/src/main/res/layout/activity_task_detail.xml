@@ -404,7 +404,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/measurementbuttonandtext"
                         android:layout_marginTop="1dp"
-                        android:nestedScrollingEnabled="false" />
+                        android:nestedScrollingEnabled="true" />
 
                 </RelativeLayout>
             </android.support.v7.widget.CardView>

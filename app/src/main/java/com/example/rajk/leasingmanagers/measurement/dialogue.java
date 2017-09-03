@@ -95,7 +95,7 @@ public class dialogue extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                FilePickerBuilder.getInstance().setMaxCount(10)
+                FilePickerBuilder.getInstance().setMaxCount(1)
                         .setActivityTheme(R.style.AppTheme)
                         .pickPhoto(dialogue.this);    }
         });
