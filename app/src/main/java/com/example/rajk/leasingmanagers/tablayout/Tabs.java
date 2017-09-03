@@ -37,12 +37,14 @@ public class Tabs extends drawer implements TabLayout.OnTabSelectedListener{
         getLayoutInflater().inflate(R.layout.activity_tabs, frame);
 
         marshmallowPermissions = new MarshmallowPermissions(this);
+        if (!marshmallowPermissions.checkPermissionForReadExternalStorage())
+            marshmallowPermissions.requestPermissionForReadExternalStorage();
+
+
         if(!marshmallowPermissions.checkPermissionForCamera())
             marshmallowPermissions.requestPermissionForCamera();
         if(!marshmallowPermissions.checkPermissionForExternalStorage())
             marshmallowPermissions.requestPermissionForExternalStorage();
-        if(!marshmallowPermissions.checkPermissionForLocations())
-            marshmallowPermissions.requestPermissionForLocations();
 
         session = new CoordinatorSession(getApplicationContext());
         if(session.get_ShortCutInstalled()==false)
