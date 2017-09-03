@@ -10,21 +10,23 @@
     android:paddingLeft="?listPreferredItemPaddingLeft"
     android:paddingRight="?listPreferredItemPaddingRight"
     android:paddingTop="@dimen/padding_list_row">
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_alignParentRight="true"
-        >
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -32,10 +34,11 @@
                     android:textColor="@color/timestamp"
                     android:textSize="@dimen/timestamp"
                     android:textStyle="bold" />
+
                 <TextView
+                    android:id="@+id/tv_pendingTasks"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tv_pendingTasks"
                     android:text="0"
                     android:textColor="@color/timestamp"
                     android:textSize="@dimen/timestamp"
@@ -46,7 +49,7 @@
         </LinearLayout>
     </LinearLayout>
 
-<LinearLayout
+    <LinearLayout
         android:id="@+id/message_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -57,25 +60,26 @@
 
         <TextView
             android:id="@+id/name"
-            android:text="Employee Name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="1"
+            android:text="Employee Name"
             android:textColor="#000000"
             android:textSize="@dimen/msg_text_primary"
             android:textStyle="bold" />
-            <TextView
-                android:id="@+id/desig"
-                android:text="Designation"
-                android:layout_marginTop="2dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:lines="1"
-                android:textColor="@color/message"
-                android:textSize="@dimen/msg_text_secondary"
-                android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/desig"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="Designation"
+            android:textColor="@color/message"
+            android:textSize="@dimen/msg_text_secondary"
+            android:textStyle="bold" />
 
 
     </LinearLayout>
@@ -111,10 +115,10 @@
 
             <TextView
                 android:id="@+id/icon_text"
-                android:text="T"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:text="T"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/icon_text" />
         </RelativeLayout>
