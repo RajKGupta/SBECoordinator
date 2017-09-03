@@ -13,12 +13,16 @@ import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.listener.ClickListener;
 import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
+import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -50,7 +54,9 @@ public class Emp_Tab extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.activity_emp_tab, container, false);
+        View view = inflater.inflate(R.layout.activity_emp_tab, container, false);
+        setHasOptionsMenu(true);
+        return view;
     }
 
     @Override
@@ -88,6 +94,25 @@ public class Emp_Tab extends Fragment {
 
             }
         }));
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu1, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+
+        final MenuItem item2 = menu.findItem(R.id.refresh);
+        item2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(getActivity(), Tabs.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("page", 1);
+                startActivity(intent);
+                getActivity().finish();
+                return false;
+            }
+        });
     }
 
     class net extends AsyncTask<Void, Void, Void> {

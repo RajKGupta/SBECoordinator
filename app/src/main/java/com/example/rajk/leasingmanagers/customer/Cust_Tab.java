@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 
+import com.example.rajk.leasingmanagers.employee.Emp_add;
 import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
 
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.listener.ClickListener;
 import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
 import com.example.rajk.leasingmanagers.notification.NotificationActivity;
+import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -150,6 +152,20 @@ public class Cust_Tab extends Fragment {
                         return true; // Return true to expand action view
                     }
                 });
+
+
+        final MenuItem item2 = menu.findItem(R.id.refresh);
+        item2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(getActivity(), Tabs.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("page", 0);
+                startActivity(intent);
+                getActivity().finish();
+                return false;
+            }
+        });
     }
 
     private List<Customer> filter(List<Customer> models, String query) {
