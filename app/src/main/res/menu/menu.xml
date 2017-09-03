@@ -7,4 +7,10 @@
         android:title="Search"
         android:icon="@drawable/ic_search_white"
         app:actionLayout="@layout/search_view_item"/>
+
+    <item
+        android:id="@+id/item1"
+        android:icon="@drawable/ic_call_me_white"
+        android:title="Edit"
+        app:showAsAction="always" />
 </menu>
