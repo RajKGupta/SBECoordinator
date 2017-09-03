@@ -43,8 +43,8 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 public class dialogue extends AppCompatActivity {
 
     private ArrayList<String> photoPaths = new ArrayList<>();
-    EditText width, height, unit;
-    String fleximage = "", temp_width, temp_height, temp_unit, id = "";
+    EditText width, height, unit, tag;
+    String fleximage = "", temp_width, temp_height, temp_unit, id = "", temp_tag="";
     private static final int REQUEST_CODE = 51;
     DatabaseReference dbRef, db;
     StorageReference storageReference, sf;
@@ -64,6 +64,7 @@ public class dialogue extends AppCompatActivity {
         width = (EditText) findViewById(R.id.width);
         height = (EditText) findViewById(R.id.height);
         unit = (EditText) findViewById(R.id.unit);
+        tag = (EditText) findViewById(R.id.tag);
 
         pd = new ProgressDialog(dialogue.this);
         pd.setMessage("Uploading....");
@@ -75,11 +76,13 @@ public class dialogue extends AppCompatActivity {
             temp_height = getIntent().getStringExtra("height");
             temp_unit = getIntent().getStringExtra("unit");
             fleximage = getIntent().getStringExtra("fleximage");
+            temp_tag = getIntent().getStringExtra("tag");
             id = getIntent().getStringExtra("id");
 
             width.setText(temp_width);
             height.setText(temp_height);
             unit.setText(temp_unit);
+            tag.setText(temp_tag);
             if (!fleximage.equals(""))
                 Picasso.with(dialogue.this).load(fleximage).into(img);
         }
@@ -129,6 +132,7 @@ public class dialogue extends AppCompatActivity {
         temp_width = width.getText().toString();
         temp_height = height.getText().toString();
         temp_unit = unit.getText().toString();
+        temp_tag = tag.getText().toString();
 
         if (temp_width.equals("") || temp_height.equals("") || temp_unit.equals(""))
             Toast.makeText(this, "Enter complete details...", Toast.LENGTH_SHORT).show();
@@ -165,7 +169,7 @@ public class dialogue extends AppCompatActivity {
 
                         Toast.makeText(dialogue.this, "Upload successful", Toast.LENGTH_SHORT).show();
                         fleximage = taskSnapshot.getDownloadUrl().toString();
-                        measurement temp = new measurement("", temp_width, temp_height, fleximage, temp_unit, id);
+                        measurement temp = new measurement(temp_tag, temp_width, temp_height, fleximage, temp_unit, id);
                         db.setValue(temp);
                         pd.dismiss();
 
@@ -177,6 +181,7 @@ public class dialogue extends AppCompatActivity {
                         intent.putExtra("height", temp_height);
                         intent.putExtra("unit", temp_unit);
                         intent.putExtra("fleximage", fleximage);
+                        intent.putExtra("tag", temp_tag);
                         intent.putExtra("id", id);
 
                         setResult(RESULT_OK, intent);
@@ -198,6 +203,7 @@ public class dialogue extends AppCompatActivity {
                 intent.putExtra("height", temp_height);
                 intent.putExtra("unit", temp_unit);
                 intent.putExtra("fleximage", fleximage);
+                intent.putExtra("tag", temp_tag);
                 intent.putExtra("id", id);
 
                 setResult(RESULT_OK, intent);

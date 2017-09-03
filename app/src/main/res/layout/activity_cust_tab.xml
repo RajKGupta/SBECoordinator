@@ -16,8 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="true"
-            android:id="@+id/recview"
-            >
+            android:id="@+id/recview">
             </android.support.v7.widget.RecyclerView>
 
     <android.support.v4.widget.Space

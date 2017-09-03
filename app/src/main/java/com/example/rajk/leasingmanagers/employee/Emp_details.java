@@ -53,7 +53,6 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
     LinearLayoutManager linearLayoutManager;
     private RecyclerView.Adapter mAdapter;
     List<String> listoftasks = new ArrayList<>();
-//    List<QuotationBatch> listofquotations;
     private AlertDialog open_options;
     CoordinatorSession coordinatorSession;
     String mykey, dbTablekey;
@@ -156,8 +155,6 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
 
             }
         });
-
-
     }
 
     @Override
@@ -464,18 +461,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         in.putExtra("otheruserkey", id);
         startActivity(in);
     }
-/*
-    @Override
-    public void onTaskRowClicked(int position) {
-        Intent intent = new Intent(Emp_details.this, QuotaionTasks.class);
-        QuotationBatch batch = listofquotations.get(position);
-        intent.putExtra("id", batch.getId());
-        intent.putExtra("note", batch.getCoordnote());
-        intent.putExtra("end", batch.getEndDate());
-        intent.putExtra("start", batch.getStartDate());
-        startActivity(intent);
 
-    }*/
 
     @Override
     public void onBackPressed() {

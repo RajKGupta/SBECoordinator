@@ -4,15 +4,18 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.chatListAdapter;
@@ -24,6 +27,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,7 +36,7 @@ import java.util.Iterator;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
-public class ChatFragment extends Fragment implements chatListAdapter.chatListAdapterListener {
+public class ChatFragment extends Fragment implements chatListAdapter.chatListAdapterListener, SwipeRefreshLayout.OnRefreshListener {
     private View myFragmentView;
     FragmentManager fmm;
     private ArrayList<ChatListModel> list = new ArrayList<>();
@@ -43,6 +47,8 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
     private HashMap<DatabaseReference, ValueEventListener> dbLastMessageHashMap = new HashMap<>();
     private ChildEventListener dbChatCHE;
     private HashMap<DatabaseReference, ValueEventListener> dbProfileRefHashMap = new HashMap<>();
+    SwipeRefreshLayout swipeLayout;
+
 
     public static ChatFragment newInstance() {
         ChatFragment fragment = new ChatFragment();
@@ -65,8 +71,15 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//      setupUI(view.findViewById(R.id.relcity));
         fmm = getFragmentManager();
+
+        swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        swipeLayout.setOnRefreshListener(this);
+        swipeLayout.setColorScheme(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
 
         CoordinatorSession coordinatorSession = new CoordinatorSession(getActivity());
         mykey = coordinatorSession.getUsername();
@@ -226,5 +239,17 @@ public class ChatFragment extends Fragment implements chatListAdapter.chatListAd
                 return o1.getLastMsg() > o2.getLastMsg() ? -1 : 0;
             }
         });
+    }
+
+    @Override
+    public void onRefresh() {
+        list.clear();
+        LoadData();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                swipeLayout.setRefreshing(false);
+            }
+        }, 2000);
     }
 }

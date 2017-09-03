@@ -201,6 +201,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(TaskDetail.this, MeasureList.class));
+                finish();
             }
         });
 

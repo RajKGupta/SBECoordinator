@@ -42,8 +42,7 @@
         android:orientation="vertical"
         android:layout_centerInParent="true"
         android:paddingLeft="72dp"
-        android:paddingRight="@dimen/padding_list_row"
-        >
+        android:paddingRight="@dimen/padding_list_row">
 
         <TextView
             android:id="@+id/name"
