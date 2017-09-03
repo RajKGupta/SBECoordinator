@@ -30,11 +30,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.codetroopers.betterpickers.calendardatepicker.MonthAdapter;
 import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
 import com.example.rajk.leasingmanagers.ForwardTask.forwardTask;
-import com.example.rajk.leasingmanagers.ForwardTask.forwardTaskScreen2;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.ViewImageAdapter;
 import com.example.rajk.leasingmanagers.adapter.assignedto_adapter;
@@ -42,11 +42,11 @@ import com.example.rajk.leasingmanagers.adapter.bigimage_adapter;
 import com.example.rajk.leasingmanagers.adapter.completedBy_adapter;
 import com.example.rajk.leasingmanagers.adapter.measurement_adapter;
 import com.example.rajk.leasingmanagers.adapter.taskdetailDescImageAdapter;
-import com.example.rajk.leasingmanagers.adapter.taskimagesadapter;
 import com.example.rajk.leasingmanagers.customer.Cust_details;
 import com.example.rajk.leasingmanagers.helper.CompressMe;
 import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
 import com.example.rajk.leasingmanagers.helper.MarshmallowPermissions;
+import com.example.rajk.leasingmanagers.helper.TouchImageView;
 import com.example.rajk.leasingmanagers.listener.ClickListener;
 import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
 import com.example.rajk.leasingmanagers.measurement.MeasureList;
@@ -69,8 +69,6 @@ import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
-import com.zfdang.multiple_images_selector.ImagesSelectorActivity;
-import com.zfdang.multiple_images_selector.SelectorSettings;
 
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -90,7 +88,7 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotifToAllCoordinators;
 import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormat;
 
-public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener , CalendarDatePickerDialogFragment.OnDateSetListener{
+public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener , CalendarDatePickerDialogFragment.OnDateSetListener, measurement_adapter.measurement_adapterListener {
 
     private DatabaseReference dbRef, dbTask, dbCompleted, dbAssigned, dbMeasurement, dbDescImages;
     ValueEventListener dbTaskVle;
@@ -100,7 +98,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     private String mykey;
     private Task task;
     private String customername;
-    EditText startDate, endDate, quantity, description,enddate_new;
+    EditText startDate, endDate, quantity, description, enddate_new;
     RecyclerView rec_assignedto, rec_completedby, rec_measurement, rec_DescImages;
     assignedto_adapter adapter_assignedto;
     completedBy_adapter adapter_completedby;
@@ -115,7 +113,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     DatabaseReference dbQuotation;
     ProgressDialog progressDialog;
     private MarshmallowPermissions marshmallowPermissions;
-    private AlertDialog viewSelectedImages, open_options, edit_description;
+    private AlertDialog viewSelectedImages, open_options, edit_description, viewSelectedImages_measure;
     LinearLayoutManager linearLayoutManager;
     bigimage_adapter adapter;
     private CoordinatorSession coordinatorSession;
@@ -127,7 +125,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     ViewImageAdapter madapter;
     Button measure;
     AlertDialog taskEditDetails;
-    String temp_taskname,temp_qty,temp_enddate;
+    String temp_taskname, temp_qty, temp_enddate;
     DatabaseReference dbedit;
 
     @Override
@@ -179,7 +177,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         rec_measurement.setLayoutManager(new LinearLayoutManager(this));
         rec_measurement.setItemAnimator(new DefaultItemAnimator());
         rec_measurement.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        adapter_measurement = new measurement_adapter(measurementList, this);
+        adapter_measurement = new measurement_adapter(measurementList, this, this);
         rec_measurement.setAdapter(adapter_measurement);
 
         rec_DescImages.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -207,7 +205,6 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 finish();
             }
         });
-
 
 
         dbTaskVle = dbTask.addValueEventListener(new ValueEventListener() {
@@ -310,7 +307,8 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 } else {
                     FilePickerBuilder.getInstance().setMaxCount(10)
                             .setActivityTheme(R.style.AppTheme)
-                            .pickPhoto(TaskDetail.this);}
+                            .pickPhoto(TaskDetail.this);
+                }
             }
         });
     }
@@ -372,13 +370,11 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                             int i = picUriList.indexOf(item[0]);
                             if (i == picUriList.size() - 1)
                                 i = 0;
-                            if(picUriList.size()==1)
-                            {
+                            if (picUriList.size() == 1) {
                                 picUriList.clear();
                                 viewSelectedImages.dismiss();
 
-                            }
-                            else {
+                            } else {
                                 picUriList.remove(item[0]);
                                 madapter.selectedPosition = i;
                                 madapter.notifyDataSetChanged();
@@ -712,7 +708,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                         db.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                if(dataSnapshot.exists()) {
+                                if (dataSnapshot.exists()) {
                                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                                         String url = ds.getValue(String.class);
                                         if (url.equals(DescImages.get(position))) {
@@ -902,8 +898,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                     String contentforother = "Coordinator " + coordinatorSession.getName() + " changed the note of " + task.getName();
                                     sendNotif(mykey, adapter_assignedto.emp.getEmpId(), "changedNote", contentforother, task_id);
                                     dialogBox.dismiss();
-                                }
-                                else
+                                } else
                                     dialogBox.dismiss();
                             }
                         })
@@ -956,7 +951,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                                             idLong = 9999999999999L - idLong;
                                                             sendNotifToAllCoordinators(mykey, "completeJob", "Task " + task.getName() + " has been successfully completed", task_id);
                                                             sendNotif(mykey, task.getCustomerId(), "completeJob", "Task " + task.getName() + " has been successfully completed", task_id);
-                                                            dbCompleted.child(mykey).setValue(new CompletedJob(mykey,task.getStartDate(),simpleDateFormat.format(Calendar.getInstance().getTime()), mykey, customername, "Customer has been notified", "Task is successfully completed", idLong + "",coordinatorSession.getName(),"Coordinator"));
+                                                            dbCompleted.child(mykey).setValue(new CompletedJob(mykey, task.getStartDate(), simpleDateFormat.format(Calendar.getInstance().getTime()), mykey, customername, "Customer has been notified", "Task is successfully completed", idLong + "", coordinatorSession.getName(), "Coordinator"));
                                                             Toast.makeText(TaskDetail.this, "Job completed sucessfully", Toast.LENGTH_SHORT).show();
                                                             dbTaskCompleteStatus.setValue("complete");
                                                             dialog.dismiss();
@@ -1025,7 +1020,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                                 sendNotif(mykey, task.getCustomerId(), "deleteTask", coordinatorSession.getName() + " deleted the " + task.getName() + " task", task_id);
                                                 Toast.makeText(TaskDetail.this, "Job deleted sucessfully", Toast.LENGTH_SHORT).show();
                                                 Intent intent = new Intent(TaskDetail.this, Cust_details.class);
-                                                intent.putExtra("id",task.getCustomerId());
+                                                intent.putExtra("id", task.getCustomerId());
                                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                                 dbDelete.removeEventListener(this);
                                                 DBREF.child("Task").child(task_id).removeValue();
@@ -1052,7 +1047,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 alert.show();
                 break;
             case R.id.item3:
-                final EditText taskname_new,qty_new;
+                final EditText taskname_new, qty_new;
                 Button sub;
 
                 taskEditDetails = new AlertDialog.Builder(this)
@@ -1090,15 +1085,14 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                     @Override
                     public void onClick(View v) {
                         temp_taskname = taskname_new.getText().toString().trim();
-                        temp_taskname= WordUtils.capitalizeFully(temp_taskname);
+                        temp_taskname = WordUtils.capitalizeFully(temp_taskname);
                         temp_qty = qty_new.getText().toString().trim();
                         temp_enddate = enddate_new.getText().toString();
 
-                        if(TextUtils.isEmpty(temp_taskname) || TextUtils.isEmpty(temp_qty) || TextUtils.isEmpty(temp_enddate))
-                            Toast.makeText(TaskDetail.this,"Enter details...",Toast.LENGTH_SHORT).show();
+                        if (TextUtils.isEmpty(temp_taskname) || TextUtils.isEmpty(temp_qty) || TextUtils.isEmpty(temp_enddate))
+                            Toast.makeText(TaskDetail.this, "Enter details...", Toast.LENGTH_SHORT).show();
 
-                        else
-                        {
+                        else {
                             dbedit.child("name").setValue(temp_taskname);
                             dbedit.child("qty").setValue(temp_qty);
                             dbedit.child("expEndDate").setValue(temp_enddate);
@@ -1131,16 +1125,41 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
 
     @Override
     public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear, int dayOfMonth) {
-        String day=String.valueOf(dayOfMonth);
-        if(dayOfMonth<10)
-        {
-            day= "0"+String.valueOf(dayOfMonth);
+        String day = String.valueOf(dayOfMonth);
+        if (dayOfMonth < 10) {
+            day = "0" + String.valueOf(dayOfMonth);
         }
-        if(monthOfYear<9)
+        if (monthOfYear < 9)
             enddate_new.setText(day + "-0" + (monthOfYear + 1) + "-" + year);
         else
             enddate_new.setText(day + "-" + (monthOfYear + 1) + "-" + year);
 
     }
 
+    @Override
+    public void onImageClicked(int position, measurement_adapter.MyViewHolder holder) {
+        viewSelectedImages_measure = new AlertDialog.Builder(TaskDetail.this)
+                .setView(R.layout.viewmeasureimage).create();
+        viewSelectedImages_measure.show();
+
+        measurement m = measurementList.get(position);
+        String uri = m.getFleximage();
+
+        TouchImageView viewchatimage = (TouchImageView) viewSelectedImages_measure.findViewById(R.id.chatimage);
+        ImageButton backbutton = (ImageButton) viewSelectedImages_measure.findViewById(R.id.back);
+
+        Glide.with(getApplicationContext())
+                .load(Uri.parse(uri))
+                .placeholder(R.color.black)
+                .crossFade()
+                .centerCrop()
+                .into(viewchatimage);
+
+        backbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewSelectedImages_measure.dismiss();
+            }
+        });
+    }
 }

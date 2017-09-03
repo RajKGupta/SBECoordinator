@@ -20,10 +20,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class measurement_adapter extends RecyclerView.Adapter<measurement_adapter.MyViewHolder> {
     List<measurement> list = new ArrayList<>();
     private Context context;
+    measurement_adapterListener measurement_adapterListener;
 
-    public measurement_adapter(List<measurement> list, Context context) {
+    public measurement_adapter(List<measurement> list, Context context, measurement_adapterListener measurement_adapterListener) {
         this.list = list;
         this.context = context;
+        this.measurement_adapterListener = measurement_adapterListener;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -58,7 +60,7 @@ public class measurement_adapter extends RecyclerView.Adapter<measurement_adapte
         holder.tag.setText(msr.getTag());
         if(!msr.getFleximage().equals(""))
             Picasso.with(context).load(msr.getFleximage()).placeholder(R.drawable.wait).into(holder.fleximage);
-
+        applyClickEvents(holder, position);
     }
 
     @Override
@@ -66,6 +68,18 @@ public class measurement_adapter extends RecyclerView.Adapter<measurement_adapte
         return list.size();
     }
 
+    public interface measurement_adapterListener {
+        void onImageClicked(int position,MyViewHolder holder);
+    }
+    private void applyClickEvents(final MyViewHolder holder, final int position) {
+
+        holder.fleximage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                measurement_adapterListener.onImageClicked(position,holder);
+            }
+        });
+    }
 }
 
 
