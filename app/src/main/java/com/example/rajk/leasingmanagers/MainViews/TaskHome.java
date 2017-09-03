@@ -210,10 +210,10 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         String selectedFilePath = "";
-        if (requestCode == REQUEST_CODE) {
+        if (requestCode == FilePickerConst.REQUEST_CODE_PHOTO) {
             if (resultCode == RESULT_OK) {
-                mResults = data.getStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS);
-                assert mResults != null;
+                mResults = new ArrayList<>();
+                mResults = data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA);
                 selectedFilePath = mResults.get(0);
             }
         }
@@ -350,10 +350,9 @@ public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListene
         uploadPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ImagesSelectorActivity.class);
-                intent.putExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, 1);
-                intent.putExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, true);
-                startActivityForResult(intent, REQUEST_CODE);
+                FilePickerBuilder.getInstance().setMaxCount(10)
+                        .setActivityTheme(R.style.AppTheme)
+                        .pickPhoto(TaskHome.this);
                 alertDialogAndroid.dismiss();
             }
         });

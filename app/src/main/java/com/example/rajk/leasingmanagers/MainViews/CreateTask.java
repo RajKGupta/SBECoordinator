@@ -47,6 +47,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+
+import droidninja.filepicker.FilePickerBuilder;
+import droidninja.filepicker.FilePickerConst;
+
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormat;
 public class CreateTask extends AppCompatActivity implements CalendarDatePickerDialogFragment.OnDateSetListener {
@@ -144,11 +148,9 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
                             2);
                 } else {
-                    Intent intent = new Intent(CreateTask.this, ImagesSelectorActivity.class);
-                    intent.putExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, 5);
-                    intent.putExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, true);
-                    startActivityForResult(intent, REQUEST_CODE);
-                }
+                    FilePickerBuilder.getInstance().setMaxCount(10)
+                            .setActivityTheme(R.style.AppTheme)
+                            .pickPhoto(CreateTask.this);}
             }
         });
 
@@ -243,10 +245,10 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE) {
+        if (requestCode == FilePickerConst.REQUEST_CODE_PHOTO) {
             if (data != null) {
-                mResults = data.getStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS);
-                assert mResults != null;
+                mResults = new ArrayList<>();
+                mResults.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA));
 
                 // show results in textview
                 System.out.println(String.format("Totally %d images selected:", mResults.size()));
@@ -355,11 +357,9 @@ public class CreateTask extends AppCompatActivity implements CalendarDatePickerD
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    Intent intent = new Intent(CreateTask.this, ImagesSelectorActivity.class);
-                    intent.putExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, 5);
-                    intent.putExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, true);
-                    startActivityForResult(intent, REQUEST_CODE);
-                } else {
+                    FilePickerBuilder.getInstance().setMaxCount(10)
+                            .setActivityTheme(R.style.AppTheme)
+                            .pickPhoto(CreateTask.this);} else {
 
                     final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("These permissions are necessary else you cant upload images")

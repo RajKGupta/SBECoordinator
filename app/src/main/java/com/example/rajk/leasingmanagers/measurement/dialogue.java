@@ -38,6 +38,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 
+import droidninja.filepicker.FilePickerBuilder;
+import droidninja.filepicker.FilePickerConst;
+
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 public class dialogue extends AppCompatActivity {
@@ -92,19 +95,17 @@ public class dialogue extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(dialogue.this, ImagesSelectorActivity.class);
-                intent.putExtra(SelectorSettings.SELECTOR_MAX_IMAGE_NUMBER, 1);
-                intent.putExtra(SelectorSettings.SELECTOR_SHOW_CAMERA, true);
-                startActivityForResult(intent, REQUEST_CODE);
-            }
+                FilePickerBuilder.getInstance().setMaxCount(10)
+                        .setActivityTheme(R.style.AppTheme)
+                        .pickPhoto(dialogue.this);    }
         });
 
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
-
-            photoPaths = data.getStringArrayListExtra(SelectorSettings.SELECTOR_RESULTS);
+        if (requestCode == FilePickerConst.REQUEST_CODE_PHOTO && resultCode == Activity.RESULT_OK && data != null) {
+            photoPaths =new ArrayList<>();
+            photoPaths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA));
             assert photoPaths != null;
 
             System.out.println(String.format("Totally %d images selected:", photoPaths.size()));
