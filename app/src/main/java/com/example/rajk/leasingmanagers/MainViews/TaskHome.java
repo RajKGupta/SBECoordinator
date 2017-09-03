@@ -61,7 +61,6 @@ import static android.app.Activity.RESULT_OK;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
 public class TaskHome extends Fragment implements taskAdapter.TaskAdapterListener {
-    private static final int REQUEST_CODE = 109;
     RecyclerView task_list;
     DatabaseReference dbTask;
     LinearLayoutManager linearLayoutManager;
