@@ -45,6 +45,7 @@ public class RecAdapter_cust extends RecyclerView.Adapter<RecAdapter_cust.RecHol
         holder.icon_text.setText(iconText.charAt(0) + "");
         holder.imgProfile.setImageResource(R.drawable.bg_circle);
         holder.imgProfile.setColorFilter(item.getColor());
+        holder.pendingJobCount.setText((1000-item.getPendingTask())+"");
         DatabaseReference dbTask = DBREF.child("Customer").child(item.getId()).child("Task").getRef();
         final Integer pendingJobs[] = {0};
         dbTask.addChildEventListener(new ChildEventListener() {
@@ -129,7 +130,7 @@ public class RecAdapter_cust extends RecyclerView.Adapter<RecAdapter_cust.RecHol
             name = (TextView) itemView.findViewById(R.id.name);
             icon_text =(TextView)itemView.findViewById(R.id.icon_text);
             imgProfile = (ImageView)itemView.findViewById(R.id.icon_profile);
-            pendingJobCount=(TextView)itemView.findViewById(R.id.pendingTasks);
+            pendingJobCount=(TextView)itemView.findViewById(R.id.pendingTaskCount);
         }
     }
     

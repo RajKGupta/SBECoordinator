@@ -213,6 +213,8 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
 
                 dialog.show();
                 break;
+
+            case R.id.item2:
         }
         return true;
     }
