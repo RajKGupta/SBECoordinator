@@ -156,6 +156,6 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
                 }
 
             }
-            return isInForeground;
+            return false;
         }
     }

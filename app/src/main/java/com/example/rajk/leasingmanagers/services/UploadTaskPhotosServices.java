@@ -108,10 +108,8 @@ public class UploadTaskPhotosServices extends IntentService
                         DatabaseReference ref = DBREF.child("Task").child(taskid).child("DescImages");
                         ref.child(fileNameOnFirebase).setValue(taskSnapshot.getDownloadUrl().toString());
 
-                        if (f+s==totalnoofimages)
-                        {
-                            updateNotification(s+" Uploaded ,"+f+" Failed ");
-                            stopSelf();
+                        if (f+s==totalnoofimages) {
+                            updateNotification(s + " Uploaded ," + f + " Failed ");
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -121,8 +119,7 @@ public class UploadTaskPhotosServices extends IntentService
                         if (f+s==totalnoofimages)
                         {
                             updateNotification(s+" Uploaded ,"+f+" Failed ");
-                            stopSelf();
-                        }
+                            }
                     }
                 });
         }
@@ -148,6 +145,8 @@ public class UploadTaskPhotosServices extends IntentService
             notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.notify(0, mBuilder.build());
         }
+        stopSelf();
+
     }
 
 }
