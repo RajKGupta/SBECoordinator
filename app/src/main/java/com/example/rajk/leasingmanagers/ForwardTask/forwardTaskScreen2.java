@@ -119,7 +119,7 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
                                 String contentforme = "You assigned " + taskName + " task to " + empName;
                                 sendNotif(mykey, mykey, "assignment", contentforme, task_id);
                                 String contentforother = "Coordinator " + coordinatorSession.getName() + " assigned " + taskName + " to you";
-                                sendNotif(mykey, empId, "assignment", contentforother, task_id);
+                                sendNotif(mykey, empId, "assignJob", contentforother, task_id);
                                 startActivity(intent1);
                                 finish();
                             }
@@ -152,7 +152,7 @@ public class forwardTaskScreen2 extends FragmentActivity implements CalendarDate
                                 String contentforme = "You assigned " + customername + " tasks for quotation to " + empName;
                                 sendNotif(mykey, mykey, "forquotation", contentforme, timestamp + "");
                                 String contentforother = "Coordinator " + coordinatorSession.getName() + "forquotation" + " " + customername + " tasks for quotation";
-                                sendNotif(mykey, empId, "assignment", contentforother, timestamp + "");
+                                sendNotif(mykey, empId, "assignJob", contentforother, timestamp + "");
 
 
                                 QuotationBatch temp = new QuotationBatch();

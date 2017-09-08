@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.CustomerAppLink;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotifToAllCoordinators;
@@ -50,6 +51,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
     DatabaseReference db, dbTask, dbaccountinfo;
     RecyclerView rec_customertasks;
     LinearLayoutManager linearLayoutManager;
+    String password;
     private String dbTablekey, mykey;
     ValueEventListener dblistener, dbtasklistener, dbaccountlistener;
     private CustomerTasks_Adapter mAdapter;
@@ -69,6 +71,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
         quotationButton = (Button) findViewById(R.id.quotation);
         quotationButton.setOnClickListener(this);
         id = getIntent().getStringExtra("id");
+
         mykey = coordinatorSession.getUsername();
         Name = (EditText) findViewById(R.id.name);
         Num = (EditText) findViewById(R.id.num);
@@ -93,6 +96,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                     name = (map_new.get("name"));
                     add = (map_new.get("address"));
                     num = (map_new.get("phone_num"));
+                    password = (map_new.get("password"));
                     getSupportActionBar().setTitle(name);
                     Name.setText(name);
                     Num.setText(num);
@@ -224,6 +228,22 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                     }
                 });
 
+                break;
+            case R.id.share:
+                Intent smsIntent = new Intent(Intent.ACTION_VIEW);
+
+                smsIntent.setData(Uri.parse("smsto:"));
+                smsIntent.setType("vnd.android-dir/mms-sms");
+                smsIntent.putExtra("address"  ,num);
+                smsIntent.putExtra("sms_body"  , "Download the app from "+CustomerAppLink+".\nUsername: " +id+"\nPassword: "+password );
+
+                try {
+                    startActivity(smsIntent);
+                    }
+                    catch (android.content.ActivityNotFoundException ex) {
+                    Toast.makeText(Cust_details.this,
+                            "SMS faild, please try again later.", Toast.LENGTH_SHORT).show();
+                }
                 break;
 
             case R.id.item2:

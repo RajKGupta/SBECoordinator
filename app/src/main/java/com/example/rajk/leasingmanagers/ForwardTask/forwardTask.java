@@ -125,7 +125,7 @@ public class forwardTask extends AppCompatActivity {
                                         String contentforother = "Coordinator " + session.getName() + " relieved you of " + taskName;
                                         sendNotif(mykey, swaping_id, "cancelJob", contentforother, task_id);
                                         contentforother = "Coordinator " + session.getName() + " assigned " + taskName + " to you";
-                                        sendNotif(mykey, item.getUsername(), "assignment", contentforother, task_id);
+                                        sendNotif(mykey, item.getUsername(), "assignJob", contentforother, task_id);
                                         Intent intent1 = new Intent(forwardTask.this, TaskDetail.class);
                                         intent1.putExtra("task_id", task_id);
                                         startActivity(intent1);

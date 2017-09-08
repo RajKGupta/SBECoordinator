@@ -28,6 +28,7 @@ import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.adapter.EmployeeTask_Adapter;
 import com.example.rajk.leasingmanagers.chat.ChatActivity;
+import com.example.rajk.leasingmanagers.customer.Cust_details;
 import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
 import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.DataSnapshot;
@@ -40,13 +41,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.rajk.leasingmanagers.LeasingManagers.CustomerAppLink;
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
+import static com.example.rajk.leasingmanagers.LeasingManagers.EmployeeAppLink;
 import static com.example.rajk.leasingmanagers.LeasingManagers.sendNotif;
 
 public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapter.EmployeeTask_AdapterListener{//}, QAdapter.QAdapterListener {
 
     Dialog dialog;
-    String id, name, num, add, desig, temp_name, temp_add, temp_num;
+    String id, name, num, add, desig, temp_name, temp_add, temp_num,password;
     EditText Name, Num, Add, Desig;
     DatabaseReference db;
     RecyclerView rec_employeetask;
@@ -68,7 +71,6 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         listener =this;
         id = getIntent().getStringExtra("id");
         emp_id = id;
-
         Name = (EditText) findViewById(R.id.name);
         Num = (EditText) findViewById(R.id.num);
         Add = (EditText) findViewById(R.id.add);
@@ -98,6 +100,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                     add = (map_new.get("address"));
                     num = (map_new.get("phone_num"));
                     desig = (map_new.get("designation"));
+                    password= (map_new.get("password"));
 
                     Name.setText(name);
                     Num.setText(num);
@@ -214,7 +217,22 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
                 dialog.show();
                 break;
 
-            case R.id.item2:
+            case R.id.share:
+                Intent smsIntent = new Intent(Intent.ACTION_VIEW);
+
+                smsIntent.setData(Uri.parse("smsto:"));
+                smsIntent.setType("vnd.android-dir/mms-sms");
+                smsIntent.putExtra("address"  ,num);
+                smsIntent.putExtra("sms_body"  , "Download the app from "+EmployeeAppLink+".\nUsername: " +id+"\nPassword: "+password );
+
+                try {
+                    startActivity(smsIntent);
+                } catch (android.content.ActivityNotFoundException ex) {
+                    Toast.makeText(Emp_details.this,
+                            "SMS faild, please try again later.", Toast.LENGTH_SHORT).show();
+                }
+
+                break;
         }
         return true;
     }
