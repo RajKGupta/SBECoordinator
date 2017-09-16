@@ -22,7 +22,6 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 public class RecAdapter_cust extends RecyclerView.Adapter<RecAdapter_cust.RecHolder>{
 
     public List<Customer> list;
-    public List<Customer> filterlist;
     Context context;
 
     RecAdapter_cust(List<Customer> list ,Context c){
@@ -103,12 +102,6 @@ public class RecAdapter_cust extends RecyclerView.Adapter<RecAdapter_cust.RecHol
             }
         });
 
-    }
-
-    public void setFilter(List<Customer> countryModels) {
-        filterlist = new ArrayList<>();
-        filterlist.addAll(countryModels);
-        notifyDataSetChanged();
     }
 
     @Override

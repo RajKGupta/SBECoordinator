@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 
-import com.example.rajk.leasingmanagers.employee.Emp_add;
 import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
 
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,12 +20,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.listener.ClickListener;
 import com.example.rajk.leasingmanagers.listener.RecyclerTouchListener;
-import com.example.rajk.leasingmanagers.notification.NotificationActivity;
 import com.example.rajk.leasingmanagers.tablayout.Tabs;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -119,10 +116,12 @@ public class Cust_Tab extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText)
             {
+
                 if (newText.equals(""))
                 {
                     adapter = new RecAdapter_cust(list, getContext());
                     recview.setAdapter(adapter);
+                    b= list;
                 }
                 else                {
                     final List<Customer> filteredModelList = filter(list, newText);
@@ -130,19 +129,19 @@ public class Cust_Tab extends Fragment {
                     recview.setAdapter(adapter);
                     b= filteredModelList;
                 }
-
-
-//                adapter.setFilter(filteredModelList);
                 return true;
             }
         });
-
+        searchView.setIconifiedByDefault(true);
+        searchView.onActionViewCollapsed();
         MenuItemCompat.setOnActionExpandListener(item,
                 new MenuItemCompat.OnActionExpandListener() {
                     @Override
                     public boolean onMenuItemActionCollapse(MenuItem item) {
-// Do something when collapsed
-                        adapter.setFilter(list);
+                        // Do something when collapsed
+                        adapter = new RecAdapter_cust(list, getContext());
+                        recview.setAdapter(adapter);
+                        b= list;
                         return true; // Return true to collapse action view
                     }
 
@@ -152,7 +151,6 @@ public class Cust_Tab extends Fragment {
                         return true; // Return true to expand action view
                     }
                 });
-
 
         final MenuItem item2 = menu.findItem(R.id.refresh);
         item2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {

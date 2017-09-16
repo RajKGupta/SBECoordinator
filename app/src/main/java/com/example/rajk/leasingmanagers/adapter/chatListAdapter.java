@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -31,17 +32,15 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormatW
 public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyViewHolder> {
     ArrayList<ChatListModel> list = new ArrayList<>();
     private Context context;
-    private chatListAdapterListener listener;
     private HashMap<DatabaseReference, ChildEventListener> hashMapCHE;
     private HashMap<DatabaseReference, ValueEventListener> hashMapVLE;
     private CoordinatorSession coordinatorSession;
     private String mykey;
+    public ArrayList<ChatListModel> filterlist;
 
-
-    public chatListAdapter(ArrayList<ChatListModel> list, Context context, chatListAdapterListener listener) {
+    public chatListAdapter(ArrayList<ChatListModel> list, Context context) {
         this.context = context;
         this.list = list;
-        this.listener = listener;
         hashMapCHE = new HashMap<>();
         hashMapVLE = new HashMap<>();
         coordinatorSession = new CoordinatorSession(context);
@@ -53,7 +52,6 @@ public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyView
         ImageView imgProfile, onlineStatus;
         LinearLayout messageContainer;
         RelativeLayout relunread;
-
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -82,7 +80,6 @@ public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyView
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         ChatListModel topic = list.get(position);
         holder.author.setText(topic.getName());
-        applyClickEvents(holder, position);
         applyProfilePicture(holder, topic);
         applyLastMessage(holder, topic);
         applyOnlineStatus(holder, topic);
@@ -92,21 +89,6 @@ public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyView
     @Override
     public int getItemCount() {
         return list.size();
-    }
-
-    public interface chatListAdapterListener {
-        void onChatRowClicked(int position);
-    }
-
-    private void applyClickEvents(MyViewHolder holder, final int position) {
-
-        holder.messageContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onChatRowClicked(position);
-            }
-        });
-
     }
 
     private void applyProfilePicture(MyViewHolder holder, ChatListModel message) {
@@ -212,6 +194,9 @@ public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyView
                         holder.relunread.setVisibility(View.VISIBLE);
                         holder.tvunread.setText(String.valueOf(countunreadmessages[0]));
                     }
+                    else {
+                        holder.relunread.setVisibility(View.GONE);
+                     }
                 } else {
                     holder.relunread.setVisibility(View.GONE);
                     countunreadmessages[0] = 0;

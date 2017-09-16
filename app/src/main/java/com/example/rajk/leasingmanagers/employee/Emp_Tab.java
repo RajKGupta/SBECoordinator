@@ -6,12 +6,14 @@ import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 
 import com.example.rajk.leasingmanagers.helper.DividerItemDecoration;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +41,7 @@ public class Emp_Tab extends Fragment {
     RecyclerView recview;
     RecAdapter_emp adapter;
     List<Employee> list = new ArrayList<Employee>();
+    List<Employee> b = new ArrayList<Employee>();
     Employee emp;
     ProgressDialog pDialog;
     FloatingActionButton emp_add;
@@ -72,6 +75,7 @@ public class Emp_Tab extends Fragment {
 
         adapter = new RecAdapter_emp(list, getContext());
         recview.setAdapter(adapter);
+        b = list;
 
         emp_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +87,7 @@ public class Emp_Tab extends Fragment {
         recview.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recview, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Employee item = list.get(position);
+                Employee item = b.get(position);
                 Intent i = new Intent(getContext(), Emp_details.class);
                 i.putExtra("id", item.getUsername());
                 startActivity(i);
@@ -98,8 +102,54 @@ public class Emp_Tab extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu1, menu);
+        inflater.inflate(R.menu.menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+
+        final MenuItem item = menu.findItem(R.id.search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText)
+            {
+                if (newText.equals(""))
+                {
+                    adapter = new RecAdapter_emp(list, getContext());
+                    recview.setAdapter(adapter);
+                    b= list;
+                }
+                else                {
+                    final List<Employee> filteredModelList = filter(list, newText);
+                    adapter = new RecAdapter_emp(filteredModelList, getContext());
+                    recview.setAdapter(adapter);
+                    b= filteredModelList;
+                }
+                return true;
+            }
+        });
+        searchView.onActionViewCollapsed();
+        searchView.setIconifiedByDefault(true);
+        MenuItemCompat.setOnActionExpandListener(item,
+                new MenuItemCompat.OnActionExpandListener() {
+                    @Override
+                    public boolean onMenuItemActionCollapse(MenuItem item) {
+                        // Do something when collapsed
+                        adapter = new RecAdapter_emp(list, getContext());
+                        recview.setAdapter(adapter);
+                        b= list;
+                        return true; // Return true to collapse action view
+                    }
+
+                    @Override
+                    public boolean onMenuItemActionExpand(MenuItem item) {
+// Do something when expanded
+                        return true; // Return true to expand action view
+                    }
+                });
 
         final MenuItem item2 = menu.findItem(R.id.refresh);
         item2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -115,6 +165,18 @@ public class Emp_Tab extends Fragment {
         });
     }
 
+    private List<Employee> filter(List<Employee> models, String query) {
+        query = query.toLowerCase();
+        final List<Employee
+                > filteredModelList = new ArrayList<>();
+        for (Employee model : models) {
+            final String text = model.getName().toLowerCase();
+            if (text.contains(query)) {
+                filteredModelList.add(model);
+            }
+        }
+        return filteredModelList;
+    }
     class net extends AsyncTask<Void, Void, Void> {
 
         @Override
