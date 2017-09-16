@@ -115,7 +115,7 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
                 }
             });
 
-            if (isAppIsInForeground(this) == false&& !chatnotifList.contains(msgid)) {
+            if (!chatnotifList.contains(msgid)) {
                 DatabaseReference dbOnlineStatus = DBREF.child("Users").child("Usersessions").child(senderuid).getRef();
                 dbOnlineStatus.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
