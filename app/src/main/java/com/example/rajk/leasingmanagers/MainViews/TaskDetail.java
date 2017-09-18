@@ -1,6 +1,7 @@
 package com.example.rajk.leasingmanagers.MainViews;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -57,6 +58,7 @@ import com.example.rajk.leasingmanagers.model.Task;
 import com.example.rajk.leasingmanagers.model.measurement;
 import com.example.rajk.leasingmanagers.services.DeleteTask;
 import com.example.rajk.leasingmanagers.services.DownloadFileService;
+import com.example.rajk.leasingmanagers.services.UploadQuotationService;
 import com.example.rajk.leasingmanagers.services.UploadTaskPhotosServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -91,6 +93,7 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.simpleDateFormat;
 public class TaskDetail extends AppCompatActivity implements taskdetailDescImageAdapter.ImageAdapterListener, assignedto_adapter.assignedto_adapterListener, bigimage_adapter.bigimage_adapterListener , CalendarDatePickerDialogFragment.OnDateSetListener, measurement_adapter.measurement_adapterListener {
 
     private DatabaseReference dbRef, dbTask, dbCompleted, dbAssigned, dbMeasurement, dbDescImages;
+    private int quoteOrDesc;
     ValueEventListener dbTaskVle;
     ImageButton download;
     ProgressBar progressBar;
@@ -305,6 +308,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
                             2);
                 } else {
+                    quoteOrDesc = R.id.photo_desc;
                     FilePickerBuilder.getInstance().setMaxCount(10)
                             .setActivityTheme(R.style.AppTheme)
                             .pickPhoto(TaskDetail.this);
@@ -318,99 +322,143 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == FilePickerConst.REQUEST_CODE_PHOTO) {
             if (data != null) {
-                mResults = new ArrayList<>();
-                mResults.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA));
-                assert mResults != null;
+                if (quoteOrDesc == R.id.photo_desc) {
+                    mResults = new ArrayList<>();
+                    mResults.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA));
+                    assert mResults != null;
 
-                System.out.println(String.format("Totally %d images selected:", mResults.size()));
-                for (String result : mResults) {
-                    String l = compressMe.compressImage(result, getApplicationContext());
-                    picUriList.add(l);
-                }
-                if (picUriList.size() > 0) {
-                    viewSelectedImages = new AlertDialog.Builder(TaskDetail.this)
-                            .setView(R.layout.activity_view_selected_image).create();
-                    viewSelectedImages.show();
+                    System.out.println(String.format("Totally %d images selected:", mResults.size()));
+                    for (String result : mResults) {
+                        String l = compressMe.compressImage(result, getApplicationContext());
+                        picUriList.add(l);
+                    }
+                    if (picUriList.size() > 0) {
+                        viewSelectedImages = new AlertDialog.Builder(TaskDetail.this)
+                                .setView(R.layout.activity_view_selected_image).create();
+                        viewSelectedImages.show();
 
-                    final ImageView ImageViewlarge = (ImageView) viewSelectedImages.findViewById(R.id.ImageViewlarge);
-                    ImageButton cancel = (ImageButton) viewSelectedImages.findViewById(R.id.cancel);
-                    ImageButton canceldone = (ImageButton) viewSelectedImages.findViewById(R.id.canceldone);
-                    ImageButton okdone = (ImageButton) viewSelectedImages.findViewById(R.id.okdone);
-                    RecyclerView rv = (RecyclerView) viewSelectedImages.findViewById(R.id.viewImages);
+                        final ImageView ImageViewlarge = (ImageView) viewSelectedImages.findViewById(R.id.ImageViewlarge);
+                        ImageButton cancel = (ImageButton) viewSelectedImages.findViewById(R.id.cancel);
+                        ImageButton canceldone = (ImageButton) viewSelectedImages.findViewById(R.id.canceldone);
+                        ImageButton okdone = (ImageButton) viewSelectedImages.findViewById(R.id.okdone);
+                        RecyclerView rv = (RecyclerView) viewSelectedImages.findViewById(R.id.viewImages);
 
-                    linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
-                    rv.setLayoutManager(linearLayoutManager);
-                    rv.setItemAnimator(new DefaultItemAnimator());
-                    rv.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.HORIZONTAL));
+                        linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+                        rv.setLayoutManager(linearLayoutManager);
+                        rv.setItemAnimator(new DefaultItemAnimator());
+                        rv.addItemDecoration(new DividerItemDecoration(getApplicationContext(), LinearLayoutManager.HORIZONTAL));
 
-                    madapter = new ViewImageAdapter(picUriList, this);
-                    rv.setAdapter(madapter);
+                        madapter = new ViewImageAdapter(picUriList, this);
+                        rv.setAdapter(madapter);
 
-                    final String[] item = {picUriList.get(0)};
-                    ImageViewlarge.setImageURI(Uri.parse(item[0]));
+                        final String[] item = {picUriList.get(0)};
+                        ImageViewlarge.setImageURI(Uri.parse(item[0]));
 
-                    rv.addOnItemTouchListener(new RecyclerTouchListener(this, rv, new ClickListener() {
-                        @Override
-                        public void onClick(View view, int position) {
-                            madapter.selectedPosition = position;
-                            madapter.notifyDataSetChanged();
-                            item[0] = picUriList.get(position);
-                            ImageViewlarge.setImageURI(Uri.parse(item[0]));
-                        }
-
-                        @Override
-                        public void onLongClick(View view, int position) {
-
-                        }
-                    }));
-
-                    cancel.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            int i = picUriList.indexOf(item[0]);
-                            if (i == picUriList.size() - 1)
-                                i = 0;
-                            if (picUriList.size() == 1) {
-                                picUriList.clear();
-                                viewSelectedImages.dismiss();
-
-                            } else {
-                                picUriList.remove(item[0]);
-                                madapter.selectedPosition = i;
+                        rv.addOnItemTouchListener(new RecyclerTouchListener(this, rv, new ClickListener() {
+                            @Override
+                            public void onClick(View view, int position) {
+                                madapter.selectedPosition = position;
                                 madapter.notifyDataSetChanged();
-                                item[0] = picUriList.get(i);
+                                item[0] = picUriList.get(position);
                                 ImageViewlarge.setImageURI(Uri.parse(item[0]));
                             }
-                        }
-                    });
 
-                    canceldone.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            picUriList.clear();
-                            viewSelectedImages.dismiss();
-                        }
-                    });
+                            @Override
+                            public void onLongClick(View view, int position) {
 
-                    okdone.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                            }
+                        }));
 
-                            if (picUriList.size() > 0) {
-                                Intent serviceIntent = new Intent(getApplicationContext(), UploadTaskPhotosServices.class);
-                                serviceIntent.putStringArrayListExtra("picUriList", picUriList);
-                                serviceIntent.putExtra("taskid", task_id);
-                                startService(serviceIntent);
-                                finish();
-                            } else {
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                int i = picUriList.indexOf(item[0]);
+                                if (i == picUriList.size() - 1)
+                                    i = 0;
+                                if (picUriList.size() == 1) {
+                                    picUriList.clear();
+                                    viewSelectedImages.dismiss();
+
+                                } else {
+                                    picUriList.remove(item[0]);
+                                    madapter.selectedPosition = i;
+                                    madapter.notifyDataSetChanged();
+                                    item[0] = picUriList.get(i);
+                                    ImageViewlarge.setImageURI(Uri.parse(item[0]));
+                                }
+                            }
+                        });
+
+                        canceldone.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                picUriList.clear();
                                 viewSelectedImages.dismiss();
                             }
-                        }
-                    });
+                        });
+
+                        okdone.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if (picUriList.size() > 0) {
+                                    Intent serviceIntent = new Intent(getApplicationContext(), UploadTaskPhotosServices.class);
+                                    serviceIntent.putStringArrayListExtra("picUriList", picUriList);
+                                    serviceIntent.putExtra("taskid", task_id);
+                                    startService(serviceIntent);
+                                    finish();
+                                } else {
+                                    viewSelectedImages.dismiss();
+                                }
+                            }
+                        });
+                    }
+                }
+                else if(quoteOrDesc == R.id.item4)
+                {
+                    ArrayList<String> photoPaths = new ArrayList<>();
+                    photoPaths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA));
+
+                                String l = compressMe.compressImage(photoPaths.get(0), TaskDetail.this);
+                                uploadFile(l, "photo");
+
                 }
             }
         }
+        else if( requestCode ==FilePickerConst.REQUEST_CODE_DOC)
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            ArrayList<String> docPaths = new ArrayList<>();
+            docPaths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_DOCS));
+            for (String result : docPaths) {
+                uploadFile(result, "doc");
+            }
+        }
+
+
+
     }
+    private void uploadFile(String filePath, String type) {
+
+        if (filePath != null && !filePath.equals("")) {
+            ArrayList<String> taskid_list = new ArrayList<>();
+
+            taskid_list.add(task.getTaskId());
+
+            String temp = Uri.fromFile(new File(filePath)).toString();
+
+            Intent serviceIntent = new Intent(this, UploadQuotationService.class);
+            serviceIntent.putExtra("TaskIdList", taskid_list);
+            serviceIntent.putExtra("customerId", task.getCustomerId());
+            serviceIntent.putExtra("selectedFileUri", temp);
+            serviceIntent.putExtra("customerName",customername);
+
+            this.startService(serviceIntent);
+        } else {
+            Toast.makeText(this, "Cannot upload file to server", Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
 
     @Override
     protected void onStop() {
@@ -986,6 +1034,41 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                     }
                 });
                 break;
+
+            case R.id.item4:
+                quoteOrDesc = R.id.item4;
+                LayoutInflater layoutInflaterAndroid = LayoutInflater.from(this);
+                View mView = layoutInflaterAndroid.inflate(R.layout.options_foruploadquotation, null);
+                AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(this);
+                alertDialogBuilderUserInput.setView(mView);
+
+                LinearLayout uploadPhoto = (LinearLayout) mView.findViewById(R.id.uploadPhoto);
+                LinearLayout uploadDoc = (LinearLayout) mView.findViewById(R.id.uploadDoc);
+
+
+                alertDialogBuilderUserInput.setCancelable(true);
+                final AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+                alertDialogAndroid.show();
+                uploadPhoto.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        FilePickerBuilder.getInstance().setMaxCount(10)
+                                .setActivityTheme(R.style.AppTheme)
+                                .pickPhoto(TaskDetail.this);
+                        alertDialogAndroid.dismiss();
+                    }
+                });
+                uploadDoc.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        FilePickerBuilder.getInstance().setMaxCount(1)
+                                .setActivityTheme(R.style.AppTheme)
+                                .pickFile(TaskDetail.this);
+                        alertDialogAndroid.dismiss();
+                    }
+                });
+
+        break;
 
             case R.id.item2:
                 final AlertDialog.Builder builder = new AlertDialog.Builder(TaskDetail.this);
