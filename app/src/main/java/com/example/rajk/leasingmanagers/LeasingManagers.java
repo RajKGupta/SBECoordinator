@@ -149,29 +149,7 @@ public class LeasingManagers extends android.support.multidex.MultiDexApplicatio
         userkey = session.getUsername();
         setOnlineStatus(userkey);
         Fresco.initialize(getApplicationContext());
-        DBREF.child("CustomerAppLink").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                CustomerAppLink = dataSnapshot.getValue(String.class);
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        DBREF.child("EmployeeAppLink").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                EmployeeAppLink = dataSnapshot.getValue(String.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
     }
 

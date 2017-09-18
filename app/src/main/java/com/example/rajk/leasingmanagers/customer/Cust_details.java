@@ -66,6 +66,17 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cust_details);
+        DBREF.child("cal").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                CustomerAppLink = dataSnapshot.getValue(String.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         coordinatorSession = new CoordinatorSession(this);
         quotationButton = (Button) findViewById(R.id.quotation);
