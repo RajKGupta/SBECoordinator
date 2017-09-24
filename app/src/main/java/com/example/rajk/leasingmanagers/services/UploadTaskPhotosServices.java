@@ -25,10 +25,6 @@ import java.util.ArrayList;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
-/**
- * Created by SoumyaAgarwal on 6/28/2017.
- */
-
 public class UploadTaskPhotosServices extends IntentService
 {
     public static ArrayList<String> picUriList = new ArrayList<String>();
@@ -55,7 +51,7 @@ public class UploadTaskPhotosServices extends IntentService
         mBuilder.setSmallIcon(icon)
                 .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_upload))
                 .setContentTitle(getString(R.string.app_name))
-                .setOngoing(true)
+                .setOngoing(false)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setColor(getApplicationContext().getResources().getColor(R.color.white))
                 .setContentText("Uploading photos...");

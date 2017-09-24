@@ -241,19 +241,22 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
 
                 break;
             case R.id.share:
-                Intent smsIntent = new Intent(Intent.ACTION_VIEW);
-
+                Intent smsIntent = new Intent(Intent.ACTION_SEND);
+                String content = "Hi "+name+". Download the Tanu Enterprises App from "+CustomerAppLink+".\nUsername: " +id+"\nPassword: "+password;
                 smsIntent.setData(Uri.parse("smsto:"));
-                smsIntent.setType("vnd.android-dir/mms-sms");
+                smsIntent.setType("text/plain");
                 smsIntent.putExtra("address"  ,num);
-                smsIntent.putExtra("sms_body"  , "Download the app from "+CustomerAppLink+".\nUsername: " +id+"\nPassword: "+password );
+                smsIntent.putExtra("sms_body"  , content);
+                smsIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Download the Tanu Enterprises App.");
+                smsIntent.putExtra(android.content.Intent.EXTRA_TEXT,content );
+                smsIntent.putExtra("sms_body"  , content );
 
                 try {
-                    startActivity(smsIntent);
+                    startActivity(Intent.createChooser(smsIntent,"Share Customer App Link "));
                     }
                     catch (android.content.ActivityNotFoundException ex) {
                     Toast.makeText(Cust_details.this,
-                            "SMS faild, please try again later.", Toast.LENGTH_SHORT).show();
+                            "Your phone does not support this option. Contact manufacturer for details", Toast.LENGTH_SHORT).show();
                 }
                 break;
 

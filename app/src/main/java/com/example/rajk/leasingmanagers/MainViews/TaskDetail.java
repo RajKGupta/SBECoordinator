@@ -406,7 +406,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                     serviceIntent.putStringArrayListExtra("picUriList", picUriList);
                                     serviceIntent.putExtra("taskid", task_id);
                                     startService(serviceIntent);
-                                    finish();
+                                    viewSelectedImages.dismiss();
                                 } else {
                                     viewSelectedImages.dismiss();
                                 }
@@ -1052,7 +1052,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                 uploadPhoto.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        FilePickerBuilder.getInstance().setMaxCount(10)
+                        FilePickerBuilder.getInstance().setMaxCount(1)
                                 .setActivityTheme(R.style.AppTheme)
                                 .pickPhoto(TaskDetail.this);
                         alertDialogAndroid.dismiss();
