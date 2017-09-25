@@ -46,7 +46,7 @@ import android.support.v7.widget.SearchView;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 
-public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class ChatFragment extends Fragment {
     private View myFragmentView;
     FragmentManager fmm;
     ArrayList<ChatListModel> list = new ArrayList<>();
@@ -58,7 +58,6 @@ public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private HashMap<DatabaseReference, ValueEventListener> dbLastMessageHashMap = new HashMap<>();
     private ChildEventListener dbChatCHE;
     private HashMap<DatabaseReference, ValueEventListener> dbProfileRefHashMap = new HashMap<>();
-    SwipeRefreshLayout swipeLayout;
 
     public static ChatFragment newInstance() {
         ChatFragment fragment = new ChatFragment();
@@ -83,13 +82,6 @@ public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         fmm = getFragmentManager();
-
-        swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
-        swipeLayout.setOnRefreshListener(this);
-        swipeLayout.setColorScheme(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
 
         CoordinatorSession coordinatorSession = new CoordinatorSession(getActivity());
         mykey = coordinatorSession.getUsername();
@@ -329,15 +321,4 @@ public class ChatFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         });
     }
 
-    @Override
-    public void onRefresh() {
-        list.clear();
-        LoadData();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                swipeLayout.setRefreshing(false);
-            }
-        }, 1000);
-    }
 }

@@ -97,7 +97,7 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
     ValueEventListener dbTaskVle;
     ImageButton download;
     ProgressBar progressBar;
-    public static String task_id;
+    public static String task_id,customerId,taskName;
     private String mykey;
     private Task task;
     private String customername;
@@ -215,6 +215,35 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     task = dataSnapshot.getValue(Task.class);
+                    taskName=task.getName();
+                    customerId=task.getCustomerId();
+                    dbMeasurement.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.exists())
+                            {
+                                if(task.getMeasurementApproved()!=null) {
+                                    if (task.getMeasurementApproved() == Boolean.TRUE)
+                                    {
+                                        measure_and_hideme.setText("Approved By Me: Yes");
+                                    }
+                                    else
+                                    {
+                                        measure_and_hideme.setText("Approved By Me: No");
+                                    }
+                                }
+
+                            }
+                            else {
+                                measure_and_hideme.setText("No measurement taken for this job");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                     setValue(task);
                     getSupportActionBar().setTitle(task.getName());
                     DatabaseReference dbCustomerName = DBREF.child("Customer").child(task.getCustomerId()).getRef();
@@ -572,12 +601,9 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.exists()) {
-                    measure_and_hideme.setVisibility(View.GONE);
                     measurement item = dataSnapshot.getValue(measurement.class);
                     measurementList.add(item);
                     adapter_measurement.notifyDataSetChanged();
-                } else {
-                    measure_and_hideme.setVisibility(View.VISIBLE);
                 }
             }
 

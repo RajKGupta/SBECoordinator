@@ -20,6 +20,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
+import com.example.rajk.leasingmanagers.LeasingManagers;
 import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.helper.CompressMe;
@@ -56,7 +58,7 @@ public class dialogue extends AppCompatActivity {
     ImageView img;
     String item;
     CompressMe compressMe;
-
+    CoordinatorSession coordinatorSession;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dialogue);
@@ -68,7 +70,7 @@ public class dialogue extends AppCompatActivity {
         height = (EditText) findViewById(R.id.height);
         unit = (EditText) findViewById(R.id.unit);
         tag = (EditText) findViewById(R.id.tag);
-
+    coordinatorSession = new CoordinatorSession(this);
         pd = new ProgressDialog(dialogue.this);
         pd.setMessage("Uploading....");
 
@@ -172,6 +174,8 @@ public class dialogue extends AppCompatActivity {
                         fleximage = taskSnapshot.getDownloadUrl().toString();
                         measurement temp = new measurement(temp_tag, temp_width, temp_height, fleximage, temp_unit, id);
                         db.setValue(temp);
+                        DBREF.child("Task").child(TaskDetail.task_id).child("measurementApproved").setValue(Boolean.FALSE);
+                        LeasingManagers.sendNotif(coordinatorSession.getUsername(),TaskDetail.customerId,"measurementChanged","Measurement for your task "+TaskDetail.taskName+" has been changed. Please approve it.",TaskDetail.task_id);
                         pd.dismiss();
 
 

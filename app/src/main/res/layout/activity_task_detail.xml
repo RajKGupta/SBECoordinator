@@ -116,7 +116,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:enabled="false"
-                            android:inputType="numberSigned"
+                            android:inputType="text"
                             android:textColor="@color/colorPrimaryDark"
                             android:textSize="15dp" />
 
@@ -396,13 +396,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/measurementbuttonandtext"
-                        android:text="No measurements taken for this job" />
+                         />
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/rec_measurement"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/measurementbuttonandtext"
+                        android:layout_below="@+id/measure_and_hideme"
                         android:layout_marginTop="1dp"
                         android:nestedScrollingEnabled="true" />
 
