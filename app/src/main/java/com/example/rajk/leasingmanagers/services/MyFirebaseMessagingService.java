@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
@@ -66,7 +67,7 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
                     if (dataSnapshot.exists()) {
                         NameAndStatus nameAndStatus = dataSnapshot.getValue(NameAndStatus.class);
                         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(MyFirebaseMessagingService.this)
-                                .setSmallIcon(R.mipmap.ic_launcher)
+                                .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher))
                                 .setContentTitle("New Notification from " + nameAndStatus.getName())
                                 .setContentText(body)
                                 .setAutoCancel(true)
@@ -123,7 +124,7 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
                         if (dataSnapshot.exists()) {
                             NameAndStatus nameAndStatus = dataSnapshot.getValue(NameAndStatus.class);
                             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(MyFirebaseMessagingService.this)
-                                    .setSmallIcon(R.mipmap.ic_launcher)
+                                    .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher))
                                     .setContentTitle("New Message from " + nameAndStatus.getName())
                                     .setContentText(msg)
                                     .setAutoCancel(true)

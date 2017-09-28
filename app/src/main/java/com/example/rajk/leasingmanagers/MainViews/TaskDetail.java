@@ -225,11 +225,11 @@ public class TaskDetail extends AppCompatActivity implements taskdetailDescImage
                                 if(task.getMeasurementApproved()!=null) {
                                     if (task.getMeasurementApproved() == Boolean.TRUE)
                                     {
-                                        measure_and_hideme.setText("Approved By Me: Yes");
+                                        measure_and_hideme.setText("Approved By Customer: Yes");
                                     }
                                     else
                                     {
-                                        measure_and_hideme.setText("Approved By Me: No");
+                                        measure_and_hideme.setText("Approved By Customer: No");
                                     }
                                 }
 
