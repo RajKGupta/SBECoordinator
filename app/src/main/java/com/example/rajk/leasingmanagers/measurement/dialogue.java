@@ -185,6 +185,14 @@ public class dialogue extends AppCompatActivity {
                         LeasingManagers.sendNotif(coordinatorSession.getUsername(), TaskDetail.customerId, "measurementChanged", "Measurement for your task " + TaskDetail.taskName + " has been changed. Please approve it.", TaskDetail.task_id);
                         pd.dismiss();
 
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(dialogue.this, "Ask", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+
 
                         // put the String to pass back into an Intent and close this activity
 
@@ -220,6 +228,17 @@ public class dialogue extends AppCompatActivity {
                 intent.putExtra("id", id);
 
                 setResult(RESULT_OK, intent);
+
+                DBREF.child("Task").child(TaskDetail.task_id).child("measurementApproved").setValue(Boolean.FALSE);
+                LeasingManagers.sendNotif(coordinatorSession.getUsername(), TaskDetail.customerId, "measurementChanged", "Measurement for your task " + TaskDetail.taskName + " has been changed. Please approve it.", TaskDetail.task_id);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(dialogue.this, "Ask", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 finish();
 
             }

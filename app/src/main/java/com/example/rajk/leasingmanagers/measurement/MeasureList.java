@@ -10,7 +10,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.example.rajk.leasingmanagers.CoordinatorLogin.CoordinatorSession;
+import com.example.rajk.leasingmanagers.LeasingManagers;
 import com.example.rajk.leasingmanagers.MainViews.TaskDetail;
 import com.example.rajk.leasingmanagers.R;
 import com.example.rajk.leasingmanagers.listener.ClickListener;
@@ -38,6 +41,9 @@ public class MeasureList extends AppCompatActivity {
     private List<measurement> listItems = new ArrayList<>();
     String task_id, id;
     ChildEventListener ch;
+    CoordinatorSession coordinatorSession;
+    int flag_changed = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +61,7 @@ public class MeasureList extends AppCompatActivity {
         registerForContextMenu(recyclerView);
 
         adapter = new MyAdapter(listItems, this);
-
+        coordinatorSession = new CoordinatorSession(this);
         recyclerView.setAdapter(adapter);
 
 
@@ -113,6 +119,11 @@ public class MeasureList extends AppCompatActivity {
         st.delete();
         db.removeValue();
 
+        DBREF.child("Task").child(TaskDetail.task_id).child("measurementApproved").setValue(Boolean.FALSE);
+        LeasingManagers.sendNotif(coordinatorSession.getUsername(), TaskDetail.customerId, "measurementChanged", "Measurement for your task " + TaskDetail.taskName + " has been changed. Please approve it.", TaskDetail.task_id);
+
+        Toast.makeText(MeasureList.this, "Ask", Toast.LENGTH_SHORT).show();
+
         listItems.remove(pos);
         adapter.notifyDataSetChanged();
     }
@@ -127,6 +138,7 @@ public class MeasureList extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent i = new Intent(this, dialogue.class);
         startActivityForResult(i, 100);
+        flag_changed = 1;
         return true;
 
     }
@@ -151,6 +163,16 @@ public class MeasureList extends AppCompatActivity {
 
                 dbRef.child(id).setValue(m);
 
+
+                // ask for approval only if + in menu is clicked not if row is clicked
+                if(flag_changed == 1){
+                    DBREF.child("Task").child(TaskDetail.task_id).child("measurementApproved").setValue(Boolean.FALSE);
+                    LeasingManagers.sendNotif(coordinatorSession.getUsername(), TaskDetail.customerId, "measurementChanged", "Measurement for your task " + TaskDetail.taskName + " has been changed. Please approve it.", TaskDetail.task_id);
+                    Toast.makeText(MeasureList.this, "Ask", Toast.LENGTH_SHORT).show();
+
+                }
+
+                flag_changed = 0;
             }
         }
     }

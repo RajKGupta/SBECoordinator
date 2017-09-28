@@ -5,6 +5,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -27,6 +29,7 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
+import java.util.List;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.AppName;
 
@@ -133,22 +136,23 @@ public class DownloadFileService extends IntentService {
             Uri pdfPath;
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 pdfPath = FileProvider.getUriForFile(DownloadFileService.this,
-                        "com.example.rajk.leasingmanagers.fileprovider",
+                        BuildConfig.APPLICATION_ID +".provider",
                         localFile);
-
-                if (pdfPath.toString().substring(0, 7).matches("file://")) {
-                    pdfPath =  Uri.parse(pdfPath.toString().substring(7));
-                }
             }
             else{
                 pdfPath = Uri.fromFile(localFile);
             }
             if (open.equals("application")) {
-                intent.setDataAndType(pdfPath, "application/pdf");
+                intent.setDataAndType(pdfPath, "application/pdf")
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             }
             else {
-                intent.setDataAndType(pdfPath, "image/*");
+                intent.setDataAndType(pdfPath, "image/*")
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             }
+            
         }
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
