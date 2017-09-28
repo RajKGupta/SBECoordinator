@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -17,6 +16,7 @@ import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.rajk.leasingmanagers.BuildConfig;
 import com.example.rajk.leasingmanagers.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,12 +27,8 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 import static com.example.rajk.leasingmanagers.LeasingManagers.AppName;
-import static java.security.AccessController.getContext;
 
 
 public class DownloadFileService extends IntentService {
@@ -55,7 +51,7 @@ public class DownloadFileService extends IntentService {
         mBuilder.setSmallIcon(icon)
                 .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_download))
                 .setContentTitle(getString(R.string.app_name))
-                .setOngoing(false)
+                .setOngoing(true)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setColor(getApplicationContext().getResources().getColor(R.color.white))
                 .setContentText("Downloading Quotation...");
@@ -125,6 +121,7 @@ public class DownloadFileService extends IntentService {
             }
         });
 
+
     }
 
     private void updateNotification(String information, String open, File localFile) {
@@ -132,43 +129,27 @@ public class DownloadFileService extends IntentService {
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         Toast.makeText(this, open, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Uri contentUri = FileProvider.getUriForFile(getApplicationContext(), "com.your.package.fileProvider", localFile);
-            if (open.equals("application")) {
-                intent.setDataAndType(contentUri, "application/pdf");
-            }
-            else {
-                intent.setDataAndType(contentUri, "image/*");
-            }
-        } else {
-            Uri pdfPath = Uri.fromFile(localFile);
-            if (open.equals("application")) {
-                intent.setDataAndType(pdfPath, "application/pdf");
-            }
-            else {
-                intent.setDataAndType(pdfPath, "image/*");
-            }
-        }
-/*        if (localFile.exists()) {
-            Uri pdfPath = Uri.fromFile(localFile);
-            if (open.equals("application")) {
-                intent.setDataAndType(pdfPath, "application/pdf");
-            }
-            else {
-                intent.setDataAndType(pdfPath, "image/*");
-            }
-        }
-        else {
-            AssetManager assets=getAssets();
+        if (localFile.exists()) {
+            Uri pdfPath;
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                pdfPath = FileProvider.getUriForFile(DownloadFileService.this,
+                        "com.example.rajk.leasingmanagers.fileprovider",
+                        localFile);
 
-            try {
-                copy(assets.open(AppName+"/Docs"), localFile);
+                if (pdfPath.toString().substring(0, 7).matches("file://")) {
+                    pdfPath =  Uri.parse(pdfPath.toString().substring(7));
+                }
             }
-            catch (IOException e) {
-                Log.e("FileProvider", "Exception copying from assets", e);
+            else{
+                pdfPath = Uri.fromFile(localFile);
             }
-        }*/
+            if (open.equals("application")) {
+                intent.setDataAndType(pdfPath, "application/pdf");
+            }
+            else {
+                intent.setDataAndType(pdfPath, "image/*");
+            }
+        }
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
@@ -190,16 +171,5 @@ public class DownloadFileService extends IntentService {
 
     }
 
-    static private void copy(InputStream in, File dst) throws IOException {
-        FileOutputStream out=new FileOutputStream(dst);
-        byte[] buf=new byte[1024];
-        int len;
 
-        while ((len=in.read(buf)) > 0) {
-            out.write(buf, 0, len);
-        }
-
-        in.close();
-        out.close();
-    }
 }

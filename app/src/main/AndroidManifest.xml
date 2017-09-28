@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.rajk.leasingmanagers">
-    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
+
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -22,8 +23,18 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        >
+        android:theme="@style/AppTheme" >
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.rajk.leasingmanagers.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
         <service android:name=".services.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -35,8 +46,8 @@
             android:configChanges="orientation|screenSize" />
         <activity
             android:name=".CoordinatorLogin.coordinatorLogin"
-            android:screenOrientation="portrait"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -58,7 +69,8 @@
             android:name=".tablayout.Tabs"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".chat.ChatActivity"
+        <activity
+            android:name=".chat.ChatActivity"
             android:screenOrientation="portrait" />
 
         <service android:name=".services.MyFirebaseInstanceIDService">
@@ -70,8 +82,8 @@
         <activity
             android:name=".drawer"
             android:label="@string/title_activity_drawer1"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainViews.CreateTask"
             android:screenOrientation="portrait" />
@@ -107,7 +119,7 @@
         <activity
             android:name=".measurement.dialogue"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <service
             android:name=".services.UploadTaskPhotosServices"
@@ -119,41 +131,38 @@
             android:name=".services.DownloadFileService"
             android:exported="false" />
 
-        <activity android:name=".customer.UploadQuotationActivity"
+        <activity
+            android:name=".customer.UploadQuotationActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".CoordinatorLogin.CoordinatorSignUp"
+        <activity
+            android:name=".CoordinatorLogin.CoordinatorSignUp"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Quotation.QuotaionTasks"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity android:name=".notification.NotificationActivity"
+        <activity
+            android:name=".notification.NotificationActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".MyProfile.MyProfile"
+        <activity
+            android:name=".MyProfile.MyProfile"
             android:screenOrientation="portrait" />
 
         <service
             android:name=".services.DeleteTask"
             android:exported="false" />
 
-        <activity android:name=".MyProfile.ContactCoordinator"
+        <activity
+            android:name=".MyProfile.ContactCoordinator"
             android:screenOrientation="portrait" />
-        <activity android:name=".MyProfile.phonebook"
+        <activity
+            android:name=".MyProfile.phonebook"
             android:screenOrientation="portrait" />
 
         <service
             android:name=".services.UploadPhotoAndFile"
-            android:exported="false"></service>
+            android:exported="false"/>
 
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.your.package.fileProvider"
-            android:grantUriPermissions="true"
-            android:exported="false">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
 
     </application>
 

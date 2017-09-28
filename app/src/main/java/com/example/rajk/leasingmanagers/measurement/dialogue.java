@@ -48,8 +48,8 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
 public class dialogue extends AppCompatActivity {
 
     private ArrayList<String> photoPaths = new ArrayList<>();
-    EditText width, height, unit, tag;
-    String fleximage = "", temp_width, temp_height, temp_unit, id = "", temp_tag="";
+    EditText width, height, unit, tag, amount;
+    String fleximage = "", temp_width, temp_height, temp_unit, temp_amount, id = "", temp_tag = "";
     private static final int REQUEST_CODE = 51;
     DatabaseReference dbRef, db;
     StorageReference storageReference, sf;
@@ -59,6 +59,7 @@ public class dialogue extends AppCompatActivity {
     String item;
     CompressMe compressMe;
     CoordinatorSession coordinatorSession;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dialogue);
@@ -70,7 +71,9 @@ public class dialogue extends AppCompatActivity {
         height = (EditText) findViewById(R.id.height);
         unit = (EditText) findViewById(R.id.unit);
         tag = (EditText) findViewById(R.id.tag);
-    coordinatorSession = new CoordinatorSession(this);
+        amount = (EditText) findViewById(R.id.amount);
+
+        coordinatorSession = new CoordinatorSession(this);
         pd = new ProgressDialog(dialogue.this);
         pd.setMessage("Uploading....");
 
@@ -82,12 +85,14 @@ public class dialogue extends AppCompatActivity {
             temp_unit = getIntent().getStringExtra("unit");
             fleximage = getIntent().getStringExtra("fleximage");
             temp_tag = getIntent().getStringExtra("tag");
+            temp_amount = getIntent().getStringExtra("amount");
             id = getIntent().getStringExtra("id");
 
             width.setText(temp_width);
             height.setText(temp_height);
             unit.setText(temp_unit);
             tag.setText(temp_tag);
+            amount.setText(temp_amount);
             if (!fleximage.equals(""))
                 Picasso.with(dialogue.this).load(fleximage).into(img);
         }
@@ -99,14 +104,15 @@ public class dialogue extends AppCompatActivity {
             public void onClick(View v) {
                 FilePickerBuilder.getInstance().setMaxCount(1)
                         .setActivityTheme(R.style.AppTheme)
-                        .pickPhoto(dialogue.this);    }
+                        .pickPhoto(dialogue.this);
+            }
         });
 
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == FilePickerConst.REQUEST_CODE_PHOTO && resultCode == Activity.RESULT_OK && data != null) {
-            photoPaths =new ArrayList<>();
+            photoPaths = new ArrayList<>();
             photoPaths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA));
             assert photoPaths != null;
 
@@ -136,8 +142,9 @@ public class dialogue extends AppCompatActivity {
         temp_height = height.getText().toString();
         temp_unit = unit.getText().toString();
         temp_tag = tag.getText().toString();
+        temp_amount = amount.getText().toString();
 
-        if (temp_width.equals("") || temp_height.equals("") || temp_unit.equals(""))
+        if (temp_width.equals("") || temp_height.equals("") || temp_unit.equals("") ||temp_amount.equals("") )
             Toast.makeText(this, "Enter complete details...", Toast.LENGTH_SHORT).show();
         else
             new net().execute();
@@ -161,7 +168,7 @@ public class dialogue extends AppCompatActivity {
 
             db = dbRef.child("Task").child(TaskDetail.task_id).child("Measurement").child(id);
 
-            if(!tempUri.toString().equals("")) {
+            if (!tempUri.toString().equals("")) {
                 sf = storageReference.child(TaskDetail.task_id).child(id + ".jpeg");
 
                 UploadTask uploadTask = sf.putFile(tempUri);
@@ -172,10 +179,10 @@ public class dialogue extends AppCompatActivity {
 
                         Toast.makeText(dialogue.this, "Upload successful", Toast.LENGTH_SHORT).show();
                         fleximage = taskSnapshot.getDownloadUrl().toString();
-                        measurement temp = new measurement(temp_tag, temp_width, temp_height, fleximage, temp_unit, id);
+                        measurement temp = new measurement(temp_tag, temp_width, temp_height, fleximage, temp_unit, id,temp_amount);
                         db.setValue(temp);
                         DBREF.child("Task").child(TaskDetail.task_id).child("measurementApproved").setValue(Boolean.FALSE);
-                        LeasingManagers.sendNotif(coordinatorSession.getUsername(),TaskDetail.customerId,"measurementChanged","Measurement for your task "+TaskDetail.taskName+" has been changed. Please approve it.",TaskDetail.task_id);
+                        LeasingManagers.sendNotif(coordinatorSession.getUsername(), TaskDetail.customerId, "measurementChanged", "Measurement for your task " + TaskDetail.taskName + " has been changed. Please approve it.", TaskDetail.task_id);
                         pd.dismiss();
 
 
@@ -187,6 +194,7 @@ public class dialogue extends AppCompatActivity {
                         intent.putExtra("unit", temp_unit);
                         intent.putExtra("fleximage", fleximage);
                         intent.putExtra("tag", temp_tag);
+                        intent.putExtra("amount", temp_amount);
                         intent.putExtra("id", id);
 
                         setResult(RESULT_OK, intent);
@@ -201,13 +209,13 @@ public class dialogue extends AppCompatActivity {
                     }
                 });
 
-            }
-            else{
+            } else {
                 Intent intent = new Intent();
                 intent.putExtra("width", temp_width);
                 intent.putExtra("height", temp_height);
                 intent.putExtra("unit", temp_unit);
                 intent.putExtra("fleximage", fleximage);
+                intent.putExtra("amount", temp_amount);
                 intent.putExtra("tag", temp_tag);
                 intent.putExtra("id", id);
 

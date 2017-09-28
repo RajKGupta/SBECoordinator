@@ -65,7 +65,7 @@ public class MeasureList extends AppCompatActivity {
                 //Action for on click event
 
 
-                String width, height, unit, fleximage,tag;
+                String width, height, unit, fleximage,tag,amount;
 
 
                 measurement temp = listItems.get(position);
@@ -74,6 +74,7 @@ public class MeasureList extends AppCompatActivity {
                 unit = temp.getUnit();
                 fleximage = temp.getFleximage();
                 tag = temp.getTag();
+                amount = temp.getAmount();
                 id = temp.getId();
 
                 Intent i = new Intent(getApplicationContext(), dialogue.class);
@@ -82,6 +83,7 @@ public class MeasureList extends AppCompatActivity {
                 i.putExtra("unit", unit);
                 i.putExtra("fleximage", fleximage);
                 i.putExtra("tag", tag);
+                i.putExtra("amount", amount);
                 i.putExtra("id", id);
 
                 startActivityForResult(i, 100);
@@ -144,7 +146,8 @@ public class MeasureList extends AppCompatActivity {
                 String fleximage = data.getStringExtra("fleximage");
                 String id = data.getStringExtra("id");
                 String tag = data.getStringExtra("tag");
-                measurement m = new measurement(tag, width, height, fleximage, unit, id);
+                String amount = data.getStringExtra("amount");
+                measurement m = new measurement(tag, width, height, fleximage, unit, id,amount);
 
                 dbRef.child(id).setValue(m);
 

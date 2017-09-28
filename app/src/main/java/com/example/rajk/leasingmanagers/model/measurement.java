@@ -7,25 +7,9 @@ public class measurement {
     private String fleximage;
     private String unit;
     private String id;
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
     private String amount;
 
-    public String getAmount() {
-        return amount;
-    }
-
-    public void setAmount(String amount) {
-        this.amount = amount;
-    }
-
-    public measurement(String tag, String width, String height, String fleximage, String unit,String id,String amount) {
+    public measurement(String tag, String width, String height, String fleximage, String unit, String id, String amount) {
         this.tag = tag;
         this.width = width;
         this.height = height;
@@ -36,6 +20,22 @@ public class measurement {
     }
 
     public measurement() {
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getAmount() {
+        return amount;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
     }
 
     public String getTag() {
