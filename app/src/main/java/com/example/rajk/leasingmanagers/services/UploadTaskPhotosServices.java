@@ -49,6 +49,7 @@ public class UploadTaskPhotosServices extends IntentService
         mBuilder = new NotificationCompat.Builder(
                 getApplicationContext());
         mBuilder.setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_upload))
+                .setSmallIcon(icon)
                 .setContentTitle(getString(R.string.app_name))
                 .setOngoing(false)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
@@ -128,6 +129,7 @@ public class UploadTaskPhotosServices extends IntentService
         mBuilder.setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher))
                 .setContentTitle(getString(R.string.app_name))
                 .setOngoing(false)
+                .setSmallIcon(icon)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setColor(getApplicationContext().getResources().getColor(R.color.white))
                 .setContentText(information)

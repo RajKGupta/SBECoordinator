@@ -52,6 +52,7 @@ public class DownloadFileService extends IntentService {
         mBuilder = new NotificationCompat.Builder(
                 getApplicationContext());
         mBuilder.setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_download))
+                .setSmallIcon(icon)
                 .setContentTitle(getString(R.string.app_name))
                 .setOngoing(true)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
@@ -159,6 +160,7 @@ public class DownloadFileService extends IntentService {
                 getApplicationContext());
         int icon = R.mipmap.ic_launcher;
         mBuilder.setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher))
+                .setSmallIcon(icon)
                 .setContentTitle(getString(R.string.app_name))
                 .setOngoing(false)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))

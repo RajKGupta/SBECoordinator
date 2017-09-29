@@ -183,7 +183,9 @@ public class chatListAdapter extends RecyclerView.Adapter<chatListAdapter.MyView
         ValueEventListener valueEventListener = dbTopicLastComment.orderByChild("status").equalTo("2").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
+                if (dataSnapshot.exists())
+                {
+                    holder.relunread.setVisibility(View.VISIBLE);
                     ChatMessage chatMessage = new ChatMessage();
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         chatMessage = ds.getValue(ChatMessage.class);

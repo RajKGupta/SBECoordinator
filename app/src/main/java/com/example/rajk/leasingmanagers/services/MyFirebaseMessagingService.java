@@ -71,6 +71,7 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
                                 .setContentTitle("New Notification from " + nameAndStatus.getName())
                                 .setContentText(body)
                                 .setAutoCancel(true)
+                                .setSmallIcon(R.mipmap.ic_launcher)
                                 .setSound(defaultSoundUri)
                                 .setContentIntent(pendingIntent);
                         NotificationManager notificationManager =
@@ -128,6 +129,7 @@ import static com.example.rajk.leasingmanagers.LeasingManagers.DBREF;
                                     .setContentTitle("New Message from " + nameAndStatus.getName())
                                     .setContentText(msg)
                                     .setAutoCancel(true)
+                                    .setSmallIcon(R.mipmap.ic_launcher)
                                     .setSound(defaultSoundUri)
                                     .setContentIntent(pendingIntent);
                             NotificationManager notificationManager =
