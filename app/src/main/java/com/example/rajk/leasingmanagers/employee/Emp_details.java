@@ -69,7 +69,7 @@ public class Emp_details extends AppCompatActivity implements EmployeeTask_Adapt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emp_details);
         listener =this;
-        DBREF.child("eal").addListenerForSingleValueEvent(new ValueEventListener() {
+        DBREF.child("eal").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 EmployeeAppLink = dataSnapshot.getValue(String.class);

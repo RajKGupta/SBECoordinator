@@ -66,7 +66,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cust_details);
-        DBREF.child("cal").addListenerForSingleValueEvent(new ValueEventListener() {
+        DBREF.child("cal").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 CustomerAppLink = dataSnapshot.getValue(String.class);
@@ -316,11 +316,15 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                         CustomerAccount customerAccount = new CustomerAccount();
                         String totalString =total.getText().toString().trim();
                         String advanceTotal = advance.getText().toString().trim();
-                        if(totalString!=null&&advanceTotal!=null) {
+                        if(totalString!=null&&advanceTotal!=null&&!totalString.equals("")&&!advanceTotal.equals("")) {
                             Integer total_amount = Integer.parseInt(totalString);
                             customerAccount.setTotal(total_amount);
                             Integer advance_amount = Integer.parseInt(advanceTotal);
                             customerAccount.setAdvance(advance_amount);
+                            if(total_amount<advance_amount){
+                                Toast.makeText(getApplicationContext(),"Invalid amount entered",Toast.LENGTH_SHORT).show();
+                            }
+                            else{
                             dbaccountinfo.setValue(customerAccount);
                             total.setEnabled(false);
                             advance.setEnabled(false);
@@ -329,7 +333,7 @@ public class Cust_details extends AppCompatActivity implements CustomerTasks_Ada
                             edit.setVisibility(View.VISIBLE);
                             sendNotif(mykey, id, "accountReset", "Your advance deposited is Rs." + advance_amount + " and balance left is Rs." + (total_amount - advance_amount), id);
                             sendNotifToAllCoordinators(mykey, "accountReset", name + " advance deposited is Rs." + advance_amount + " and balance left is Rs." + (total_amount - advance_amount), id);
-                        }
+                        }}
                         else
                         {
                             Toast.makeText(getApplicationContext(),"Invalid amount entered",Toast.LENGTH_SHORT).show();
